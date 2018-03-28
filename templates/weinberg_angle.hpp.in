@@ -74,6 +74,8 @@ private:
    double calculate_delta_vb(double, double) const;
    double calculate_delta_vb_sm(double) const;
    double calculate_delta_vb_bsm(double) const;
+   double calculate_mw_pole(double) const;
+   double calculate_delta_alpha_hat_bsm(double) const;
 
 @DeltaVBprototypes@
    // Passarino-Veltman loop functions

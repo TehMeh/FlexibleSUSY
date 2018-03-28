@@ -33,6 +33,9 @@ GetBottomMass::usage="";
 GetTopMass::usage="";
 DefVZSelfEnergy::usage="";
 DefVWSelfEnergy::usage="";
+YukawaMatching::usage="";
+DefVZVWSelfEnergies::usage="";
+DeltaAlphaHatBSM::usage="";
 
 DeltaRhoHat2LoopSM::usage="";
 DeltaRHat2LoopSM::usage="";
@@ -118,6 +121,43 @@ DefVWSelfEnergy[] :=
            If[!MuonDecayWorks,
               Return[result <> "0.;"]];
            result <> "Re(model->" <> SelfEnergies`CreateSelfEnergyFunctionName[SARAH`VectorW, 1] <> "(p));"
+          ];
+
+YukawaMatching[] :=
+    Module[{fermion, yukawa, result},
+           fermion = {TreeMasses`GetSMTopQuarkMultiplet[],
+                      TreeMasses`GetSMBottomQuarkMultiplet[],
+                      TreeMasses`GetSMTauLeptonMultiplet[]};
+           yukawa = {SARAH`UpYukawa, SARAH`DownYukawa, SARAH`ElectronYukawa};
+           prefactor = Table[ThresholdCorrections`YukawaToMassPrefactor[fermion[[i]], yukawa[[i]]], {i, 3}];
+           result = Parameters`CreateLocalConstRefs[prefactor] <> "\n";
+           result = result <> "sm.set_Yu(model->get_";
+           result = result <> CConversion`ToValidCSymbolString[yukawa[[1]]] <> "()*";
+           result = result <> CConversion`RValueToCFormString[prefactor[[1]]/(Global`SMvev/Sqrt[2])] <> ");\n";
+           result = result <> "sm.set_Yd(model->get_";
+           result = result <> CConversion`ToValidCSymbolString[yukawa[[2]]] <> "()*";
+           result = result <> CConversion`RValueToCFormString[prefactor[[2]]/(Global`SMvev/Sqrt[2])] <> ");\n";
+           result = result <> "sm.set_Ye(model->get_";
+           result = result <> CConversion`ToValidCSymbolString[yukawa[[3]]] <> "()*";
+           result <> CConversion`RValueToCFormString[prefactor[[3]]/(Global`SMvev/Sqrt[2])] <> ");"
+          ];
+
+DefVZVWSelfEnergies[] :=
+    Module[{result},
+           result = "const double sigma_Z_MZ_Model = Re(model->";
+           result = result <> SelfEnergies`CreateSelfEnergyFunctionName[SARAH`VectorZ, 1] <> "(mz));\n";
+           result = result <> "const double sigma_W_MW_Model = Re(model->";
+           result = result <> SelfEnergies`CreateSelfEnergyFunctionName[SARAH`VectorW, 1] <> "(mw));\n";
+           result = result <> "const double sigma_W_0_Model  = Re(model->";
+           result <> SelfEnergies`CreateSelfEnergyFunctionName[SARAH`VectorW, 1] <> "(0.));"
+          ];
+
+DeltaAlphaHatBSM[scheme_] :=
+    Module[{dahatbsm, result},
+           dahatbsm = ThresholdCorrections`CalculateElectromagneticCoupling[scheme];
+           result = Parameters`CreateLocalConstRefs[dahatbsm] <> "\n";
+           result = result <> "delta_alpha_hat_bsm += alpha_em/(2.*Pi)*(";
+           result <> CConversion`RValueToCFormString[dahatbsm] <> ");"
           ];
 
 FindMassZ2[masses_List] := FindMass2[masses, SARAH`VectorZ];

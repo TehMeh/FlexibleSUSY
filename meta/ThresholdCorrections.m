@@ -34,6 +34,7 @@ CalculateColorCoupling::usage="";
 CalculateElectromagneticCoupling::usage="";
 SetDRbarYukawaCouplings::usage="";
 GetTwoLoopThresholdHeaders::usage="";
+YukawaToMassPrefactor::usage="";
 
 CalculateGaugeCouplings::MissingRelation = "Warning: Coupling `1` is not\
  releated to `2` via DependenceNum: `1` = `3`"
@@ -355,6 +356,19 @@ InvertMassRelation[fermion_, yukawa_] :=
               Quit[1];
              ];
            InvertRelation[matrixExpression, fermion / prefactor, yukawa]
+          ];
+
+YukawaToMassPrefactor[fermion_, yukawa_] :=
+    Module[{massMatrix, polynom},
+           If[TreeMasses`IsUnmixed[fermion],
+              massMatrix = TreeMasses`GetMassOfUnmixedParticle[fermion];
+              massMatrix = TreeMasses`ReplaceDependencies[massMatrix];
+              massMatrix = Vertices`StripGroupStructure[massMatrix, {SARAH`ct1, SARAH`ct2}];
+              ,
+              massMatrix = SARAH`MassMatrix[fermion];
+             ];
+           polynom = Factor[massMatrix /. List -> Plus];
+           GetPrefactor[polynom, yukawa]
           ];
 
 SetDRbarYukawaCouplingTop[settings_] :=
