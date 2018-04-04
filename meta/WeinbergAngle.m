@@ -59,7 +59,8 @@ DebugPrint[msg___] :=
 CheckMuonDecayInputRequirements[] :=
     Module[{requiredSymbols, availPars, areDefined},
            requiredSymbols = {SARAH`VectorP, SARAH`VectorW, SARAH`VectorZ,
-                              SARAH`hyperchargeCoupling, SARAH`leftCoupling, SARAH`strongCoupling};
+                              SARAH`hyperchargeCoupling, SARAH`leftCoupling, SARAH`strongCoupling,
+                              SARAH`UpYukawa, SARAH`DownYukawa, SARAH`ElectronYukawa};
            availPars = Join[TreeMasses`GetParticles[],
                             Parameters`GetInputParameters[],
                             Parameters`GetModelParameters[],
@@ -129,7 +130,15 @@ YukawaMatching[] :=
                       TreeMasses`GetSMBottomQuarkMultiplet[],
                       TreeMasses`GetSMTauLeptonMultiplet[]};
            yukawa = {SARAH`UpYukawa, SARAH`DownYukawa, SARAH`ElectronYukawa};
+           If[(Parameters`GetParameterDimensions /@ yukawa) != {{3, 3}, {3, 3}, {3, 3}},
+              MuonDecayWorks = False;
+              DebugPrint["Error: Not all SM Yukawas are 3x3 matrices"];];
            prefactor = Table[ThresholdCorrections`YukawaToMassPrefactor[fermion[[i]], yukawa[[i]]], {i, 3}];
+           If[!(And @@ Not /@ NumericQ /@ prefactor),
+              MuonDecayWorks = False;
+              DebugPrint["Error: Prefactors of SM Yukawas cannot be determined"];];
+           If[!MuonDecayWorks,
+              Return[""]];
            result = Parameters`CreateLocalConstRefs[prefactor] <> "\n";
            result = result <> "sm.set_Yu(model->get_";
            result = result <> CConversion`ToValidCSymbolString[yukawa[[1]]] <> "()*";
