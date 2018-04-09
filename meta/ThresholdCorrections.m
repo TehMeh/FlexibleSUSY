@@ -464,6 +464,7 @@ sm_pars.mw_pole = qedqcd.displayPoleMW();
 sm_pars.mz_pole = qedqcd.displayPoleMZ();
 sm_pars.mt_pole = qedqcd.displayPoleMt();
 sm_pars.alpha_s = calculate_alpha_s_SM5_at(qedqcd, qedqcd.displayPoleMt());
+sm_pars.higgs_index = higgs_idx;
 
 const int number_of_iterations =
     std::max(20, static_cast<int>(std::abs(-log10(MODEL->get_precision()) * 10)));

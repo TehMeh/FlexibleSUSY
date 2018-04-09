@@ -590,6 +590,7 @@ double CLASSNAME::calculate_mw_pole(double sinThetaW) const
 
    const double mz = model->get_M@VectorZ(0)@;
    const double mw = model->get_M@VectorW(0)@;
+   const int higgs_idx = sm_parameters.higgs_index;
 
    standard_model::Standard_model sm;
    sm.set_scale(model->get_scale());
@@ -601,7 +602,7 @@ double CLASSNAME::calculate_mw_pole(double sinThetaW) const
    sm.set_g3(model->get_@strongCoupling@() * @ModelName@_info::normalization_@strongCoupling@ /
              standard_model_info::normalization_g3);
    sm.set_v(SMvev);
-   sm.set_Lambdax(Sqr(model->get_M@HiggsBoson(0)@ / SMvev));
+   sm.set_Lambdax(Sqr(model->get_M@HiggsBoson(higgs_idx)@ / SMvev));
 
 @YukawaMatching@
 
