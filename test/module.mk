@@ -430,7 +430,8 @@ TEST_SRC += \
 		$(DIR)/test_SM_higgs_loop_corrections.cpp \
 		$(DIR)/test_SM_tree_level_spectrum.cpp \
 		$(DIR)/test_SM_three_loop_spectrum.cpp \
-		$(DIR)/test_SM_two_loop_spectrum.cpp
+		$(DIR)/test_SM_two_loop_spectrum.cpp \
+		$(DIR)/test_SM_mw_calculation.cpp
 endif
 
 ifeq ($(WITH_SMHighPrecision),yes)
@@ -891,6 +892,8 @@ $(DIR)/test_SM_one_loop_spectrum.x: $(LIBSM)
 $(DIR)/test_SM_three_loop_spectrum.x: $(LIBSM)
 
 $(DIR)/test_SM_two_loop_spectrum.x: $(LIBSM)
+
+$(DIR)/test_SM_mw_calculation.x: $(LIBSM)
 
 $(DIR)/test_SM_weinberg_angle.x: $(LIBSM)
 
