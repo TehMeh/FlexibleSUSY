@@ -411,7 +411,8 @@ TEST_SRC += \
 		$(DIR)/test_CMSSM_slha.cpp \
 		$(DIR)/test_CMSSM_slha_input.cpp \
 		$(DIR)/test_CMSSM_two_loop_spectrum.cpp \
-		$(DIR)/test_CMSSM_info.cpp
+		$(DIR)/test_CMSSM_info.cpp \
+		$(DIR)/test_CMSSM_mw_calculation.cpp
 endif
 
 ifeq ($(WITH_NMSSM),yes)
@@ -775,6 +776,8 @@ $(DIR)/test_CMSSM_model.x: $(LIBCMSSM)
 $(DIR)/test_CMSSM_info.x: $(LIBCMSSM)
 
 $(DIR)/test_CMSSM_two_loop_spectrum.x: $(LIBCMSSM)
+
+$(DIR)/test_CMSSM_mw_calculation.x: $(LIBCMSSM)
 
 $(DIR)/test_CMSSM_beta_function_benchmark.x: $(LIBCMSSM)
 
