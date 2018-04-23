@@ -52,6 +52,7 @@ BOOST_AUTO_TEST_CASE( test_decoupling )
    input.m12 = 10000.;
    BOOST_REQUIRE_NO_THROW(mw10 = run_CMSSM(input).get_physical().MVWm);
 
+   BOOST_CHECK_GT(std::abs(mw1 / 80.357 - 1.), 1.0e-5);
    BOOST_CHECK_CLOSE_FRACTION(mw1, mw2, 1.0e-4);
    BOOST_CHECK_CLOSE_FRACTION(mw2, mw5, 1.0e-5);
    BOOST_CHECK_CLOSE_FRACTION(mw5, mw10, 1.0e-6);
