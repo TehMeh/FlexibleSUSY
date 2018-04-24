@@ -195,7 +195,8 @@ endif
 
 ifeq ($(WITH_MRSSM2),yes)
 TEST_SRC += \
-		$(DIR)/test_MRSSM2_gmm2.cpp
+		$(DIR)/test_MRSSM2_gmm2.cpp \
+		$(DIR)/test_MRSSM2_mw_calculation.cpp
 endif
 
 endif # ifneq ($(findstring two_scale,$(SOLVERS)),)
@@ -771,6 +772,8 @@ $(DIR)/test_CMSSM_database.x: $(LIBCMSSM)
 $(DIR)/test_CMSSM_gluino.sh: $(RUN_SOFTPOINT_EXE)
 
 $(DIR)/test_MRSSM2_gmm2.x: $(LIBMRSSM2)
+
+$(DIR)/test_MRSSM2_mw_calculation.x: $(LIBMRSSM2)
 
 $(DIR)/test_CMSSM_model.x: $(LIBCMSSM)
 
