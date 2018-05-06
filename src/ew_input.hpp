@@ -41,6 +41,7 @@ namespace Electroweak_constants {
       const double MZ = 91.1876;
       const double Error_MZ = 0.0021; ///< uncertainty on MZ from PDG
       const double MW = 80.385;
+      const double MWSM = 80.357; ///< SM prediction from arXiv:1411.7040
       const double MH = 125.09; ///< Higgs mass from PDG (CMS and ATLAS combination)
       const double Error_MH = 0.24; ///< uncertainty on MH from PDG - 0.11 (sys) and 0.21 stat combined in quadrature. 
       const double MUP = 2.4e-3; ///< default running quark mass from PDG

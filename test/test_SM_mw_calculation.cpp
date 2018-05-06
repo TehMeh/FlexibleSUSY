@@ -9,6 +9,7 @@
 #include "lowe.h"
 #include "SM_input_parameters.hpp"
 #include "SM_two_scale_spectrum_generator.hpp"
+#include "ew_input.hpp"
 
 using namespace flexiblesusy;
 
@@ -36,5 +37,6 @@ BOOST_AUTO_TEST_CASE( test_consistency )
 
    double mw;
    BOOST_REQUIRE_NO_THROW(mw = run_SM(input).get_physical().MVWp);
-   BOOST_CHECK_CLOSE_FRACTION(mw, 80.357, 1.0e-10);
+   const double mwSM = Electroweak_constants::MWSM;
+   BOOST_CHECK_CLOSE_FRACTION(mw, mwSM, 1.0e-10);
 }

@@ -29,6 +29,7 @@
 #include "error.hpp"
 #include "pv.hpp"
 #include "standard_model.hpp"
+#include "ew_input.hpp"
 
 #include <limits>
 #include <cmath>
@@ -626,7 +627,9 @@ double CLASSNAME::calculate_mw_pole(double sinThetaW) const
       calculate_delta_alpha_hat_bsm(alphaDRbar);
    const double delta_rho_hat_tree = calculate_rho_hat_tree() - 1.0;
 
-   return 80.357 * Sqrt(1.0 + sinThetaW2 / (cosThetaW2 - sinThetaW2) *
+   const double mwSM = Electroweak_constants::MWSM;
+
+   return mwSM * Sqrt(1.0 + sinThetaW2 / (cosThetaW2 - sinThetaW2) *
                     (cosThetaW2 / sinThetaW2 *
                      (delta_rho_hat_BSM + delta_rho_hat_tree)
                      - delta_rw_hat_BSM - delta_alpha_hat_BSM));
