@@ -572,6 +572,15 @@ double CLASSNAME::calculate_self_energy_@VectorW@_top(double p, double mt) const
    return self_energy_w_top;
 }
 
+double CLASSNAME::calculate_mw_pole() const
+{
+   @DefSMhyperCoupling@
+   @DefSMleftCoupling@
+   const double sinThetaW = gY / Sqrt(Sqr(gY) + Sqr(g2));
+
+   return calculate_mw_pole(sinThetaW);
+}
+
 /**
  * Calculates W boson pole mass from SM value and BSM contributions
  * taken into account strictly on 1-loop level
