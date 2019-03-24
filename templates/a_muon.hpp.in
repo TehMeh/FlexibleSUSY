@@ -28,7 +28,9 @@
 #ifndef @ModelName@_A_MUON_H
 #define @ModelName@_A_MUON_H
 
-#include "lowe.h"
+namespace softsusy {
+   class QedQcd;
+} // namespace softsusy
 
 namespace flexiblesusy {
 class @ModelName@_mass_eigenstates;
