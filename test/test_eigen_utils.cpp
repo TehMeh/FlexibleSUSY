@@ -52,6 +52,18 @@ BOOST_AUTO_TEST_CASE(test_div_safe)
    BOOST_CHECK_EQUAL(result(2), 3./2.);
 }
 
+BOOST_AUTO_TEST_CASE(test_div_safe_dynamic)
+{
+   Eigen::ArrayXd v1(3,1), v2(3,1), result(3,1);
+   v1 << 1, 2, 3;
+   v2 << 0, 1, 2;
+   result = div_safe(v1, v2);
+
+   BOOST_CHECK_EQUAL(result(0), 0.);
+   BOOST_CHECK_EQUAL(result(1), 2.);
+   BOOST_CHECK_EQUAL(result(2), 3./2.);
+}
+
 BOOST_AUTO_TEST_CASE(test_reorder_vector)
 {
    Eigen::Array<double,3,1> vec1, vec2;
@@ -123,28 +135,6 @@ BOOST_AUTO_TEST_CASE(test_remove_if_equal_double_indices)
    BOOST_CHECK_EQUAL(dst(0), 1);
    BOOST_CHECK_EQUAL(dst(1), 4);
    BOOST_CHECK_EQUAL(dst(2), 5);
-}
-
-BOOST_AUTO_TEST_CASE(test_Eval)
-{
-   Eigen::Matrix<double,2,2> m1, m2;
-   Eigen::Matrix<double,2,1> v1, v2;
-   int i;
-   double d;
-   std::complex<double> c;
-
-   BOOST_CHECK_EQUAL(typeid(Eval(m1)).hash_code(), typeid(m1).hash_code());
-   BOOST_CHECK_EQUAL(typeid(Eval(m1*m2)).hash_code(), typeid(m1).hash_code());
-   BOOST_CHECK_EQUAL(typeid(Eval(m1*m2 + m1)).hash_code(), typeid(m1).hash_code());
-
-   BOOST_CHECK_EQUAL(typeid(Eval(v1)).hash_code(), typeid(v1).hash_code());
-   BOOST_CHECK_EQUAL(typeid(Eval(m1*v1)).hash_code(), typeid(v1).hash_code());
-   BOOST_CHECK_EQUAL(typeid(Eval(m1*v1 + v2)).hash_code(), typeid(v1).hash_code());
-
-   BOOST_CHECK_EQUAL(typeid(Eval(c)).hash_code(), typeid(c).hash_code());
-   BOOST_CHECK_EQUAL(typeid(Eval(d)).hash_code(), typeid(d).hash_code());
-   BOOST_CHECK_EQUAL(typeid(Eval(i)).hash_code(), typeid(i).hash_code());
-
 }
 
 BOOST_AUTO_TEST_CASE(test_normalize_to_interval_real)

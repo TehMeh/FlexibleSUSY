@@ -32,7 +32,6 @@
 #include "threshold_corrections.hpp"
 #include "error.hpp"
 #include "problems.hpp"
-#include "config.h"
 #include "physical_input.hpp"
 
 #include <array>
@@ -578,6 +577,7 @@ private:
    double calc_beta_g3_two_loop(const Beta_traces&) const;
    double calc_beta_g3_three_loop(const Beta_traces&) const;
    double calc_beta_g3_four_loop(const Beta_traces&) const;
+   double calc_beta_g3_five_loop(const Beta_traces&) const;
    double calc_beta_Lambdax_one_loop(const Beta_traces&) const;
    double calc_beta_Lambdax_two_loop(const Beta_traces&) const;
    double calc_beta_Lambdax_three_loop(const Beta_traces&) const;
@@ -607,10 +607,10 @@ private:
       virtual std::string what() const override { return "Could not perform EWSB step."; }
    };
 
-   int ewsb_loop_order{2};
-   int pole_mass_loop_order{2};
+   int ewsb_loop_order{4};
+   int pole_mass_loop_order{4};
    bool force_output{false};      ///< switch to force output of pole masses
-   double precision{1e-3};        ///< RG running precision
+   double precision{1e-4};        ///< RG running precision
    double ewsb_iteration_precision{1e-5};
    Standard_model_physical physical{}; ///< contains the pole masses and mixings
    Problems problems{standard_model_info::model_name,

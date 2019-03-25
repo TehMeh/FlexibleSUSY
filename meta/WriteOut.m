@@ -515,6 +515,14 @@ WriteSLHABlockEntry[blockName_, {par_?IsObservable, idx___}, comment_String:""] 
                       result = WriteSLHABlockEntry[blockName,
                                                    {"OBSERVABLES." <> Observables`GetObservableName[par], idx},
                                                    Observables`GetObservableDescription[par]],
+                  FlexibleSUSYObservable`BrLToLGamma[__],
+                      result = WriteSLHABlockEntry[blockName,
+                                                   {"OBSERVABLES." <> Observables`GetObservableName[par], idx},
+                                                   Observables`GetObservableDescription[par]],
+                  FlexibleSUSYObservable`FToFConversionInNucleus[__],
+                      result = WriteSLHABlockEntry[blockName,
+                                                   {"OBSERVABLES." <> Observables`GetObservableName[par], idx},
+                                                   Observables`GetObservableDescription[par]],
                   _,
                      result = WriteSLHABlockEntry[blockName, {"", idx}, ""]
                  ];
@@ -1140,6 +1148,18 @@ CalculatePMNSMatrix[] :=
               result = "pmns = " <>
               CreateSLHAFermionMixingMatrixName[SARAH`ElectronMatrixL] <> " * " <>
               CreateSLHAFermionMixingMatrixName[SARAH`NeutrinoMM] <> ".adjoint();\n";
+              (* convert PMNS matrix to PDG convention *)
+              If[MemberQ[Parameters`GetOutputParameters[], SARAH`ElectronMatrixL] &&
+                 MemberQ[Parameters`GetOutputParameters[], SARAH`ElectronMatrixR] &&
+                 MemberQ[Parameters`GetOutputParameters[], SARAH`NeutrinoMM] &&
+                 SARAH`getDimParameters[SARAH`ElectronMatrixL] === {3,3} &&
+                 SARAH`getDimParameters[SARAH`ElectronMatrixR] === {3,3} &&
+                 SARAH`getDimParameters[SARAH`ElectronMatrixL] === SARAH`getDimParameters[SARAH`NeutrinoMM],
+                 result = result <> "PMNS_parameters::to_pdg_convention(pmns, " <>
+                 CreateSLHAFermionMixingMatrixName[SARAH`NeutrinoMM] <> ", " <>
+                 CreateSLHAFermionMixingMatrixName[SARAH`ElectronMatrixL] <> ", " <>
+                 CreateSLHAFermionMixingMatrixName[SARAH`ElectronMatrixR] <> ");\n";
+                ];
               ,
               result = "pmns << 1, 0, 0, 0, 1, 0, 0, 0, 1;\n";
              ];
