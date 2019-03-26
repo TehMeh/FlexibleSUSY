@@ -22,12 +22,13 @@
 #include <tuple>
 
 #include "lowe.h"
+#include "munuSSM_input_parameters.hpp"
+#include "spectrum_generator_settings.hpp"
 #include "munuSSM_two_scale_spectrum_generator.hpp"
 
 namespace flexiblesusy {
 
-munuSSM_slha<munuSSM<Two_scale>>
-setup_munuSSM(
+inline munuSSM_slha<munuSSM<Two_scale>> setup_munuSSM(
    const munuSSM_input_parameters& input,
    const softsusy::QedQcd& qedqcd,
    const Spectrum_generator_settings& settings)
