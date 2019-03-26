@@ -110,14 +110,19 @@ Block YVIN\
    // extract the input parameters
    softsusy::QedQcd qedqcd;
    munuSSM_input_parameters input;
+   Spectrum_generator_settings settings;
 
    try {
+      slha_io.fill(settings);
       slha_io.fill(qedqcd);
       slha_io.fill(input);
    } catch (const Error& error) {
       BOOST_TEST_MESSAGE(error.what());
       BOOST_TEST(false);
    }
+
+   settings.set(Spectrum_generator_settings::calculate_sm_masses, 0);
+   settings.set(Spectrum_generator_settings::calculate_bsm_masses, 0);
 
    typedef Eigen::DiagonalMatrix<double, 3> DiagonalMatrix3;
 
@@ -140,7 +145,7 @@ Block YVIN\
    input.YvInput << 0.01, 0.01, 0.01;
    */
 
-   munuSSM_slha<munuSSM<Two_scale>> m = setup_munuSSM(input, qedqcd);
+   munuSSM_slha<munuSSM<Two_scale>> m = setup_munuSSM(input, qedqcd, settings);
 
    auto amu = munuSSM_a_muon::calculate_a_muon(m, qedqcd);
 #if defined(__INTEL_COMPILER)

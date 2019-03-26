@@ -27,12 +27,11 @@
 namespace flexiblesusy {
 
 munuSSM_slha<munuSSM<Two_scale>>
-setup_munuSSM(const munuSSM_input_parameters& input, const softsusy::QedQcd& qedqcd)
+setup_munuSSM(
+   const munuSSM_input_parameters& input,
+   const softsusy::QedQcd& qedqcd,
+   const Spectrum_generator_settings& settings)
 {
-    Spectrum_generator_settings settings;
-    settings.set(Spectrum_generator_settings::calculate_sm_masses, 0);
-    settings.set(Spectrum_generator_settings::calculate_bsm_masses, 0);
-
     munuSSM_spectrum_generator<Two_scale> spectrum_generator;
     spectrum_generator.set_settings(settings);
     spectrum_generator.run(qedqcd, input);
