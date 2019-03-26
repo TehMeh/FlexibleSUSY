@@ -24,13 +24,11 @@
 #include "lowe.h"
 #include "munuSSM_two_scale_spectrum_generator.hpp"
 
-using namespace flexiblesusy;
+namespace flexiblesusy {
 
 munuSSM_slha<munuSSM<Two_scale>>
-setup_munuSSM(const munuSSM_input_parameters& input)
+setup_munuSSM(const munuSSM_input_parameters& input, const softsusy::QedQcd& qedqcd)
 {
-    softsusy::QedQcd qedqcd;
-
     Spectrum_generator_settings settings;
     settings.set(Spectrum_generator_settings::calculate_sm_masses, 0);
     settings.set(Spectrum_generator_settings::calculate_bsm_masses, 0);
@@ -41,5 +39,7 @@ setup_munuSSM(const munuSSM_input_parameters& input)
 
     return std::get<0>(spectrum_generator.get_models_slha());
 }
+
+} // namespace flexiblesusy
 
 #endif
