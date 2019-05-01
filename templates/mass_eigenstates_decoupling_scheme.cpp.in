@@ -176,7 +176,12 @@ void CLASSNAME::fill_from(const standard_model::Standard_model& sm_input)
 
 void CLASSNAME::fill_from(const @ModelName@_mass_eigenstates& model)
 {
-   static_cast<@ModelName@_soft_parameters&>(*this) = static_cast<@ModelName@_soft_parameters>(model);
+   set(model.get());
+   set_scale(model.get_scale());
+   set_loops(model.get_loops());
+   set_thresholds(model.get_thresholds());
+   set_zero_threshold(model.get_zero_threshold());
+   set_input_parameters(model.get_input());
    physical = model.get_physical();
 
 #define OTHER(p) model.get_##p()
