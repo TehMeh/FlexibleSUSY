@@ -96,7 +96,7 @@ bool CLASSNAME::do_force_output() const
    return force_output;
 }
 
-bool CLASSNAME::fill_from(const standard_model::Standard_model& sm_input)
+void CLASSNAME::fill_from(const standard_model::Standard_model& sm_input)
 {
    using RM33 = Eigen::Matrix<double, 3, 3>;
    using CM33 = Eigen::Matrix<std::complex<double>, 3, 3>;
@@ -174,7 +174,7 @@ bool CLASSNAME::fill_from(const standard_model::Standard_model& sm_input)
    calculate_tree_level_mass_spectrum();
 }
 
-bool CLASSNAME::fill_from(const @ModelName@_mass_eigenstates& model)
+void CLASSNAME::fill_from(const @ModelName@_mass_eigenstates& model)
 {
    static_cast<@ModelName@_soft_parameters&>(*this) = static_cast<@ModelName@_soft_parameters>(model);
    physical = model.get_physical();
