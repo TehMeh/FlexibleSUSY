@@ -31,6 +31,7 @@
 #include "error.hpp"
 #include "lowe.h"
 #include "numerics2.hpp"
+#include "shooting_solver.hpp"
 
 #include <limits>
 
@@ -113,14 +114,16 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
 
    susy_scale = low_scale = 0.;
 
-   // RGFlow<Shooting> solver;
-   // solver.reset();
-   // solver.set_convergence_tester(&convergence_tester);
-   // solver.set_running_precision(&precision);
-   // solver.set_initial_guesser(&initial_guesser);
-   // solver.add(&low_scale_constraint, &model);
-   // solver.add(&susy_scale_constraint, &model);
-   // solver.solve();
+   // function to find root of
+   auto dev_from_input = [&](const Vec_t& pars) {
+      return deviation_from_observables(pars, qedqcd);
+   };
+
+   Shooting_solver<N> solver;
+   solver.set_max_iterations(settings.get(Spectrum_generator_settings::max_iterations));
+   solver.set_precision(settings.get(Spectrum_generator_settings::precision));
+
+   solver.solve(dev_from_input, initial_guess());
 
    // impose low-scale constraint one last time
    model.run_to(low_scale_constraint.get_scale());
@@ -190,6 +193,19 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
       model.get_problems().flag_running_tachyon(@ModelName@_info::@VectorW@);
    if (eft.get_problems().is_pole_tachyon(standard_model_info::VWp))
       model.get_problems().flag_pole_tachyon(@ModelName@_info::@VectorW@);
+}
+
+@ModelName@_spectrum_generator<Shooting>::Vec_t
+@ModelName@_spectrum_generator<Shooting>::initial_guess()
+{
+   return Vec_t::Zero();
+}
+
+@ModelName@_spectrum_generator<Shooting>::Vec_t
+@ModelName@_spectrum_generator<Shooting>::deviation_from_observables(
+   const Vec_t& bsm_pars, const softsusy::QedQcd& qedqcd)
+{
+   return Vec_t::Zero();
 }
 
 } // namespace flexiblesusy

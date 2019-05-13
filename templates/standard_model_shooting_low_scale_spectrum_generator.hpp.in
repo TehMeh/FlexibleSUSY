@@ -51,12 +51,18 @@ protected:
    virtual void run_except(const softsusy::QedQcd&, const @ModelName@_input_parameters&) override;
 
 private:
+   static const int N = 7; ///< number of relevant SM parameters
+   using Vec_t = Eigen::Matrix<double, N, 1>;
+
    double susy_scale{0.};
    double low_scale{0.};
 
    void calculate_spectrum(double);
    double get_eft_pole_mass_scale(double, double) const;
    double get_pole_mass_scale(double) const;
+
+   Vec_t initial_guess();
+   Vec_t deviation_from_observables(const Vec_t&, const softsusy::QedQcd&);
 };
 
 } // namespace flexiblesusy
