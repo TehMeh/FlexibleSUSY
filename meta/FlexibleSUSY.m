@@ -284,6 +284,7 @@ FSEWSBSolvers = { FPIRelative, GSLHybridS, GSLBroyden };
 TwoScaleSolver;      (* two-scale algorithm *)
 LatticeSolver;       (* lattice algorithm *)
 SemiAnalyticSolver;  (* semi-analytic algorithm *)
+ShootingSolver;      (* shooting method, can be used for FlexibleEFTHiggs *)
 FSBVPSolvers = { TwoScaleSolver };
 
 (* macros *)
@@ -364,7 +365,7 @@ numberOfModelParameters = 0;
 allEWSBSolvers = { GSLHybrid, GSLHybridS, GSLBroyden, GSLNewton,
                    FPIRelative, FPIAbsolute, FPITadpole };
 
-allBVPSolvers = { TwoScaleSolver, LatticeSolver, SemiAnalyticSolver };
+allBVPSolvers = { TwoScaleSolver, LatticeSolver, SemiAnalyticSolver, ShootingSolver };
 
 HaveEWSBSolver[solver_] := MemberQ[FlexibleSUSY`FSEWSBSolvers, solver];
 
@@ -1879,6 +1880,16 @@ WriteTwoScaleSpectrumGeneratorClass[files_List] :=
                           } ];
           ];
 
+WriteShootingSpectrumGeneratorClass[files_List] :=
+    Module[{fillSMFermionPoleMasses = ""},
+           fillSMFermionPoleMasses = FlexibleEFTHiggsMatching`FillSMFermionPoleMasses[];
+           WriteOut`ReplaceInFiles[files,
+                          {
+                            "@fillSMFermionPoleMasses@" -> IndentText[fillSMFermionPoleMasses],
+                            Sequence @@ GeneralReplacementRules[]
+                          } ];
+          ];
+
 WriteSemiAnalyticSpectrumGeneratorClass[files_List] :=
     Module[{boundaryConstraint = "", semiAnalyticConstraint = "", getBoundaryScale = ""},
            Which[SemiAnalytic`IsBoundaryConstraint[FlexibleSUSY`HighScaleInput],
@@ -2241,6 +2252,7 @@ GetBVPSolverHeaderName[solver_] :=
     Switch[solver,
            FlexibleSUSY`TwoScaleSolver, "two_scale",
            FlexibleSUSY`SemiAnalyticSolver, "semi_analytic",
+           FlexibleSUSY`ShootingSolver, "shooting",
            FlexibleSUSY`LatticeSolver, "lattice",
            _, Print["Error: invalid BVP solver requested: ", solver];
               Quit[1];
@@ -2250,6 +2262,7 @@ GetBVPSolverEnabledMacro[solver_] :=
     Switch[solver,
            FlexibleSUSY`TwoScaleSolver, "ENABLE_TWO_SCALE_SOLVER",
            FlexibleSUSY`SemiAnalyticSolver, "ENABLE_SEMI_ANALYTIC_SOLVER",
+           FlexibleSUSY`ShootingSolver, "ENABLE_SHOOTING_SOLVER",
            FlexibleSUSY`LatticeSolver, "ENABLE_LATTICE_SOLVER",
            _, Print["Error: invalid BVP solver requested: ", solver];
               Quit[1];
@@ -2260,6 +2273,7 @@ GetBVPSolverSLHAOptionKey[solver_] :=
            FlexibleSUSY`TwoScaleSolver, "1",
            FlexibleSUSY`SemiAnalyticSolver, "2",
            FlexibleSUSY`LatticeSolver, "3",
+           FlexibleSUSY`ShootingSolver, "4",
            _, Print["Error: invalid BVP solver requested: ", solver];
               Quit[1];
           ];
@@ -2268,6 +2282,7 @@ GetBVPSolverTemplateParameter[solver_] :=
     Switch[solver,
            FlexibleSUSY`TwoScaleSolver, "Two_scale",
            FlexibleSUSY`SemiAnalyticSolver, "Semi_analytic",
+           FlexibleSUSY`ShootingSolver, "Shooting",
            FlexibleSUSY`LatticeSolver, "Lattice",
            _, Print["Error: invalid BVP solver requested: ", solver];
               Quit[1];
@@ -2446,6 +2461,8 @@ WriteBVPSolverMakefile[files_List] :=
            WriteOut`ReplaceInFiles[files,
                    { "@FlexibleEFTHiggsTwoScaleSource@" -> twoScaleSource,
                      "@FlexibleEFTHiggsTwoScaleHeader@" -> twoScaleHeader,
+                     "@FlexibleEFTHiggsShootingSource@" -> "",
+                     "@FlexibleEFTHiggsShootingHeader@" -> "",
                      Sequence @@ GeneralReplacementRules[]
                    } ];
           ];
@@ -4319,6 +4336,63 @@ MakeFlexibleSUSY[OptionsPattern[]] :=
 
               Parameters`RemoveExtraParameters[SemiAnalytic`CreateCoefficientParameters[semiAnalyticSolns]];
              ]; (* If[HaveBVPSolver[FlexibleSUSY`SemiAnalyticSolver] *)
+
+           If[HaveBVPSolver[FlexibleSUSY`ShootingSolver],
+              Print["Creating FlexibleEFTHiggs.mk ..."];
+              WriteFlexibleEFTHiggsMakefileModule[
+                  {{FileNameJoin[{$flexiblesusyTemplateDir, "FlexibleEFTHiggs.mk.in"}],
+                    FileNameJoin[{FSOutputDir, "FlexibleEFTHiggs.mk"}]}
+                  }];
+
+              Print["Creating makefile module for shooting solver ..."];
+              WriteBVPSolverMakefile[{{FileNameJoin[{$flexiblesusyTemplateDir, "shooting.mk.in"}],
+                                       FileNameJoin[{FSOutputDir, "shooting.mk"}]}}];
+
+              Print["Creating class for shooting model ..."];
+              WriteTwoScaleModelClass[{{FileNameJoin[{$flexiblesusyTemplateDir, "shooting_model.hpp.in"}],
+                                        FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_shooting_model.hpp"}]},
+                                       {FileNameJoin[{$flexiblesusyTemplateDir, "shooting_model.cpp.in"}],
+                                        FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_shooting_model.cpp"}]}}];
+
+              Print["Creating class for shooting EWSB solver ..."];
+              WriteEWSBSolverClass[ewsbEquations, FlexibleSUSY`EWSBOutputParameters, FlexibleSUSY`EWSBInitialGuess,
+                                   FlexibleSUSY`ShootingSolver /. solverEwsbSubstitutions,
+                                   FlexibleSUSY`ShootingSolver /. solverEwsbSolutions,
+                                   FlexibleSUSY`ShootingSolver /. solverFreePhases,
+                                   FlexibleSUSY`ShootingSolver /. solverEwsbSolvers,
+                                   {{FileNameJoin[{$flexiblesusyTemplateDir, "shooting_ewsb_solver.hpp.in"}],
+                                     FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_shooting_ewsb_solver.hpp"}]},
+                                    {FileNameJoin[{$flexiblesusyTemplateDir, "shooting_ewsb_solver.cpp.in"}],
+                                     FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_shooting_ewsb_solver.cpp"}]}}];
+
+              If[FlexibleSUSY`FlexibleEFTHiggs === True,
+                 Print["Creating matching class ..."];
+                 WriteMatchingClass[FlexibleSUSY`MatchingScaleInput, massMatrices,
+                                    {{FileNameJoin[{$flexiblesusyTemplateDir, "standard_model_matching.hpp.in"}],
+                                      FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_standard_model_matching.hpp"}]},
+                                     {FileNameJoin[{$flexiblesusyTemplateDir, "standard_model_matching.cpp.in"}],
+                                      FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_standard_model_matching.cpp"}]}
+                                    }];
+              ];
+
+              spectrumGeneratorInputFile =
+                  If[FlexibleSUSY`FlexibleEFTHiggs,
+                     "standard_model_",
+                     ""
+                  ] <>
+                  If[FlexibleSUSY`OnlyLowEnergyFlexibleSUSY,
+                     "shooting_low_scale_spectrum_generator",
+                     "shooting_high_scale_spectrum_generator"];
+
+              Print["Creating class for shooting spectrum generator ..."];
+              WriteShootingSpectrumGeneratorClass[
+                  {{FileNameJoin[{$flexiblesusyTemplateDir, spectrumGeneratorInputFile <> ".hpp.in"}],
+                    FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_shooting_spectrum_generator.hpp"}]},
+                   {FileNameJoin[{$flexiblesusyTemplateDir, spectrumGeneratorInputFile <> ".cpp.in"}],
+                    FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_shooting_spectrum_generator.cpp"}]}
+                  }];
+
+           ]; (* If[HaveBVPSolver[FlexibleSUSY`ShootingSolver] *)
 
            Utils`PrintHeadline["Creating observables"];
            Print["Creating class for effective couplings ..."];

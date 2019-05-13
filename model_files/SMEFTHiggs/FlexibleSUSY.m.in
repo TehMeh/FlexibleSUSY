@@ -3,6 +3,7 @@ FSEigenstates = SARAH`EWSB;
 FSDefaultSARAHModel = SM;
 OnlyLowEnergyFlexibleSUSY = True;
 FlexibleEFTHiggs = True;
+FSBVPSolvers = { ShootingSolver };
 
 (* SM input parameters *)
 

@@ -125,10 +125,19 @@ SEMI_ANALYTIC_TEMPLATES := \
 		$(DIR)/soft_parameters_constraint.hpp.in \
 		$(DIR)/susy_convergence_tester.hpp.in
 
+SHOOTING_TEMPLATES := \
+		$(DIR)/shooting_ewsb_solver.hpp.in \
+		$(DIR)/shooting_ewsb_solver.cpp.in \
+		$(DIR)/shooting_model.hpp.in \
+		$(DIR)/shooting_model.cpp.in \
+		$(DIR)/standard_model_shooting_low_scale_spectrum_generator.hpp.in \
+		$(DIR)/standard_model_shooting_low_scale_spectrum_generator.cpp.in
+
 TEMPLATES    := \
 		$(BASE_TEMPLATES) \
 		$(TWO_SCALE_TEMPLATES) \
-		$(SEMI_ANALYTIC_TEMPLATES)
+		$(SEMI_ANALYTIC_TEMPLATES) \
+		$(SHOOTING_TEMPLATES)
 
 .PHONY:         all-$(MODNAME) clean-$(MODNAME) distclean-$(MODNAME)
 

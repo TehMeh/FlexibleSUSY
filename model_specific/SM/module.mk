@@ -27,6 +27,7 @@ LIB_model_specific_SM_HDR := \
 		$(DIR)/standard_model_effective_couplings.hpp \
 		$(DIR)/standard_model_low_scale_constraint.hpp \
 		$(DIR)/standard_model_physical.hpp \
+		$(DIR)/standard_model_shooting_model.hpp \
 		$(DIR)/standard_model_two_scale_convergence_tester.hpp \
 		$(DIR)/standard_model_two_scale_low_scale_constraint.hpp \
 		$(DIR)/standard_model_two_scale_model.hpp
