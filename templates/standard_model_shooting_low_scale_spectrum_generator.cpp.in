@@ -218,6 +218,7 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
    //    Q_low,
    //    gauge_less);
 
+   eft.run_to(Q_low);
    eft.solve_ewsb();
    eft.calculate_pole_masses();
 
@@ -231,7 +232,7 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
    const double alpha_em_msbar = Sqr(e) / (4*Pi);
    const double alpha_s_msbar  = Sqr(g3) / (4*Pi);
 
-   auto qedqcd_GF = qedqcd;
+   auto qedqcd_GF = qedqcd; // TODO: why necessary for GF?
    qedqcd_GF.setPoleMt(eft.get_physical().MFu(2));
    qedqcd_GF.setPoleMW(eft.get_physical().MVWp);
    qedqcd_GF.setPoleMZ(eft.get_physical().MVZ);
@@ -239,17 +240,15 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
    const double cos_theta      = eft.get_MVWp()/eft.get_MVZ();
    const double g_fermi        = 1.1663787e-5; // TODO: eft.calculate_G_fermi(qedqcd_GF, alpha_em_msbar, cos_theta);
 
-   auto qedqcd_pred = qedqcd;
-   qedqcd_pred.toMz();
+   auto qedqcd_Q_low = qedqcd; // TODO: why necessary for mb?
+   qedqcd_Q_low.to(Q_low);
 
-   const double mb_qedqcd      = qedqcd_pred.displayMass(softsusy::mBottom);
-   const double mc_qedqcd      = qedqcd_pred.displayMass(softsusy::mCharm);
-   const double ms_qedqcd      = qedqcd_pred.displayMass(softsusy::mStrange);
+   const double Mtop           = qedqcd.displayPoleMt();
+   const double mb_qedqcd      = qedqcd_Q_low.displayMass(softsusy::mBottom);
    const double alpha_em_SM5   = qedqcd.displayAlpha(softsusy::ALPHA);
    const double alpha_s_SM5    = qedqcd.displayAlpha(softsusy::ALPHAS);
    const double delta_alpha_em = eft.calculate_delta_alpha_em(alpha_em_msbar);
    const double delta_alpha_s  = eft.calculate_delta_alpha_s(alpha_s_SM5);
-   const double Mtop           = qedqcd.displayPoleMt();
    const double alpha_em_SM5_p = alpha_em_msbar / (1 + delta_alpha_em);
    const double alpha_s_SM5_p  = alpha_s_msbar * (1 - delta_alpha_s);
 
