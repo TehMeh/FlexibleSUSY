@@ -205,7 +205,63 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
 @ModelName@_spectrum_generator<Shooting>::deviation_from_observables(
    const Vec_t& bsm_pars, const softsusy::QedQcd& qedqcd)
 {
-   return Vec_t::Zero();
+   const double Q_match = settings.get(Spectrum_generator_settings::eft_matching_scale);
+   const double Q_low = qedqcd.displayPoleMZ();
+   const auto bsm_input = model.get_input();
+
+   // // TODO:
+   // eft = run_down_with(
+   //    settings,
+   //    bsm_input,
+   //    bsm_pars,
+   //    Q_match,
+   //    Q_low,
+   //    gauge_less);
+
+   eft.solve_ewsb();
+   eft.calculate_pole_masses();
+
+   Vec_t diff(Vec_t::Zero());
+
+   const double Pi             = 3.141592653589793;
+   const double gY             = eft.get_g1() * standard_model_info::normalization_g1;
+   const double g2             = eft.get_g2() * standard_model_info::normalization_g2;
+   const double g3             = eft.get_g3() * standard_model_info::normalization_g3;
+   const double e              = gY*g2 / Sqrt(Sqr(gY) + Sqr(g2));
+   const double alpha_em_msbar = Sqr(e) / (4*Pi);
+   const double alpha_s_msbar  = Sqr(g3) / (4*Pi);
+
+   auto qedqcd_GF = qedqcd;
+   qedqcd_GF.setPoleMt(eft.get_physical().MFu(2));
+   qedqcd_GF.setPoleMW(eft.get_physical().MVWp);
+   qedqcd_GF.setPoleMZ(eft.get_physical().MVZ);
+
+   const double cos_theta      = eft.get_MVWp()/eft.get_MVZ();
+   const double g_fermi        = 1.1663787e-5; // TODO: eft.calculate_G_fermi(qedqcd_GF, alpha_em_msbar, cos_theta);
+
+   auto qedqcd_pred = qedqcd;
+   qedqcd_pred.toMz();
+
+   const double mb_qedqcd      = qedqcd_pred.displayMass(softsusy::mBottom);
+   const double mc_qedqcd      = qedqcd_pred.displayMass(softsusy::mCharm);
+   const double ms_qedqcd      = qedqcd_pred.displayMass(softsusy::mStrange);
+   const double alpha_em_SM5   = qedqcd.displayAlpha(softsusy::ALPHA);
+   const double alpha_s_SM5    = qedqcd.displayAlpha(softsusy::ALPHAS);
+   const double delta_alpha_em = eft.calculate_delta_alpha_em(alpha_em_msbar);
+   const double delta_alpha_s  = eft.calculate_delta_alpha_s(alpha_s_SM5);
+   const double Mtop           = qedqcd.displayPoleMt();
+   const double alpha_em_SM5_p = alpha_em_msbar / (1 + delta_alpha_em);
+   const double alpha_s_SM5_p  = alpha_s_msbar * (1 - delta_alpha_s);
+
+   diff(0) = (alpha_em_SM5 - alpha_em_SM5_p)/alpha_em_SM5;
+   diff(1) = (alpha_s_SM5 - alpha_s_SM5_p)/alpha_s_SM5;
+   diff(2) = (qedqcd.displayFermiConstant() -  g_fermi)/qedqcd.displayFermiConstant();
+   diff(3) = (Mtop -  eft.get_physical().MFu(2))/Mtop;
+   diff(4) = (qedqcd.displayPoleMZ() - eft.get_physical().MVZ)/qedqcd.displayPoleMZ();
+   diff(5) = (eft.calculate_MFd_DRbar(mb_qedqcd, 2) - eft.get_MFd(2))/eft.calculate_MFd_DRbar(mb_qedqcd, 2) ;
+   diff(6) = (qedqcd.displayPoleMtau() - eft.get_physical().MFe(2))/(qedqcd.displayPoleMtau());
+
+   return diff;
 }
 
 } // namespace flexiblesusy
