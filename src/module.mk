@@ -131,6 +131,11 @@ LIBFLEXI_HDR += \
 		$(DIR)/two_scale_solver.hpp
 endif
 
+ifneq ($(findstring shooting,$(SOLVERS)),)
+LIBFLEXI_HDR += \
+		$(DIR)/shooting_solver.hpp
+endif
+
 # remove duplicates in case multiple solvers are used
 LIBFLEXI_SRC := $(sort $(LIBFLEXI_SRC))
 LIBFLEXI_HDR := $(sort $(LIBFLEXI_HDR))

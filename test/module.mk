@@ -102,6 +102,11 @@ TEST_SRC += \
 		$(DIR)/test_sm_twoloop_mt.cpp
 endif
 
+ifneq ($(findstring shooting,$(SOLVERS)),)
+TEST_SRC += \
+		$(DIR)/test_shooting_solver.cpp
+endif
+
 ifneq ($(findstring two_scale,$(SOLVERS)),)
 TEST_SRC += \
 		$(DIR)/test_two_scale_running_precision.cpp \
