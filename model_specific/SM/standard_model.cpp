@@ -904,6 +904,94 @@ double Standard_model::calculate_delta_alpha_s(double alphaS) const
 
 }
 
+/*
+ * Determine Gf out of Weinberg angle
+ */
+double Standard_model::calculate_G_fermi(const softsusy::QedQcd& qedqcd)
+{
+	// 
+   double g_fermi= 0.;
+
+   using namespace weinberg_angle;
+
+   const double scale               = get_scale();
+   const double mw_pole             = qedqcd.displayPoleMW();
+   const double mz_pole             = qedqcd.displayPoleMZ();
+   const double mt_pole             = qedqcd.displayPoleMt();
+   const double mt_drbar            = MFu(2);
+   const double mb_drbar            = MFd(2);
+   const double mh_drbar            = Mhh;
+   const double gY                  = g1 * 0.7745966692414834;
+   const double e                   =  gY*g2 / Sqrt(Sqr(gY) + Sqr(g2));
+   const double alpha_em_drbar      = Sqr(e) / (4*Pi);
+   const double cos_theta_w         = MVWp / MVZ;
+   
+   const double pizztMZ             = Re(self_energy_VZ_1loop(mz_pole));
+   const double piwwt0              = Re(self_energy_VWp_1loop(0.));
+   const double self_energy_w_at_mw = Re(self_energy_VWp_1loop(mw_pole));
+   const double theta_w             = ArcCos(cos_theta_w);
+
+
+
+   Weinberg_angle::Self_energy_data se_data;
+   se_data.scale    = scale;
+   se_data.mt_pole  = mt_pole;
+   se_data.mt_drbar = mt_drbar;
+   se_data.mb_drbar = mb_drbar;
+   se_data.gY       = gY;
+   se_data.g2       = g2;
+
+   double pizztMZ_corrected = pizztMZ;
+   double piwwtMW_corrected = self_energy_w_at_mw;
+   double piwwt0_corrected  = piwwt0;
+
+
+   if (get_thresholds() > 1 && threshold_corrections.sin_theta_w > 1) {
+      pizztMZ_corrected =
+         Weinberg_angle::replace_mtop_in_self_energy_z(pizztMZ, mz_pole,
+            se_data);
+      piwwtMW_corrected =
+         Weinberg_angle::replace_mtop_in_self_energy_w(
+            self_energy_w_at_mw, mw_pole, se_data);
+      piwwt0_corrected =
+         Weinberg_angle::replace_mtop_in_self_energy_w(piwwt0, 0.,
+            se_data);
+   }
+
+   Weinberg_angle::Data data;
+   data.scale               = scale;
+   data.alpha_em_drbar      = alpha_em_drbar;
+   data.self_energy_z_at_mz = pizztMZ_corrected;
+   data.self_energy_w_at_mw = piwwtMW_corrected;
+   data.self_energy_w_at_0  = piwwt0_corrected;
+   data.mw_pole             = mw_pole;
+   data.mz_pole             = mz_pole;
+   data.mt_pole             = mt_pole;
+   data.mh_drbar            = mh_drbar;
+   data.gY                  = gY;
+   data.g2                  = g2;
+   data.g3                  = g3;
+   data.theta               = theta_w;
+
+   Weinberg_angle weinberg;
+   weinberg.disable_susy_contributions();
+   weinberg.set_number_of_loops(threshold_corrections.sin_theta_w); 
+   weinberg.set_data(data);
+
+   const int error = weinberg.calculate_G_fermi();
+
+   g_fermi = weinberg.get_G_fermi();
+
+/*   if (error)
+      problems.flag_no_G_fermi_convergence();  //TODO: create flag for convergence
+   else
+      problems.unflag_no_G_fermi_convergence();
+*/
+   return g_fermi;
+}
+
+
+
 double Standard_model::calculate_theta_w(const softsusy::QedQcd& qedqcd, double alpha_em_drbar)
 {
    double theta_w = 0.;

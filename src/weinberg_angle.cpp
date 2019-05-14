@@ -68,6 +68,7 @@ Weinberg_angle::Data::Data()
    , g2(0.)
    , g3(0.)
    , tan_beta(0.)
+   , theta(0.)
 {
 }
 
@@ -92,6 +93,7 @@ Weinberg_angle::Weinberg_angle()
    , precision_goal(1.0e-8)
    , rho_hat(0.)
    , sin_theta(0.)
+   , g_fermi(0.)
    , data()
    , susy_contributions(true)
 {
@@ -136,6 +138,138 @@ double Weinberg_angle::get_sin_theta() const
 {
    return sin_theta;
 }
+
+double Weinberg_angle::get_G_fermi() const
+{
+   return g_fermi;
+}
+
+double Weinberg_angle::calculate_rho_hat( 
+   double sinThetaW,
+   const Data& data,
+   bool add_susy_contributions,
+   int number_of_loops
+)
+{
+   const double mz = data.mz_pole;
+   const double mw = data.mw_pole;
+   const double mt = data.mt_pole;
+   const double mh = data.mh_drbar;
+   const double sinb = Sin(ArcTan(data.tan_beta));
+   const double xt = 3.0 * data.fermi_contant * Sqr(mt) * ROOT2 * oneOver16PiSqr;
+   const double alphaDRbar = data.alpha_em_drbar;
+   const double g3 = data.g3;
+   const double pizztMZ = data.self_energy_z_at_mz;
+   const double piwwtMW = data.self_energy_w_at_mw;
+   const double hmix12 = data.hmix_12;
+
+#if defined(ENABLE_VERBOSE) || defined(ENABLE_DEBUG)
+   WARN_IF_ZERO(sinThetaW, calculate_rho_hat)
+   WARN_IF_ZERO(mz, calculate_rho_hat)
+   WARN_IF_ZERO(mw, calculate_rho_hat)
+   WARN_IF_ZERO(mt, calculate_rho_hat)
+   WARN_IF_ZERO(mh, calculate_rho_hat)
+   WARN_IF_ZERO(alphaDRbar, calculate_rho_hat)
+   WARN_IF_ZERO(pizztMZ, calculate_rho_hat)
+   WARN_IF_ZERO(piwwtMW, calculate_rho_hat)
+   if (add_susy_contributions) {
+      WARN_IF_ZERO(sinb, calculate_rho_hat)
+      WARN_IF_ZERO(hmix12, calculate_rho_hat)
+   }
+#endif
+
+   double hmix_r = 1.0;
+   if (add_susy_contributions)
+      hmix_r = Sqr(hmix12 / sinb);
+
+   double  rhohat = 1.;
+   double deltaRho2LoopSm = 0.;
+
+   if (number_of_loops > 1) {
+      deltaRho2LoopSm = alphaDRbar * Sqr(g3) /
+         (16.0 * Pi * Sqr(Pi) * Sqr(sinThetaW)) *
+         (-2.145 * Sqr(mt) / Sqr(mw) + 1.262 * log(mt / mz) - 2.24
+          - 0.85 * Sqr(mz)
+          / Sqr(mt)) + Sqr(xt) * hmix_r *
+         rho_2(mh / mt) / 3.0;
+   }
+
+   if (number_of_loops > 0)
+      rhohat = (pizztMZ / (Sqr(mz)) + 1)/(1 + piwwtMW / Sqr(mw) - deltaRho2LoopSm);
+
+   return rhohat;
+}
+
+
+/**
+ * Calculates the Fermi constant \f$\sin\hat{\theta}_W\f$ as
+ * defined in Eq. (C.3) from hep-ph/9606211 given theta,
+ * the Z-boson pole mass and the DR-bar electromagnetic coupling 
+ *
+ * @return value != 0 if an error has occured
+ */
+int Weinberg_angle::calculate_G_fermi()
+{
+   const double alphaDRbar = data.alpha_em_drbar;
+   const double mz_pole    = data.mz_pole;
+   const double theta      = data.theta;
+   sin_theta  = Sin(theta);
+   const double sin_2_cos_2 = Sqr(sin_theta*Cos(theta));
+
+   double rhohat = 1.;
+   double delta_rhat = 0.;
+
+   if (number_of_loops < 2){
+      rho_hat = calculate_rho_hat(sin_theta, data, susy_contributions, number_of_loops);
+      delta_rhat
+             = calculate_delta_r(rho_hat, sin_theta, data, susy_contributions, number_of_loops);
+      g_fermi = Pi * alphaDRbar /
+             (ROOT2 * Sqr(mz_pole) * sin_2_cos_2 * (1.0 - delta_rhat));
+      return 0;
+   }
+       
+   int iteration = 0;
+   bool not_converged = true;
+  
+   double rhohat_1l = calculate_rho_hat(sin_theta, data, susy_contributions, 1);
+   double delta_r_hat_1l
+         = calculate_delta_r(rhohat_1l, sin_theta, data, susy_contributions,1);
+
+   double gfermi_1l = Pi * alphaDRbar /
+             (ROOT2 * Sqr(mz_pole) * sin_2_cos_2 * (1.0 - delta_r_hat_1l));
+
+   data.fermi_contant = gfermi_1l;
+   double gfermi_old = gfermi_1l;
+   double gfermi_new = gfermi_1l;
+ 
+      while (not_converged && iteration < number_of_iterations) {
+
+         rhohat = calculate_rho_hat(sin_theta, data, susy_contributions,
+                                     number_of_loops);
+         delta_rhat
+             = calculate_delta_r(rhohat, sin_theta, data, susy_contributions,
+                             number_of_loops);
+         gfermi_new = Pi * alphaDRbar /
+             (ROOT2 * Sqr(mz_pole) * sin_2_cos_2 * (1.0 - delta_rhat));
+
+         const double precision
+            = Abs(gfermi_old / gfermi_new - 1.0);
+        
+   	 not_converged = precision >= precision_goal;
+
+         data.fermi_contant = gfermi_new;
+	 gfermi_old = gfermi_new;
+         iteration++;
+      }
+ 
+   rho_hat = rhohat;
+   g_fermi = gfermi_new;
+ 
+   const int no_convergence_error = iteration == number_of_iterations;
+
+   return no_convergence_error;
+}
+
 
 /**
  * Calculates the DR-bar weak mixing angle \f$\sin\hat{\theta}_W\f$ as
@@ -350,7 +484,6 @@ double Weinberg_angle::calculate_delta_r(
    WARN_IF_ZERO(mw, calculate_delta_r)
    WARN_IF_ZERO(mt, calculate_delta_r)
    WARN_IF_ZERO(mh, calculate_delta_r)
-   WARN_IF_ZERO(xt, calculate_delta_r)
    WARN_IF_ZERO(alphaDRbar, calculate_delta_r)
    WARN_IF_ZERO(g3, calculate_delta_r)
    WARN_IF_ZERO(pizztMZ, calculate_delta_r)
