@@ -318,8 +318,7 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
    qedqcd_GF.setPoleMW(eft.get_physical().MVWp);
    qedqcd_GF.setPoleMZ(eft.get_physical().MVZ);
 
-   const double cos_theta      = eft.get_MVWp()/eft.get_MVZ();
-   const double g_fermi        = 1.1663787e-5; // TODO: eft.calculate_G_fermi(qedqcd_GF, alpha_em_msbar, cos_theta);
+   const double g_fermi        = eft.calculate_G_fermi(qedqcd_GF);
 
    auto qedqcd_Q_low = qedqcd; // TODO: why necessary for mb?
    qedqcd_Q_low.to(Q_low);
