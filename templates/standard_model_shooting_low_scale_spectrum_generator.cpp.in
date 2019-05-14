@@ -240,14 +240,12 @@ standard_model::StandardModel<Shooting>
 std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
 @ModelName@_spectrum_generator<Shooting>::run_down(
    const Vec_t& bsm_pars, const softsusy::QedQcd& qedqcd,
-   const @ModelName@_input_parameters& input) const
+   const @ModelName@_input_parameters& bsm_input) const
 {
    @ModelName@<Shooting> model;
-   clear(model, input);
-   // TODO:
-   // fill_parameters(model, bsm_pars);  // overwrite SM-like parameters
-   // TODO:
-   // fill_parameters(model, bsm_input); // impose susy-scale boundary condition
+   clear(model, bsm_input);
+   fill_parameters(model, bsm_pars);  // overwrite SM-like parameters
+   fill_parameters(model, bsm_input); // impose susy-scale boundary condition
 
    model.calculate_DRbar_masses();
    model.solve_ewsb();
@@ -258,6 +256,38 @@ std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
 
    // calculate lambda and run down
    return std::make_pair(model, run_down(model));
+}
+
+void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
+   @ModelName@<Shooting>& model, const Vec_t& vec) const
+{
+   int idx = 0;
+
+   // TODO: check normalization
+   model.set_@hyperchargeCoupling@(vec(idx++));
+   model.set_@leftCoupling@(vec(idx++));
+   model.set_@strongCoupling@(vec(idx++));
+   model.set_@UpYukawa@(2, 2, vec(idx++));
+   model.set_@DownYukawa@(2, 2, vec(idx++));
+   model.set_@ElectronYukawa@(2, 2, vec(idx++));
+
+   const double VEV = vec(idx++);
+
+   model.set_v(VEV);
+
+   // TODO: generate this from MatchingScaleInput
+   // const double tb = model.get_vu() == 0. || model.get_vd() == 0.
+   //                      ? 1
+   //                      : model.get_vu() / model.get_vd();
+   // model.set_vu(VEV * tb/Sqrt(1 + Sqr(tb)));
+   // model.set_vd(VEV *  1/Sqrt(1 + Sqr(tb)));
+}
+
+void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
+   @ModelName@<Shooting>& model,
+   const @ModelName@_input_parameters& input) const
+{
+   // TODO
 }
 
 @ModelName@_spectrum_generator<Shooting>::Vec_t
