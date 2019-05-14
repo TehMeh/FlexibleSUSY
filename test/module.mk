@@ -23,7 +23,7 @@ LIBTEST_DEP := \
 LIBTEST     := $(DIR)/lib$(MODNAME)$(MODULE_LIBEXT)
 
 TEST_SRC := \
-		$(DIR)/test_array_view.cpp \
+	        $(DIR)/test_array_view.cpp \
 		$(DIR)/test_cast_model.cpp \
 		$(DIR)/test_ckm.cpp \
 		$(DIR)/test_logger.cpp \
@@ -53,6 +53,7 @@ TEST_SRC := \
 		$(DIR)/test_threshold_corrections.cpp \
 		$(DIR)/test_threshold_loop_functions.cpp \
 		$(DIR)/test_spectrum_generator_settings.cpp \
+		$(DIR)/test_standard_model_G_fermi.cpp \
 		$(DIR)/test_which.cpp \
 		$(DIR)/test_wrappers.cpp
 

@@ -66,6 +66,7 @@ public:
       double g2;                     ///< SU(2)_L gauge coupling
       double g3;                     ///< SU(3)_c gauge coupling
       double tan_beta;               ///< tan(beta) = vu / vd
+      double theta;                  ///< Weinberg angle
    };
 
    struct Self_energy_data {
@@ -89,10 +90,12 @@ public:
    void set_precision_goal(double);  ///< set precision goal
    double get_rho_hat() const;       ///< returns the rho parameter
    double get_sin_theta() const;     ///< returns sin(theta_w)
+   double get_G_fermi() const;       ///< returns G_fermi
 
    /// calculates the sinus of the Weinberg angle
    int calculate(double rho_start = 1.0, double sin_start = 0.48);
-
+   int calculate_G_fermi();
+   
    static double replace_mtop_in_self_energy_z(double, double, const Self_energy_data&);
    static double replace_mtop_in_self_energy_w(double, double, const Self_energy_data&);
 
@@ -102,11 +105,14 @@ private:
    double precision_goal;         ///< precision goal
    double rho_hat;                ///< output rho-hat parameter
    double sin_theta;              ///< output sin(theta)
+   double g_fermi;                ///< output G_fermi
    Data data;
    bool susy_contributions;       ///< model type
 
    static double calculate_delta_r(double, double, const Data&, bool add_susy_contributions = true, int number_of_loops = 2);
+   static double calculate_r_hat(double, double, const Data&, bool add_susy_contributions = true, int number_of_loops = 2);
    static double calculate_delta_rho(double, double, const Data&, bool add_susy_contributions = true, int number_of_loops = 2);
+   static double calculate_rho_hat(double, const Data&, bool add_susy_contributions = true, int number_of_loops = 2);
    static double calculate_delta_vb(double, double, const Data&, bool add_susy_contributions = true);
    static double calculate_delta_vb_sm(double, double, const Data&);
    static double calculate_delta_vb_susy(double, const Data&);
