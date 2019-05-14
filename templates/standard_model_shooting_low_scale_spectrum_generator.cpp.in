@@ -20,7 +20,6 @@
 
 #include "@ModelName@_shooting_spectrum_generator.hpp"
 #include "@ModelName@_input_parameters.hpp"
-// #include "@ModelName@_shooting_convergence_tester.hpp"
 #include "@ModelName@_shooting_ewsb_solver.hpp"
 // #include "@ModelName@_shooting_initial_guesser.hpp"
 // #include "@ModelName@_shooting_susy_scale_constraint.hpp"
@@ -35,6 +34,8 @@
 #include "shooting_solver.hpp"
 
 #include <limits>
+#include <tuple>
+#include <utility>
 
 namespace flexiblesusy {
 
@@ -61,13 +62,8 @@ double @ModelName@_spectrum_generator<Shooting>::get_matching_scale() const
    return settings.get(Spectrum_generator_settings::eft_matching_scale);
 }
 
-double @ModelName@_spectrum_generator<Shooting>::get_low_scale(const softsusy::QedQcd& qedqcd) const
-{
-   return qedqcd.displayPoleMZ(); // TODO: = qedqcd.displayMu();
-}
-
 void @ModelName@_spectrum_generator<Shooting>::clear(
-   @ModelName@_mass_eigenstates& model,
+   @ModelName@<Shooting>& model,
    const @ModelName@_input_parameters& input) const
 {
    model.clear();
@@ -131,7 +127,7 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
    low_scale_constraint.initialize();
 
    susy_scale = 0.;
-   low_scale = get_low_scale(qedqcd);
+   low_scale = low_scale_constraint.get_scale();
 
    // function to find root of
    auto dev_from_input = [&](const Vec_t& pars) {
@@ -143,12 +139,9 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
    solver.set_precision(settings.get(Spectrum_generator_settings::precision));
    solver.solve(dev_from_input, initial_guess());
 
-   // impose low-scale constraint one last time
-   model.run_to(low_scale_constraint.get_scale());
-   low_scale_constraint.apply();
+   std::tie(model, eft) = run_down(solver.get_solution(), qedqcd, input);
 
-   // susy_scale = susy_scale_constraint.get_scale();
-   low_scale  = low_scale_constraint.get_scale();
+   susy_scale = model.get_scale();
 
    const double Mt = qedqcd.displayPoleMt();
 
@@ -232,11 +225,11 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
  *
  * @return SM at Q_low
  */
-standard_model::Standard_model
+standard_model::StandardModel<Shooting>
 @ModelName@_spectrum_generator<Shooting>::run_down(
-   const @ModelName@_mass_eigenstates& model) const
+   const @ModelName@<Shooting>& model) const
 {
-   standard_model::Standard_model sm;
+   standard_model::StandardModel<Shooting> sm;
    // TODO: impose matchign condition
 
    sm.run_to(get_low_scale());
@@ -244,12 +237,12 @@ standard_model::Standard_model
    return sm;
 }
 
-standard_model::Standard_model
+std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
 @ModelName@_spectrum_generator<Shooting>::run_down(
    const Vec_t& bsm_pars, const softsusy::QedQcd& qedqcd,
    const @ModelName@_input_parameters& input) const
 {
-   @ModelName@_mass_eigenstates model;
+   @ModelName@<Shooting> model;
    clear(model, input);
    // TODO:
    // fill_parameters(model, bsm_pars);  // overwrite SM-like parameters
@@ -264,7 +257,7 @@ standard_model::Standard_model
    model.solve_ewsb();
 
    // calculate lambda and run down
-   return run_down(model);
+   return std::make_pair(model, run_down(model));
 }
 
 @ModelName@_spectrum_generator<Shooting>::Vec_t
@@ -272,10 +265,10 @@ standard_model::Standard_model
    const Vec_t& bsm_pars, const softsusy::QedQcd& qedqcd) const
 {
    const double Q_match = get_matching_scale();
-   const double Q_low = get_low_scale(qedqcd);
+   const double Q_low = get_low_scale();
    const auto bsm_input = model.get_input();
 
-   auto eft = run_down(bsm_pars, qedqcd, bsm_input);
+   auto eft = run_down(bsm_pars, qedqcd, bsm_input).second;
    eft.run_to(Q_low);
    eft.solve_ewsb();
    eft.calculate_pole_masses();
