@@ -206,7 +206,7 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
    const Vec_t& bsm_pars, const softsusy::QedQcd& qedqcd)
 {
    const double Q_match = settings.get(Spectrum_generator_settings::eft_matching_scale);
-   const double Q_low = qedqcd.displayPoleMZ();
+   const double Q_low = qedqcd.displayPoleMZ(); // TODO: = qedqcd.displayMu();
    const auto bsm_input = model.get_input();
 
    // // TODO:
@@ -232,7 +232,7 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
    const double alpha_em_msbar = Sqr(e) / (4*Pi);
    const double alpha_s_msbar  = Sqr(g3) / (4*Pi);
 
-   auto qedqcd_GF = qedqcd; // TODO: why necessary for GF?
+   auto qedqcd_GF = qedqcd;
    qedqcd_GF.setPoleMt(eft.get_physical().MFu(2));
    qedqcd_GF.setPoleMW(eft.get_physical().MVWp);
    qedqcd_GF.setPoleMZ(eft.get_physical().MVZ);
