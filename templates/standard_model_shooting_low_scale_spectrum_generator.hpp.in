@@ -63,7 +63,9 @@ private:
    /// overwrite SM-like BSM parameters
    void fill_parameters(@ModelName@<Shooting>&, const Vec_t&) const;
    /// impose BSM boundary condition
-   void fill_parameters(@ModelName@<Shooting>&, const @ModelName@_input_parameters&) const;
+   void fill_parameters(@ModelName@<Shooting>&,
+                        const @ModelName@_input_parameters&,
+                        const softsusy::QedQcd&) const;
    double get_eft_pole_mass_scale(double, double) const;
    double get_matching_scale() const;
    double get_pole_mass_scale(double) const;

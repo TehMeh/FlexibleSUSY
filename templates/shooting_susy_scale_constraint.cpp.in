@@ -67,11 +67,11 @@ void @ModelName@_susy_scale_constraint<Shooting>::apply()
 
 @initialSetting@
 
-   model->calculate_DRbar_masses();
-   update_scale();
-
    // apply user-defined susy scale constraints
 @applyConstraint@
+
+   model->calculate_DRbar_masses();
+   update_scale();
 }
 
 double @ModelName@_susy_scale_constraint<Shooting>::get_scale() const

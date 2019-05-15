@@ -244,8 +244,10 @@ std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
 {
    @ModelName@<Shooting> model;
    clear(model, bsm_input);
-   fill_parameters(model, bsm_pars);  // overwrite SM-like parameters
-   fill_parameters(model, bsm_input); // impose susy-scale boundary condition
+   // overwrite SM-like parameters
+   fill_parameters(model, bsm_pars);
+   // impose susy-scale boundary condition
+   fill_parameters(model, bsm_input, qedqcd);
 
    model.calculate_DRbar_masses();
    model.solve_ewsb();
@@ -285,9 +287,12 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
 
 void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
    @ModelName@<Shooting>& model,
-   const @ModelName@_input_parameters& input) const
+   const @ModelName@_input_parameters& input,
+   const softsusy::QedQcd& qedqcd) const
 {
-   // TODO
+   @ModelName@_susy_scale_constraint<Shooting> hc(&model, qedqcd);
+   hc.apply();
+   model.set_scale(hc.get_scale());
 }
 
 @ModelName@_spectrum_generator<Shooting>::Vec_t
