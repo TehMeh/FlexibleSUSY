@@ -58,11 +58,19 @@ private:
    double low_scale{0.};
 
    void calculate_spectrum(double);
+   void clear(@ModelName@<Shooting>&, const @ModelName@_input_parameters&) const;
+   Vec_t deviation_from_observables(const Vec_t&, const softsusy::QedQcd&) const;
+   /// overwrite SM-like BSM parameters
+   void fill_parameters(@ModelName@<Shooting>&, const Vec_t&) const;
+   /// impose BSM boundary condition
+   void fill_parameters(@ModelName@<Shooting>&, const @ModelName@_input_parameters&) const;
    double get_eft_pole_mass_scale(double, double) const;
+   double get_matching_scale() const;
    double get_pole_mass_scale(double) const;
-
-   Vec_t initial_guess();
-   Vec_t deviation_from_observables(const Vec_t&, const softsusy::QedQcd&);
+   Vec_t initial_guess() const;
+   standard_model::StandardModel<Shooting> run_down(const @ModelName@<Shooting>&) const;
+   std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
+   run_down(const Vec_t&, const softsusy::QedQcd&, const @ModelName@_input_parameters&) const;
 };
 
 } // namespace flexiblesusy
