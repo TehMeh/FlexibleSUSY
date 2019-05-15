@@ -128,7 +128,7 @@ double delta_mh_1loop_ab_sm(
    const double result =
       3*yb2*(4.*mb2 - p2)*ReB0(p2,mb2,mb2,Q2);
 
-   return - result * oneOver16PiSqr;
+   return result * oneOver16PiSqr;
 }
 
 double delta_mh_1loop_atau_sm(
@@ -144,7 +144,7 @@ double delta_mh_1loop_atau_sm(
    const double result =
       yt2*(4.*mt2 - p2)*ReB0(p2,mt2,mt2,Q2);
 
-   return - result * oneOver16PiSqr;
+   return result * oneOver16PiSqr;
 }
 
 /*
