@@ -128,8 +128,14 @@ SEMI_ANALYTIC_TEMPLATES := \
 SHOOTING_TEMPLATES := \
 		$(DIR)/shooting_ewsb_solver.hpp.in \
 		$(DIR)/shooting_ewsb_solver.cpp.in \
+		$(DIR)/shooting_high_scale_constraint.hpp.in \
+		$(DIR)/shooting_high_scale_constraint.cpp.in \
+		$(DIR)/shooting_low_scale_constraint.hpp.in \
+		$(DIR)/shooting_low_scale_constraint.cpp.in \
 		$(DIR)/shooting_model.hpp.in \
 		$(DIR)/shooting_model.cpp.in \
+		$(DIR)/shooting_susy_scale_constraint.hpp.in \
+		$(DIR)/shooting_susy_scale_constraint.cpp.in \
 		$(DIR)/standard_model_shooting_low_scale_spectrum_generator.hpp.in \
 		$(DIR)/standard_model_shooting_low_scale_spectrum_generator.cpp.in
 

@@ -4368,6 +4368,42 @@ MakeFlexibleSUSY[OptionsPattern[]] :=
                                     {FileNameJoin[{$flexiblesusyTemplateDir, "shooting_ewsb_solver.cpp.in"}],
                                      FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_shooting_ewsb_solver.cpp"}]}}];
 
+              Print["Creating class for high-scale constraint ..."];
+              WriteConstraintClass[FlexibleSUSY`HighScale,
+                                   FlexibleSUSY`HighScaleInput,
+                                   FlexibleSUSY`HighScaleFirstGuess,
+                                   {FlexibleSUSY`HighScaleMinimum, FlexibleSUSY`HighScaleMaximum},
+                                   {{FileNameJoin[{$flexiblesusyTemplateDir, "shooting_high_scale_constraint.hpp.in"}],
+                                     FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_shooting_high_scale_constraint.hpp"}]},
+                                    {FileNameJoin[{$flexiblesusyTemplateDir, "shooting_high_scale_constraint.cpp.in"}],
+                                     FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_shooting_high_scale_constraint.cpp"}]}
+                                   }
+                                  ];
+
+              Print["Creating class for susy-scale constraint ..."];
+              WriteConstraintClass[FlexibleSUSY`SUSYScale,
+                                   FlexibleSUSY`SUSYScaleInput,
+                                   FlexibleSUSY`SUSYScaleFirstGuess,
+                                   {FlexibleSUSY`SUSYScaleMinimum, FlexibleSUSY`SUSYScaleMaximum},
+                                   {{FileNameJoin[{$flexiblesusyTemplateDir, "shooting_susy_scale_constraint.hpp.in"}],
+                                     FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_shooting_susy_scale_constraint.hpp"}]},
+                                    {FileNameJoin[{$flexiblesusyTemplateDir, "shooting_susy_scale_constraint.cpp.in"}],
+                                     FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_shooting_susy_scale_constraint.cpp"}]}
+                                   }
+                                  ];
+
+              Print["Creating class for low-scale constraint ..."];
+              WriteConstraintClass[FlexibleSUSY`LowScale,
+                                   FlexibleSUSY`LowScaleInput,
+                                   FlexibleSUSY`LowScaleFirstGuess,
+                                   {FlexibleSUSY`LowScaleMinimum, FlexibleSUSY`LowScaleMaximum},
+                                   {{FileNameJoin[{$flexiblesusyTemplateDir, "shooting_low_scale_constraint.hpp.in"}],
+                                     FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_shooting_low_scale_constraint.hpp"}]},
+                                    {FileNameJoin[{$flexiblesusyTemplateDir, "shooting_low_scale_constraint.cpp.in"}],
+                                     FileNameJoin[{FSOutputDir, FlexibleSUSY`FSModelName <> "_shooting_low_scale_constraint.cpp"}]}
+                                   }
+                                  ];
+
               If[FlexibleSUSY`FlexibleEFTHiggs === True,
                  Print["Creating matching class ..."];
                  WriteMatchingClass[FlexibleSUSY`MatchingScaleInput, massMatrices,
