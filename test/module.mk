@@ -54,6 +54,7 @@ TEST_SRC := \
 		$(DIR)/test_threshold_loop_functions.cpp \
 		$(DIR)/test_spectrum_generator_settings.cpp \
 		$(DIR)/test_standard_model_G_fermi.cpp \
+		$(DIR)/test_standard_model_hh_deriv.cpp \
 		$(DIR)/test_which.cpp \
 		$(DIR)/test_wrappers.cpp
 
