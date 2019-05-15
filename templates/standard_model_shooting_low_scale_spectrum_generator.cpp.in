@@ -56,9 +56,33 @@ double @ModelName@_spectrum_generator<Shooting>::get_eft_pole_mass_scale(double 
    return Q_higgs;
 }
 
-double @ModelName@_spectrum_generator<Shooting>::get_matching_scale() const
+double @ModelName@_spectrum_generator<Shooting>::get_matching_scale(
+   const @ModelName@<Shooting>& model, const softsusy::QedQcd& qedqcd) const
 {
-   return settings.get(Spectrum_generator_settings::eft_matching_scale);
+   double Q_match = settings.get(Spectrum_generator_settings::eft_matching_scale);
+
+   if (is_zero(Q_match)) {
+      auto m = model;
+      @ModelName@_susy_scale_constraint<Shooting> hc(&m, qedqcd);
+      hc.apply();
+      Q_match = hc.get_scale();
+   }
+
+   return Q_match;
+}
+
+double @ModelName@_spectrum_generator<Shooting>::get_matching_scale_first_guess(
+   const @ModelName@_input_parameters& bsm_input, const softsusy::QedQcd& qedqcd) const
+{
+   double Q_match = settings.get(Spectrum_generator_settings::eft_matching_scale);
+
+   if (is_zero(Q_match)) {
+      @ModelName@<Shooting> model(bsm_input);
+      @ModelName@_susy_scale_constraint<Shooting> hc(&model, qedqcd);
+      Q_match = hc.get_initial_scale_guess();
+   }
+
+   return Q_match;
 }
 
 void @ModelName@_spectrum_generator<Shooting>::clear(
@@ -260,7 +284,7 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
    sm.calculate_DRbar_masses();
    sm.set_integrator(runge_kutta::RKF_integrator());
 
-   const auto Q_match = get_matching_scale();
+   const auto Q_match = get_matching_scale_first_guess(bsm_input, qedqcd);
 
    VERBOSE_MSG("\t[2] running SM up to Q_match = " << Q_match << " GeV ...");
 
@@ -349,10 +373,12 @@ std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
    model.solve_ewsb();
    model.set_integrator(runge_kutta::RKF_integrator());
 
-   VERBOSE_MSG("\t[3] running to matching scale Q_match = "
-               << get_matching_scale() << " GeV ...");
+   const auto Q_match = get_matching_scale(model, qedqcd);
 
-   model.run_to(get_matching_scale());
+   VERBOSE_MSG("\t[3] running to matching scale Q_match = "
+               << Q_match << " GeV ...");
+
+   model.run_to(Q_match);
 
    VERBOSE_MSG("\t[4] calculate BSM tree-level mass spectrum ...");
 
@@ -401,7 +427,7 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
 {
    VERBOSE_MSG("Calculating deviation from SM input observables ...");
 
-   const double Q_match = get_matching_scale();
+   const double Q_match = get_matching_scale(model, qedqcd);
    const double Q_low = get_low_scale();
    const auto bsm_input = model.get_input();
 
