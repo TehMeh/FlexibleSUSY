@@ -133,10 +133,18 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
       return deviation_from_observables(pars, qedqcd);
    };
 
+   VERBOSE_MSG("Setting up shooting solver ...");
+
    Shooting_solver<N> solver;
    solver.set_max_iterations(settings.get(Spectrum_generator_settings::max_iterations));
    solver.set_precision(settings.get(Spectrum_generator_settings::precision));
-   solver.solve(dev_from_input, initial_guess());
+
+   VERBOSE_MSG("\t[1] starting shooting solver ...");
+
+   solver.solve(dev_from_input, initial_guess(qedqcd, input));
+
+   VERBOSE_MSG("\t[2] shooting solver has finished ...");
+   VERBOSE_MSG("\t[3] running to electroweak scale one last time ...");
 
    std::tie(model, eft) = run_down(solver.get_solution(), qedqcd, input);
 
@@ -144,7 +152,12 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
 
    const double Mt = qedqcd.displayPoleMt();
 
+   VERBOSE_MSG("\t[4] calculating mass spectrum ...");
+
    calculate_spectrum(Mt);
+
+   VERBOSE_MSG("\t[5] running SM and BSM model to output scale "
+               << parameter_output_scale << " GeV ...");
 
    // run to output scale (if scale > 0)
    if (!is_zero(parameter_output_scale)) {
@@ -168,15 +181,29 @@ void @ModelName@_spectrum_generator<Shooting>::write_running_couplings(
 
 void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
 {
-   model.run_to(get_pole_mass_scale(susy_scale));
+   const auto Q_pole = get_pole_mass_scale(susy_scale);
+
+   VERBOSE_MSG("Calculating spectrum ...");
+   VERBOSE_MSG("\t[1] running BSM model to Q_pole = " << Q_pole << " GeV ...");
+
+   model.run_to(Q_pole);
+
+   VERBOSE_MSG("\t[2] calculating BSM pole mass spectrum ...");
+
    model.solve_ewsb();
    model.calculate_spectrum();
 
-   eft.run_to(get_eft_pole_mass_scale(susy_scale, Mt));
+   const auto Q_pole_eft = get_eft_pole_mass_scale(susy_scale, Mt);
+
+   VERBOSE_MSG("\t[3] running SM to Q_pole_eft = " << Q_pole_eft << " GeV ...");
+
+   eft.run_to(Q_pole_eft);
 
    // computation of pole mass spectrum in the SM
    const int eft_pole_loops = eft.get_pole_mass_loop_order();
    const int eft_ewsb_loops = eft.get_ewsb_loop_order();
+
+   VERBOSE_MSG("\t[4] calculating SM pole mass spectrum ...");
 
    eft.calculate_DRbar_masses();
    eft.solve_ewsb();
@@ -186,6 +213,8 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
    eft.set_ewsb_loop_order(eft_ewsb_loops);
 
    const int index = settings.get(Spectrum_generator_settings::eft_higgs_index);
+
+   VERBOSE_MSG("\t[5] copy SM-like particle masses from SM to BSM model ...");
 
    model.get_physical().M@HiggsBoson_index@ = eft.get_physical().Mhh;
    model.get_physical().M@VectorZ_0@ = eft.get_physical().MVZ;
@@ -203,6 +232,8 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
       model.get_problems().flag_running_tachyon(@ModelName@_info::@VectorW@);
    if (eft.get_problems().is_pole_tachyon(standard_model_info::VWp))
       model.get_problems().flag_pole_tachyon(@ModelName@_info::@VectorW@);
+
+   VERBOSE_MSG("\t[6] spectrum calculation finished.");
 }
 
 /**
@@ -211,10 +242,60 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
  * @return vector of SM-like BSM parameters
  */
 @ModelName@_spectrum_generator<Shooting>::Vec_t
-@ModelName@_spectrum_generator<Shooting>::initial_guess() const
+@ModelName@_spectrum_generator<Shooting>::initial_guess(
+   const softsusy::QedQcd& qedqcd,
+   const @ModelName@_input_parameters& bsm_input) const
 {
-   // TODO
-   return Vec_t::Zero();
+   using namespace @ModelName@_standard_model_matching;
+
+   VERBOSE_MSG("Perform initial guess ...");
+   VERBOSE_MSG("\t[1] initializing the SM ...");
+
+   standard_model::Standard_model sm;
+   sm.set_precision(1e-2);
+   sm.set_loops(3);
+   sm.set_pole_mass_loop_order(2);
+   sm.set_ewsb_loop_order(2);
+   sm.initialise_from_input(qedqcd);
+   sm.calculate_DRbar_masses();
+   sm.set_integrator(runge_kutta::RKF_integrator());
+
+   const auto Q_match = get_matching_scale();
+
+   VERBOSE_MSG("\t[2] running SM up to Q_match = " << Q_match << " GeV ...");
+
+   sm.run_to(Q_match);
+   sm.calculate_DRbar_masses();
+
+   VERBOSE_MSG("\t[3] initializing the BSM model ...");
+
+   @ModelName@<Shooting> model(bsm_input);
+   model.set_scale(sm.get_scale());
+   model.set_precision(1e-2);
+   model.set_loops(3);
+   model.set_pole_mass_loop_order(2);
+   model.set_ewsb_loop_order(2);
+
+   VERBOSE_MSG("\t[4] fill SM-like parameters of BSM model ...");
+
+   match_low_to_high_scale_model_tree_level(model, sm);
+
+   VERBOSE_MSG("\t[5] fill BSM parameters of BSM model ...");
+
+   fill_parameters(model, bsm_input, qedqcd);
+
+   Vec_t vec;
+   vec(0) = model.get_@hyperchargeCoupling@(); // TODO: check normalization
+   vec(1) = model.get_@leftCoupling@();
+   vec(2) = model.get_@strongCoupling@();
+   vec(3) = model.get_@UpYukawa@(2,2);
+   vec(4) = model.get_@DownYukawa@(2,2);
+   vec(5) = model.get_@ElectronYukawa@(2,2);
+   vec(6) = model.get_v();
+
+   VERBOSE_MSG("\t[6] initial guess finished.");
+
+   return vec;
 }
 
 /**
@@ -230,12 +311,18 @@ standard_model::StandardModel<Shooting>
 {
    using namespace @ModelName@_standard_model_matching;
 
+   VERBOSE_MSG("Matching to the SM ...");
+
    const int loops =
       settings.get(Spectrum_generator_settings::eft_matching_loop_order_down);
 
    standard_model::StandardModel<Shooting> sm;
 
+   VERBOSE_MSG("\t[1] match BSM to SM at " << loops << "-loop level ...");
+
    match_high_to_low_scale_model_tree_level(sm, model, loops);
+
+   VERBOSE_MSG("\t[3] running SM down to Q_low = " << get_low_scale() << " ...");
 
    sm.run_to(get_low_scale());
 
@@ -247,6 +334,10 @@ std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
    const Vec_t& bsm_pars, const softsusy::QedQcd& qedqcd,
    const @ModelName@_input_parameters& bsm_input) const
 {
+   VERBOSE_MSG("Running down ...");
+
+   VERBOSE_MSG("\t[1] initializing the BSM model parameters ...");
+
    @ModelName@<Shooting> model;
    clear(model, bsm_input);
    // overwrite SM-like parameters
@@ -257,9 +348,18 @@ std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
    model.calculate_DRbar_masses();
    model.solve_ewsb();
    model.set_integrator(runge_kutta::RKF_integrator());
+
+   VERBOSE_MSG("\t[3] running to matching scale Q_match = "
+               << get_matching_scale() << " GeV ...");
+
    model.run_to(get_matching_scale());
+
+   VERBOSE_MSG("\t[4] calculate BSM tree-level mass spectrum ...");
+
    model.calculate_DRbar_masses();
    model.solve_ewsb();
+
+   VERBOSE_MSG("\t[5] start matching to SM ...");
 
    // calculate lambda and run down
    return std::make_pair(model, run_down(model));
@@ -299,14 +399,27 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
 @ModelName@_spectrum_generator<Shooting>::deviation_from_observables(
    const Vec_t& bsm_pars, const softsusy::QedQcd& qedqcd) const
 {
+   VERBOSE_MSG("Calculating deviation from SM input observables ...");
+
    const double Q_match = get_matching_scale();
    const double Q_low = get_low_scale();
    const auto bsm_input = model.get_input();
 
+   VERBOSE_MSG("\t[1] running down ...");
+
    auto eft = run_down(bsm_pars, qedqcd, bsm_input).second;
+
+   VERBOSE_MSG("\t[2] running to electroweak matching scale Q_low = "
+               << Q_low << " GeV ...");
+
    eft.run_to(Q_low);
+
+   VERBOSE_MSG("\t[3] calculating pole masses ...");
+
    eft.solve_ewsb();
    eft.calculate_pole_masses();
+
+   VERBOSE_MSG("\t[4] calculating observables ...");
 
    Vec_t diff(Vec_t::Zero());
 
@@ -344,6 +457,8 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
    diff(4) = (qedqcd.displayPoleMZ() - eft.get_physical().MVZ)/qedqcd.displayPoleMZ();
    diff(5) = (eft.calculate_MFd_DRbar(mb_qedqcd, 2) - eft.get_MFd(2))/eft.calculate_MFd_DRbar(mb_qedqcd, 2) ;
    diff(6) = (qedqcd.displayPoleMtau() - eft.get_physical().MFe(2))/(qedqcd.displayPoleMtau());
+
+   VERBOSE_MSG("\t[5] relative deviation from input observables: " <<  diff.transpose());
 
    return diff;
 }
