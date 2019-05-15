@@ -24,7 +24,6 @@
 // #include "@ModelName@_shooting_initial_guesser.hpp"
 #include "@ModelName@_shooting_susy_scale_constraint.hpp"
 #include "@ModelName@_standard_model_matching.hpp"
-// #include "@ModelName@_standard_model_two_scale_matching.hpp"
 #include "standard_model_shooting_low_scale_constraint.hpp"
 
 #include "error.hpp"
@@ -229,8 +228,14 @@ standard_model::StandardModel<Shooting>
 @ModelName@_spectrum_generator<Shooting>::run_down(
    const @ModelName@<Shooting>& model) const
 {
+   using namespace @ModelName@_standard_model_matching;
+
+   const int loops =
+      settings.get(Spectrum_generator_settings::eft_matching_loop_order_down);
+
    standard_model::StandardModel<Shooting> sm;
-   // TODO: impose matchign condition
+
+   match_high_to_low_scale_model_tree_level(sm, model, loops);
 
    sm.run_to(get_low_scale());
 
@@ -263,6 +268,8 @@ std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
 void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
    @ModelName@<Shooting>& model, const Vec_t& vec) const
 {
+   using namespace @ModelName@_standard_model_matching;
+
    int idx = 0;
 
    // TODO: check normalization
@@ -275,14 +282,7 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
 
    const double VEV = vec(idx++);
 
-   model.set_v(VEV);
-
-   // TODO: generate this from MatchingScaleInput
-   // const double tb = model.get_vu() == 0. || model.get_vd() == 0.
-   //                      ? 1
-   //                      : model.get_vu() / model.get_vd();
-   // model.set_vu(VEV * tb/Sqrt(1 + Sqr(tb)));
-   // model.set_vd(VEV *  1/Sqrt(1 + Sqr(tb)));
+   impose_user_matching(model, VEV);
 }
 
 void @ModelName@_spectrum_generator<Shooting>::fill_parameters(

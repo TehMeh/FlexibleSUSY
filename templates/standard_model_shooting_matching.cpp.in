@@ -1,0 +1,105 @@
+// ====================================================================
+// This file is part of FlexibleSUSY.
+//
+// FlexibleSUSY is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published
+// by the Free Software Foundation, either version 3 of the License,
+// or (at your option) any later version.
+//
+// FlexibleSUSY is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FlexibleSUSY.  If not, see
+// <http://www.gnu.org/licenses/>.
+// ====================================================================
+
+// File generated at @DateAndTime@
+
+#include "@ModelName@_standard_model_matching.hpp"
+#include "wrappers.hpp"
+#include "single_scale_matching.hpp"
+#include "linalg2.hpp"
+#include "loop_corrections.hpp"
+#include "standard_model.hpp"
+#include "@ModelName@_mass_eigenstates.hpp"
+#include "@ModelName@_info.hpp"
+#include "config.h"
+#ifdef ENABLE_THREADS
+#include "global_thread_pool.hpp"
+#endif
+#include <cmath>
+
+using namespace flexiblesusy::standard_model;
+
+namespace flexiblesusy {
+namespace @ModelName@_standard_model_matching {
+
+#define MODELPARAMETER(p) model.get_##p()
+#define EXTRAPARAMETER(parameter) model.get_##parameter()
+#define SMPARAMETER(p) sm.get_##p()
+#define INPUTPARAMETER(p) model.get_input().p
+#define PHASE(p) model.get_##p()
+#define LowEnergyConstant(p) Electroweak_constants::p
+#define Pole(p) model.get_physical().p
+#define SCALE model.get_scale()
+
+namespace {
+
+} // anonymous namespace
+
+/**
+ * Calculates \f$\lambda(Q)\f$ at the tree level from the lightest
+ * CP-even Higgs boson mass of the @ModelName@.
+ *
+ * @param sm Standard Model parameters
+ * @param model @ModelName@ parameters
+ * @param idx Higgs index (in mass ordered Higgs multiplet)
+ */
+void match_high_to_low_scale_model_tree_level(
+   Standard_model& sm, const @ModelName@_mass_eigenstates& model, int idx)
+{
+   auto model_tmp = model;
+   model_tmp.calculate_DRbar_masses();
+   sm.set_Lambdax(Sqr(model_tmp.get_M@HiggsBoson(idx)@/sm.get_v()));
+   sm.calculate_DRbar_masses();
+}
+
+/**
+ * Calculates \f$\lambda(Q)\f$ at the 1-loop level from the lightest
+ * CP-even Higgs boson mass of the @ModelName@ by requiring that the
+ * 1-loop Higgs pole masses are equal in both models.
+ *
+ * @param sm Standard Model
+ * @param model @ModelName@ parameters
+ * @param loop_order downwards matching loop order
+ * @param idx Higgs index (in mass ordered Higgs multiplet)
+ */
+void match_high_to_low_scale_model(
+   Standard_model& sm, const @ModelName@_mass_eigenstates& model, int loop_order, int idx)
+{
+   if (loop_order == 0) {
+      match_high_to_low_scale_model_tree_level(sm, model, idx);
+      return;
+   }
+
+   // match_high_to_low_scale_model_1loop(sm, model, idx);
+}
+
+/**
+ * Imposes the user-defined matching conditions, defined in
+ * MatchingScaleInput.
+ */
+void impose_user_matching(@ModelName@_mass_eigenstates& model, double VEV)
+{
+   {
+      auto MODEL = &model;
+
+@applyUserMatching@
+   }
+}
+
+} // namespace @ModelName@_standard_model_matching
+} // namespace flexiblesusy
