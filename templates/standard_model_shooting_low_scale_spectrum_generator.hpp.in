@@ -58,7 +58,8 @@ private:
    double low_scale{0.};
 
    void calculate_spectrum(double);
-   void clear(@ModelName@<Shooting>&, const @ModelName@_input_parameters&) const;
+   void init(@ModelName@<Shooting>&, const @ModelName@_input_parameters&) const;
+   void init(standard_model::StandardModel<Shooting>&) const;
    Vec_t deviation_from_observables(const Vec_t&, const softsusy::QedQcd&) const;
    /// overwrite SM-like BSM parameters
    void fill_parameters(@ModelName@<Shooting>&, const Vec_t&) const;

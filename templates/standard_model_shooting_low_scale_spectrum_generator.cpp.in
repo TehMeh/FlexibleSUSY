@@ -85,11 +85,10 @@ double @ModelName@_spectrum_generator<Shooting>::get_matching_scale_first_guess(
    return Q_match;
 }
 
-void @ModelName@_spectrum_generator<Shooting>::clear(
+void @ModelName@_spectrum_generator<Shooting>::init(
    @ModelName@<Shooting>& model,
    const @ModelName@_input_parameters& input) const
 {
-   model.clear();
    model.set_input_parameters(input);
    model.do_calculate_sm_pole_masses(
       settings.get(Spectrum_generator_settings::calculate_sm_masses));
@@ -109,6 +108,23 @@ void @ModelName@_spectrum_generator<Shooting>::clear(
       std::make_shared<@ModelName@_ewsb_solver<Shooting> >(ewsb_solver));
 }
 
+void @ModelName@_spectrum_generator<Shooting>::init(
+   standard_model::StandardModel<Shooting>& sm) const
+{
+   sm.do_force_output(
+      settings.get(Spectrum_generator_settings::force_output));
+   sm.set_loops(settings.get(Spectrum_generator_settings::beta_loop_order));
+   sm.set_thresholds(
+      settings.get(
+         Spectrum_generator_settings::threshold_corrections_loop_order));
+   sm.set_zero_threshold(
+      settings.get(Spectrum_generator_settings::beta_zero_threshold));
+   sm.set_pole_mass_loop_order(this->model.get_pole_mass_loop_order());
+   sm.set_ewsb_loop_order(this->model.get_ewsb_loop_order());
+   sm.set_ewsb_iteration_precision(this->model.get_ewsb_iteration_precision());
+   sm.set_loop_corrections(this->model.get_loop_corrections());
+   sm.set_threshold_corrections(this->model.get_threshold_corrections());
+}
 
 /**
  * @brief Run's the RG solver with the given input parameters
@@ -126,24 +142,15 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
 {
    VERBOSE_MSG("Solving BVP using shooting solver");
 
+   std::cerr.precision(std::numeric_limits<long double>::digits10 + 1);
+
    problems.set_bvp_solver_problems({ BVP_solver_problems("ShootingSolver") });
 
-   clear(model, input);
+   model.clear();
+   init(model, input);
 
    eft.clear();
-   eft.do_force_output(
-      settings.get(Spectrum_generator_settings::force_output));
-   eft.set_loops(settings.get(Spectrum_generator_settings::beta_loop_order));
-   eft.set_thresholds(
-      settings.get(
-         Spectrum_generator_settings::threshold_corrections_loop_order));
-   eft.set_zero_threshold(
-      settings.get(Spectrum_generator_settings::beta_zero_threshold));
-   eft.set_pole_mass_loop_order(this->model.get_pole_mass_loop_order());
-   eft.set_ewsb_loop_order(this->model.get_ewsb_loop_order());
-   eft.set_ewsb_iteration_precision(this->model.get_ewsb_iteration_precision());
-   eft.set_loop_corrections(this->model.get_loop_corrections());
-   eft.set_threshold_corrections(this->model.get_threshold_corrections());
+   init(eft);
 
    standard_model::Standard_model_low_scale_constraint<Shooting>
       low_scale_constraint(&eft, qedqcd);
@@ -348,6 +355,7 @@ standard_model::StandardModel<Shooting>
    standard_model::StandardModel<Shooting> sm;
    sm.set_precision(model.get_precision());
    sm.set_scale(model.get_scale());
+   init(sm);
 
    VERBOSE_MSG("\t[1] match BSM to SM at " << loops << "-loop level ...");
 
@@ -373,7 +381,7 @@ std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
    VERBOSE_MSG("\t[1] initializing the BSM model parameters ...");
 
    @ModelName@<Shooting> model;
-   clear(model, bsm_input);
+   init(model, bsm_input);
    // overwrite SM-like parameters
    fill_parameters(model, bsm_pars);
    // impose susy-scale boundary condition
