@@ -344,7 +344,9 @@ standard_model::StandardModel<Shooting>
 
    VERBOSE_MSG("\t[1] match BSM to SM at " << loops << "-loop level ...");
 
-   match_high_to_low_scale_model_tree_level(sm, model, loops);
+   const int index = settings.get(Spectrum_generator_settings::eft_higgs_index);
+
+   match_high_to_low_scale_model(sm, model, loops, index);
 
    VERBOSE_MSG("\t[3] running SM down to Q_low = " << get_low_scale() << " ...");
 

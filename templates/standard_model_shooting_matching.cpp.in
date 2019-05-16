@@ -22,6 +22,7 @@
 #include "wrappers.hpp"
 #include "single_scale_matching.hpp"
 #include "linalg2.hpp"
+#include "logger.hpp"
 #include "loop_corrections.hpp"
 #include "standard_model.hpp"
 #include "@ModelName@_mass_eigenstates.hpp"
@@ -143,6 +144,8 @@ void match_high_to_low_scale_model(
       return;
    }
 
+   WARNING("Using only tree-level matching, because 1-loop is not yet implemented.");
+   match_high_to_low_scale_model_tree_level(sm, model, idx);
    // match_high_to_low_scale_model_1loop(sm, model, idx);
 }
 
