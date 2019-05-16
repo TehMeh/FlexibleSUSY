@@ -346,6 +346,8 @@ standard_model::StandardModel<Shooting>
       settings.get(Spectrum_generator_settings::eft_matching_loop_order_down);
 
    standard_model::StandardModel<Shooting> sm;
+   sm.set_precision(model.get_precision());
+   sm.set_scale(model.get_scale());
 
    VERBOSE_MSG("\t[1] match BSM to SM at " << loops << "-loop level ...");
 
@@ -353,6 +355,7 @@ standard_model::StandardModel<Shooting>
 
    match_high_to_low_scale_model(sm, model, loops, index);
 
+   VERBOSE_MSG("\t[2] lambda(Q_match = " << sm.get_scale() << ") = " << sm.get_Lambdax());
    VERBOSE_MSG("\t[3] running SM down to Q_low = " << get_low_scale() << " ...");
 
    sm.run_to(get_low_scale());
