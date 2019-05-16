@@ -450,6 +450,7 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
 
    VERBOSE_MSG("\t[2] imposing susy-scale constraint ...");
 
+   model.set_scale(hc.get_scale()); // TODO scale may be dynamic
    hc.apply();
 
    const auto Q_input = hc.get_scale();
