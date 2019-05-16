@@ -160,7 +160,12 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
    VERBOSE_MSG("Setting up shooting solver ...");
 
    Shooting_solver<N> solver;
-   solver.set_max_iterations(settings.get(Spectrum_generator_settings::max_iterations));
+
+   const int max_it = settings.get(Spectrum_generator_settings::max_iterations);
+
+   if (!is_zero(max_it))
+      solver.set_max_iterations(max_it);
+
    solver.set_precision(settings.get(Spectrum_generator_settings::precision));
 
    VERBOSE_MSG("\t[1] starting shooting solver ...");
