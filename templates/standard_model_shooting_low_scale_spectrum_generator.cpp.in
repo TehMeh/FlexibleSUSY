@@ -369,7 +369,11 @@ std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
    // impose susy-scale boundary condition
    fill_parameters(model, bsm_input, qedqcd);
 
+   model.solve_ewsb_tree_level();
    model.calculate_DRbar_masses();
+
+   VERBOSE_MSG("\t[1-1] BSM model with filled parameters: \n" << model);
+
    model.solve_ewsb();
    model.set_integrator(runge_kutta::RKF_integrator());
 
@@ -396,6 +400,8 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
 {
    using namespace @ModelName@_standard_model_matching;
 
+   VERBOSE_MSG("Overwriting SM-like BSM parameters with " << vec.transpose());
+
    int idx = 0;
 
    // TODO: check normalization
@@ -408,6 +414,8 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
 
    const double VEV = vec(idx++);
 
+   VERBOSE_MSG("Imposing user-defined matching condition ...");
+
    impose_user_matching(model, VEV);
 }
 
@@ -416,9 +424,21 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
    const @ModelName@_input_parameters& input,
    const softsusy::QedQcd& qedqcd) const
 {
+   VERBOSE_MSG("Setting BSM parameters ... ");
+   VERBOSE_MSG("Using the model:\n" << model);
+   VERBOSE_MSG("\t[1] creating susy-scale constraint ...");
+
    @ModelName@_susy_scale_constraint<Shooting> hc(&model, qedqcd);
+
+   VERBOSE_MSG("\t[2] imposing susy-scale constraint ...");
+
    hc.apply();
-   model.set_scale(hc.get_scale());
+
+   const auto Q_input = hc.get_scale();
+
+   VERBOSE_MSG("\t[3] setting input scale to Q_input = " << Q_input << " GeV");
+
+   model.set_scale(Q_input);
 }
 
 @ModelName@_spectrum_generator<Shooting>::Vec_t
@@ -427,7 +447,6 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
 {
    VERBOSE_MSG("Calculating deviation from SM input observables ...");
 
-   const double Q_match = get_matching_scale(model, qedqcd);
    const double Q_low = get_low_scale();
    const auto bsm_input = model.get_input();
 
