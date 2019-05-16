@@ -372,7 +372,7 @@ std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
    model.solve_ewsb_tree_level();
    model.calculate_DRbar_masses();
 
-   VERBOSE_MSG("\t[1-1] BSM model with filled parameters: \n" << model);
+   // VERBOSE_MSG("\t[1-1] BSM model with filled parameters: \n" << model);
 
    model.solve_ewsb();
    model.set_integrator(runge_kutta::RKF_integrator());
@@ -425,7 +425,7 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
    const softsusy::QedQcd& qedqcd) const
 {
    VERBOSE_MSG("Setting BSM parameters ... ");
-   VERBOSE_MSG("Using the model:\n" << model);
+   // VERBOSE_MSG("Using the model:\n" << model);
    VERBOSE_MSG("\t[1] creating susy-scale constraint ...");
 
    @ModelName@_susy_scale_constraint<Shooting> hc(&model, qedqcd);
@@ -446,6 +446,7 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
    const Vec_t& bsm_pars, const softsusy::QedQcd& qedqcd) const
 {
    VERBOSE_MSG("Calculating deviation from SM input observables ...");
+   VERBOSE_MSG("\t[0] using the SM-like BSM parameters: " << bsm_pars.transpose());
 
    const double Q_low = get_low_scale();
    const auto bsm_input = model.get_input();
