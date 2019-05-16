@@ -114,6 +114,201 @@ double delta_mh_1loop_at_sm(
    return result * oneOver16PiSqr;
 }
 
+
+double delta_mh_1loop_ab_sm(
+   double p, double scale, double mb, double yb)
+{
+   using namespace passarino_veltman;
+
+   const double yb2 = Sqr(yb);
+   const double mb2 = Sqr(mb);
+   const double p2 = Sqr(p);
+   const double Q2 = Sqr(scale);
+
+   const double result =
+      3*yb2*(4.*mb2 - p2)*ReB0(p2,mb2,mb2,Q2);
+
+   return result * oneOver16PiSqr;
+}
+
+double delta_mh_1loop_atau_sm(
+   double p, double scale, double mtau, double ytau)
+{
+   using namespace passarino_veltman;
+
+   const double yt2 = Sqr(ytau);
+   const double mt2 = Sqr(mtau);
+   const double p2 = Sqr(p);
+   const double Q2 = Sqr(scale);
+
+   const double result =
+      yt2*(4.*mt2 - p2)*ReB0(p2,mt2,mt2,Q2);
+
+   return result * oneOver16PiSqr;
+}
+
+/*
+ * Derivatives w.r.t. to y_{t,b,tau}, v, p
+ *
+ * Note: Because 2L-Se are evaluated from the effective potential
+ * all formal two-loop contr must be derived for p=0.
+ *
+ */
+
+double delta_mh_1loop_at_sm_deriv_yt(
+   double p, double scale, double mt, double yt)
+{
+   const double yt2 = Sqr(yt);
+   const double mt2 = Sqr(mt);
+   const double p2 = Sqr(p);
+   const double Q2 = Sqr(scale);
+   const double LogT = FiniteLog(mt2 / Q2);
+
+
+   const double result =
+      -24. * yt * mt2 * (2. * LogT + 1.);
+
+   return  result * oneOver16PiSqr;
+}
+
+double delta_mh_1loop_ab_sm_deriv_yb(
+   double p, double scale, double mb, double yb)
+{
+
+   const double yb2 = Sqr(yb);
+   const double mb2 = Sqr(mb);
+   const double p2 = Sqr(p);
+   const double Q2 = Sqr(scale);
+   const double LogB = FiniteLog(mb2 / Q2);
+
+
+   const double result =
+      -24. * yb * mb2 *(2 * LogB + 1.);
+
+   return  result * oneOver16PiSqr;
+}
+
+double delta_mh_1loop_atau_sm_deriv_ytau(
+   double p, double scale, double mtau, double ytau)
+{
+
+   const double ytau2 = Sqr(ytau);
+   const double mtau2 = Sqr(mtau);
+   const double p2 = Sqr(p);
+   const double Q2 = Sqr(scale);
+   const double LogT = FiniteLog(mtau2 / Q2);
+
+
+   const double result =
+      -8. * ytau * mtau2 * (2. * LogT + 1.);
+
+   return  result * oneOver16PiSqr;
+}
+
+double delta_mh_1loop_at_sm_deriv_v(
+   double p, double scale, double mt, double yt)
+{
+
+   const double yt2 = Sqr(yt);
+   const double mt2 = Sqr(mt);
+   const double p2 = Sqr(p);
+   const double Q2 = Sqr(scale);
+   const double LogT = FiniteLog(mt2 / Q2);
+
+
+   const double result =
+      - 12. * 1.41421356237 * yt * yt2 * mt * ( LogT + 1.);
+
+   return  result * oneOver16PiSqr;
+}
+
+double delta_mh_1loop_ab_sm_deriv_v(
+   double p, double scale, double mb, double yb)
+{
+
+   const double yb2 = Sqr(yb);
+   const double mb2 = Sqr(mb);
+   const double p2 = Sqr(p);
+   const double Q2 = Sqr(scale);
+   const double LogB = FiniteLog(mb2 / Q2);
+
+
+   const double result =
+      - 12. * 1.41421356237 * yb * yb2 * mb * ( LogB + 1.);
+
+   return  result * oneOver16PiSqr;
+}
+
+double delta_mh_1loop_atau_sm_deriv_v(
+   double p, double scale, double mtau, double ytau)
+{
+
+   const double ytau2 = Sqr(ytau);
+   const double mtau2 = Sqr(mtau);
+   const double p2 = Sqr(p);
+   const double Q2 = Sqr(scale);
+   const double LogTau = FiniteLog(mtau2 / Q2);
+
+
+   const double result =
+      - 4. * 1.41421356237 * ytau * ytau2 * mtau * ( LogTau + 1.);
+
+   return  result * oneOver16PiSqr;
+}
+
+
+double delta_mh_1loop_at_sm_deriv_p2(
+   double p, double scale, double mt, double yt)
+{
+
+   const double yt2 = Sqr(yt);
+   const double mt2 = Sqr(mt);
+   const double p2 = Sqr(p);
+   const double Q2 = Sqr(scale);
+   const double LogT = FiniteLog(mt2 / Q2);
+
+
+   const double result =
+       yt2 * (3.* LogT + 2.);
+
+   return  result * oneOver16PiSqr;
+}
+
+double delta_mh_1loop_ab_sm_deriv_p2(
+   double p, double scale, double mb, double yb)
+{
+
+   const double yb2 = Sqr(yb);
+   const double mb2 = Sqr(mb);
+   const double p2 = Sqr(p);
+   const double Q2 = Sqr(scale);
+   const double LogB = FiniteLog(mb2 / Q2);
+
+
+   const double result =
+       yb2 * (3.* LogB + 2.);
+
+   return  result * oneOver16PiSqr;
+}
+
+
+double delta_mh_1loop_atau_sm_deriv_p2(
+   double p, double scale, double mtau, double ytau)
+{
+
+   const double ytau2 = Sqr(ytau);
+   const double mtau2 = Sqr(mtau);
+   const double p2 = Sqr(p);
+   const double Q2 = Sqr(scale);
+   const double LogTau = FiniteLog(mtau2 / Q2);
+
+
+   const double result =
+       ytau2 * ( LogTau + 2./3.);
+
+   return  result * oneOver16PiSqr;
+}
+
 /**
  * Standard Model Higgs self-energy 2-loop, \f$O(\alpha_t
  * \alpha_s)\f$, including momentum dependence.
