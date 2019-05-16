@@ -74,7 +74,7 @@ Eigen::Matrix<double,3,3> calculate_MFd_DRbar_tree_level(const @ModelName@_mass_
 {
    Eigen::Matrix<double,3,3> mf = ZEROMATRIX(3,3);
 
-@setRunningUpQuarkMasses@
+@setRunningDownQuarkMasses@
 
    return mf;
 }
@@ -83,7 +83,7 @@ Eigen::Matrix<double,3,3> calculate_MFe_DRbar_tree_level(const @ModelName@_mass_
 {
    Eigen::Matrix<double,3,3> mf = ZEROMATRIX(3,3);
 
-@setRunningUpQuarkMasses@
+@setRunningDownLeptonMasses@
 
    return mf;
 }
