@@ -38,7 +38,7 @@ char const * const slha_input = R"(
 Block MODSEL                 # Select model
    12   100                  # parameter output scale (GeV)
 Block FlexibleSUSY
-    0   1.000000000e-04      # precision goal
+    0   1.000000000e-05      # precision goal
     1   0                    # max. iterations (0 = automatic)
     2   0                    # solver (0 = all, 1 = two_scale, 2 = semi_analytic)
     3   1                    # calculate SM pole masses
