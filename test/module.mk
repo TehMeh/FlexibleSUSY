@@ -604,6 +604,11 @@ TEST_META += \
 		$(DIR)/test_multiple_librarylinks.m
 endif
 
+ifeq ($(WITH_SM) $(WITH_SMEFTHiggsTopDown),yes yes)
+TEST_SRC += \
+		$(DIR)/test_SMEFTHiggsTopDown.cpp
+endif
+
 ifeq ($(WITH_SM),yes)
 TEST_SH += \
 		$(DIR)/test_flexiblesusy-config.sh
@@ -872,6 +877,8 @@ $(DIR)/test_CMSSMCPV_ewsb.x: $(LIBCMSSMCPV)
 $(DIR)/test_CMSSMCPV_tree_level_spectrum.x: $(LIBCMSSM) $(LIBCMSSMCPV)
 
 $(DIR)/test_MSSMEFTHiggs_lambda_threshold_correction.x: $(LIBMSSMEFTHiggs)
+
+$(DIR)/test_SMEFTHiggsTopDown.x: $(LIBSM) $(LIBSMEFTHiggsTopDown)
 
 $(DIR)/test_NMSSMCPV_ewsb.x: $(LIBNMSSMCPV)
 
