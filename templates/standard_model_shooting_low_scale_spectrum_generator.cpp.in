@@ -320,7 +320,7 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
    vec(3) = model.get_@UpYukawa@(2,2);
    vec(4) = model.get_@DownYukawa@(2,2);
    vec(5) = model.get_@ElectronYukawa@(2,2);
-   vec(6) = model.get_v();
+   vec(6) = model.VEV();
 
    VERBOSE_MSG("\t[6] initial guess finished.");
 
