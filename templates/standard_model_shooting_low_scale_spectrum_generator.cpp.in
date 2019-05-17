@@ -21,7 +21,7 @@
 #include "@ModelName@_shooting_spectrum_generator.hpp"
 #include "@ModelName@_input_parameters.hpp"
 #include "@ModelName@_shooting_ewsb_solver.hpp"
-// #include "@ModelName@_shooting_initial_guesser.hpp"
+#include "@ModelName@_shooting_initial_guesser.hpp"
 #include "@ModelName@_shooting_susy_scale_constraint.hpp"
 #include "@ModelName@_standard_model_matching.hpp"
 #include "standard_model_shooting_low_scale_constraint.hpp"
@@ -282,12 +282,10 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
    const softsusy::QedQcd& qedqcd,
    const @ModelName@_input_parameters& bsm_input) const
 {
-   using namespace @ModelName@_standard_model_matching;
-
    VERBOSE_MSG("Perform initial guess ...");
    VERBOSE_MSG("\t[1] initializing the SM ...");
 
-   standard_model::Standard_model sm;
+   standard_model::StandardModel<Shooting> sm;
    sm.set_precision(1e-2);
    sm.set_loops(3);
    sm.set_pole_mass_loop_order(2);
@@ -312,13 +310,10 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
    model.set_pole_mass_loop_order(2);
    model.set_ewsb_loop_order(2);
 
-   VERBOSE_MSG("\t[4] fill SM-like parameters of BSM model ...");
+   VERBOSE_MSG("\t[4] fill parameters of BSM model ...");
 
-   match_low_to_high_scale_model_tree_level(model, sm);
-
-   VERBOSE_MSG("\t[5] fill BSM parameters of BSM model ...");
-
-   fill_parameters(model, bsm_input, qedqcd);
+   @ModelName@_standard_model_initial_guesser<Shooting> ig(&model, &sm, qedqcd);
+   ig.guess();
 
    Vec_t vec;
    vec(0) = model.get_@hyperchargeCoupling@(); // TODO: check normalization
@@ -329,7 +324,7 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
    vec(5) = model.get_@ElectronYukawa@(2,2);
    vec(6) = model.VEV();
 
-   VERBOSE_MSG("\t[6] initial guess finished.");
+   VERBOSE_MSG("\t[5] initial guess finished.");
 
    return vec;
 }

@@ -33,7 +33,7 @@ LowScaleInput = {
 };
 
 InitialGuessAtSUSYScale = {
-    {v, LowEnergyConstant[vev]},
+    {v, VEV},
     {Yu, Automatic},
     {Yd, Automatic},
     {Ye, Automatic}
