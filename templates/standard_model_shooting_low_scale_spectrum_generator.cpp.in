@@ -68,20 +68,6 @@ double @ModelName@_spectrum_generator<Shooting>::get_matching_scale(
    return Q_match;
 }
 
-double @ModelName@_spectrum_generator<Shooting>::get_matching_scale_first_guess(
-   const @ModelName@_input_parameters& bsm_input, const softsusy::QedQcd& qedqcd) const
-{
-   double Q_match = settings.get(Spectrum_generator_settings::eft_matching_scale);
-
-   if (is_zero(Q_match)) {
-      @ModelName@<Shooting> model(bsm_input);
-      @ModelName@_susy_scale_constraint<Shooting> hc(&model, qedqcd);
-      Q_match = hc.get_initial_scale_guess();
-   }
-
-   return Q_match;
-}
-
 void @ModelName@_spectrum_generator<Shooting>::init(
    @ModelName@<Shooting>& model,
    const @ModelName@_input_parameters& input) const
@@ -159,6 +145,10 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
    susy_scale = 0.;
    low_scale = low_scale_constraint.get_scale();
 
+   VERBOSE_MSG("\t[0] perform initial guess ...");
+
+   const Vec_t ig = initial_guess(qedqcd);
+
    // function to find root of
    auto dev_from_input = [&](const Vec_t& pars) {
       return deviation_from_observables(pars, susy_scale_constraint, qedqcd);
@@ -177,7 +167,7 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
 
    VERBOSE_MSG("\t[1] starting shooting solver ...");
 
-   solver.solve(dev_from_input, initial_guess(qedqcd));
+   solver.solve(dev_from_input, ig);
 
    VERBOSE_MSG("\t[2] shooting solver has finished ...");
    VERBOSE_MSG("\t[3] running to electroweak scale one last time ...");
@@ -282,36 +272,8 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
    const softsusy::QedQcd& qedqcd)
 {
    VERBOSE_MSG("Perform initial guess ...");
-   VERBOSE_MSG("\t[1] initializing the SM ...");
 
-   standard_model::StandardModel<Shooting> sm;
-   sm.set_precision(1e-2);
-   sm.set_loops(3);
-   sm.set_pole_mass_loop_order(2);
-   sm.set_ewsb_loop_order(2);
-   sm.initialise_from_input(qedqcd);
-   sm.calculate_DRbar_masses();
-   sm.set_integrator(runge_kutta::RKF_integrator());
-
-   /// TODO: use initial guess from ig, see below
-   const auto Q_match = get_matching_scale_first_guess(model.get_input(), qedqcd);
-
-   VERBOSE_MSG("\t[2] running SM up to Q_match = " << Q_match << " GeV ...");
-
-   sm.run_to(Q_match);
-   sm.calculate_DRbar_masses();
-
-   VERBOSE_MSG("\t[3] initializing the BSM model ...");
-
-   model.set_scale(sm.get_scale());
-   model.set_precision(1e-2);
-   model.set_loops(3);
-   model.set_pole_mass_loop_order(2);
-   model.set_ewsb_loop_order(2);
-
-   VERBOSE_MSG("\t[4] fill parameters of BSM model ...");
-
-   @ModelName@_standard_model_initial_guesser<Shooting> ig(&model, &sm, qedqcd);
+   @ModelName@_standard_model_initial_guesser<Shooting> ig(&model, qedqcd);
    ig.guess();
 
    Vec_t vec;
@@ -323,7 +285,7 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
    vec(5) = model.get_@ElectronYukawa@(2,2);
    vec(6) = model.VEV();
 
-   VERBOSE_MSG("\t[5] initial guess finished.");
+   VERBOSE_MSG("\tinitial guess finished.");
 
    return vec;
 }

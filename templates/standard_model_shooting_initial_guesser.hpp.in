@@ -36,11 +36,6 @@ class Shooting;
 template <class T>
 class @ModelName@;
 
-namespace standard_model {
-template <class T>
-class StandardModel;
-}
-
 template <class T>
 class @ModelName@_standard_model_initial_guesser;
 
@@ -48,15 +43,12 @@ template<>
 class @ModelName@_standard_model_initial_guesser<Shooting> : public Initial_guesser {
 public:
    @ModelName@_standard_model_initial_guesser(
-      @ModelName@<Shooting>*,
-      standard_model::StandardModel<Shooting>*,
-      const softsusy::QedQcd&);
+      @ModelName@<Shooting>*, const softsusy::QedQcd&);
 
    virtual void guess() override; ///< initial guess
 
 private:
    @ModelName@<Shooting>* model{nullptr}; ///< pointer to model class
-   standard_model::StandardModel<Shooting>* eft{nullptr}; ///< pointer to effective model class
    softsusy::QedQcd qedqcd{}; ///< Standard Model low-energy data
 
    Eigen::Matrix<std::complex<double>,3,3> upQuarksDRbar{Eigen::Matrix<std::complex<double>,3,3>::Zero()};

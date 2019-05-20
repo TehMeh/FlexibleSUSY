@@ -68,7 +68,6 @@ private:
    void fill_parameters(@ModelName@<Shooting>&, Single_scale_constraint&) const;
    double get_eft_pole_mass_scale(double, double) const;
    double get_matching_scale(const Single_scale_constraint&) const;
-   double get_matching_scale_first_guess(const @ModelName@_input_parameters&, const softsusy::QedQcd&) const;
    double get_pole_mass_scale(double) const;
    Vec_t initial_guess(const softsusy::QedQcd&);
    standard_model::StandardModel<Shooting> run_down(const @ModelName@<Shooting>&) const;
