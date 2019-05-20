@@ -338,9 +338,9 @@ void @ModelName@_spectrum_generator<Shooting>::run_down(
    VERBOSE_MSG("\t[1] initializing the BSM model parameters ...");
 
    // overwrite SM-like parameters
-   fill_parameters(model, bsm_pars);
+   set_SM_parameters(bsm_pars);
    // impose susy-scale boundary condition
-   fill_parameters(model, constraint);
+   set_BSM_parameters(constraint);
 
    model.solve_ewsb_tree_level();
    model.calculate_DRbar_masses();
@@ -368,8 +368,8 @@ void @ModelName@_spectrum_generator<Shooting>::run_down(
    eft = run_down(model);
 }
 
-void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
-   @ModelName@<Shooting>& model, const Vec_t& vec) const
+void @ModelName@_spectrum_generator<Shooting>::set_SM_parameters(
+   const Vec_t& vec)
 {
    using namespace @ModelName@_standard_model_matching;
 
@@ -392,9 +392,8 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
    impose_user_matching(model, VEV);
 }
 
-void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
-   @ModelName@<Shooting>& model,
-   Single_scale_constraint& constraint) const
+void @ModelName@_spectrum_generator<Shooting>::set_BSM_parameters(
+   Single_scale_constraint& constraint)
 {
    VERBOSE_MSG("Setting BSM parameters ... ");
 
