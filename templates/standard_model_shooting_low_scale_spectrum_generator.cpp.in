@@ -57,15 +57,12 @@ double @ModelName@_spectrum_generator<Shooting>::get_eft_pole_mass_scale(double 
 }
 
 double @ModelName@_spectrum_generator<Shooting>::get_matching_scale(
-   const @ModelName@<Shooting>& model, const softsusy::QedQcd& qedqcd) const
+   const Single_scale_constraint& constraint) const
 {
    double Q_match = settings.get(Spectrum_generator_settings::eft_matching_scale);
 
    if (is_zero(Q_match)) {
-      auto m = model;
-      @ModelName@_susy_scale_constraint<Shooting> hc(&m, qedqcd);
-      hc.apply();
-      Q_match = hc.get_scale();
+      Q_match = constraint.get_scale();
    }
 
    return Q_match;
@@ -156,12 +153,15 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
       low_scale_constraint(&eft, qedqcd);
    low_scale_constraint.initialize();
 
+   @ModelName@_susy_scale_constraint<Shooting> susy_scale_constraint(&model, qedqcd);
+   susy_scale_constraint.initialize();
+
    susy_scale = 0.;
    low_scale = low_scale_constraint.get_scale();
 
    // function to find root of
    auto dev_from_input = [&](const Vec_t& pars) {
-      return deviation_from_observables(pars, qedqcd);
+      return deviation_from_observables(pars, susy_scale_constraint, qedqcd);
    };
 
    VERBOSE_MSG("Setting up shooting solver ...");
@@ -182,7 +182,7 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
    VERBOSE_MSG("\t[2] shooting solver has finished ...");
    VERBOSE_MSG("\t[3] running to electroweak scale one last time ...");
 
-   std::tie(model, eft) = run_down(solver.get_solution(), qedqcd, input);
+   run_down(solver.get_solution(), qedqcd, susy_scale_constraint);
 
    susy_scale = model.get_scale();
 
@@ -366,21 +366,19 @@ standard_model::StandardModel<Shooting>
    return sm;
 }
 
-std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
-@ModelName@_spectrum_generator<Shooting>::run_down(
-   const Vec_t& bsm_pars, const softsusy::QedQcd& qedqcd,
-   const @ModelName@_input_parameters& bsm_input) const
+void @ModelName@_spectrum_generator<Shooting>::run_down(
+   const Vec_t& bsm_pars,
+   const softsusy::QedQcd& qedqcd,
+   Single_scale_constraint& constraint)
 {
    VERBOSE_MSG("Running down ...");
 
    VERBOSE_MSG("\t[1] initializing the BSM model parameters ...");
 
-   @ModelName@<Shooting> model;
-   init(model, bsm_input);
    // overwrite SM-like parameters
    fill_parameters(model, bsm_pars);
    // impose susy-scale boundary condition
-   fill_parameters(model, bsm_input, qedqcd);
+   fill_parameters(model, constraint);
 
    model.solve_ewsb_tree_level();
    model.calculate_DRbar_masses();
@@ -390,7 +388,7 @@ std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
    model.solve_ewsb();
    model.set_integrator(runge_kutta::RKF_integrator());
 
-   const auto Q_match = get_matching_scale(model, qedqcd);
+   const auto Q_match = get_matching_scale(constraint);
 
    VERBOSE_MSG("\t[3] running to matching scale Q_match = "
                << Q_match << " GeV ...");
@@ -405,7 +403,7 @@ std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
    VERBOSE_MSG("\t[5] start matching to SM ...");
 
    // calculate lambda and run down
-   return std::make_pair(model, run_down(model));
+   eft = run_down(model);
 }
 
 void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
@@ -434,40 +432,35 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
 
 void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
    @ModelName@<Shooting>& model,
-   const @ModelName@_input_parameters& input,
-   const softsusy::QedQcd& qedqcd) const
+   Single_scale_constraint& constraint) const
 {
    VERBOSE_MSG("Setting BSM parameters ... ");
-   // VERBOSE_MSG("Using the model:\n" << model);
-   VERBOSE_MSG("\t[1] creating susy-scale constraint ...");
 
-   @ModelName@_susy_scale_constraint<Shooting> hc(&model, qedqcd);
+   const auto Q_input = constraint.get_scale();
+
+   VERBOSE_MSG("\t[1] setting input scale to Q_input = " << Q_input << " GeV");
+
+   model.set_scale(Q_input);
 
    VERBOSE_MSG("\t[2] imposing susy-scale constraint ...");
 
-   model.set_scale(hc.get_scale()); // TODO scale may be dynamic
-   hc.apply();
-
-   const auto Q_input = hc.get_scale();
-
-   VERBOSE_MSG("\t[3] setting input scale to Q_input = " << Q_input << " GeV");
-
-   model.set_scale(Q_input);
+   constraint.apply();
 }
 
 @ModelName@_spectrum_generator<Shooting>::Vec_t
 @ModelName@_spectrum_generator<Shooting>::deviation_from_observables(
-   const Vec_t& bsm_pars, const softsusy::QedQcd& qedqcd) const
+   const Vec_t& bsm_pars,
+   Single_scale_constraint& constraint,
+   const softsusy::QedQcd& qedqcd)
 {
    VERBOSE_MSG("Calculating deviation from SM input observables ...");
    VERBOSE_MSG("\t[0] using the SM-like BSM parameters: " << bsm_pars.transpose());
 
    const double Q_low = get_low_scale();
-   const auto bsm_input = model.get_input();
 
    VERBOSE_MSG("\t[1] running down ...");
 
-   auto eft = run_down(bsm_pars, qedqcd, bsm_input).second;
+   run_down(bsm_pars, qedqcd, constraint);
 
    VERBOSE_MSG("\t[2] running to electroweak matching scale Q_low = "
                << Q_low << " GeV ...");

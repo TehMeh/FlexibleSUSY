@@ -32,6 +32,7 @@ namespace softsusy { class QedQcd; }
 namespace flexiblesusy {
 
 class Shooting;
+class Single_scale_constraint;
 
 template <>
 class @ModelName@_spectrum_generator<Shooting>
@@ -60,21 +61,18 @@ private:
    void calculate_spectrum(double);
    void init(@ModelName@<Shooting>&, const @ModelName@_input_parameters&) const;
    void init(standard_model::StandardModel<Shooting>&) const;
-   Vec_t deviation_from_observables(const Vec_t&, const softsusy::QedQcd&) const;
+   Vec_t deviation_from_observables(const Vec_t&, Single_scale_constraint&, const softsusy::QedQcd&);
    /// overwrite SM-like BSM parameters
    void fill_parameters(@ModelName@<Shooting>&, const Vec_t&) const;
    /// impose BSM boundary condition
-   void fill_parameters(@ModelName@<Shooting>&,
-                        const @ModelName@_input_parameters&,
-                        const softsusy::QedQcd&) const;
+   void fill_parameters(@ModelName@<Shooting>&, Single_scale_constraint&) const;
    double get_eft_pole_mass_scale(double, double) const;
-   double get_matching_scale(const @ModelName@<Shooting>&, const softsusy::QedQcd&) const;
+   double get_matching_scale(const Single_scale_constraint&) const;
    double get_matching_scale_first_guess(const @ModelName@_input_parameters&, const softsusy::QedQcd&) const;
    double get_pole_mass_scale(double) const;
    Vec_t initial_guess(const softsusy::QedQcd&, const @ModelName@_input_parameters&) const;
    standard_model::StandardModel<Shooting> run_down(const @ModelName@<Shooting>&) const;
-   std::pair<@ModelName@<Shooting>, standard_model::StandardModel<Shooting>>
-   run_down(const Vec_t&, const softsusy::QedQcd&, const @ModelName@_input_parameters&) const;
+   void run_down(const Vec_t&, const softsusy::QedQcd&, Single_scale_constraint&);
 };
 
 } // namespace flexiblesusy
