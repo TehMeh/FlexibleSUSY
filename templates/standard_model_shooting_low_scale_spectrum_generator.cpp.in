@@ -177,7 +177,7 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
 
    VERBOSE_MSG("\t[1] starting shooting solver ...");
 
-   solver.solve(dev_from_input, initial_guess(qedqcd, input));
+   solver.solve(dev_from_input, initial_guess(qedqcd));
 
    VERBOSE_MSG("\t[2] shooting solver has finished ...");
    VERBOSE_MSG("\t[3] running to electroweak scale one last time ...");
@@ -279,8 +279,7 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
  */
 @ModelName@_spectrum_generator<Shooting>::Vec_t
 @ModelName@_spectrum_generator<Shooting>::initial_guess(
-   const softsusy::QedQcd& qedqcd,
-   const @ModelName@_input_parameters& bsm_input) const
+   const softsusy::QedQcd& qedqcd)
 {
    VERBOSE_MSG("Perform initial guess ...");
    VERBOSE_MSG("\t[1] initializing the SM ...");
@@ -294,7 +293,8 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
    sm.calculate_DRbar_masses();
    sm.set_integrator(runge_kutta::RKF_integrator());
 
-   const auto Q_match = get_matching_scale_first_guess(bsm_input, qedqcd);
+   /// TODO: use initial guess from ig, see below
+   const auto Q_match = get_matching_scale_first_guess(model.get_input(), qedqcd);
 
    VERBOSE_MSG("\t[2] running SM up to Q_match = " << Q_match << " GeV ...");
 
@@ -303,7 +303,6 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
 
    VERBOSE_MSG("\t[3] initializing the BSM model ...");
 
-   @ModelName@<Shooting> model(bsm_input);
    model.set_scale(sm.get_scale());
    model.set_precision(1e-2);
    model.set_loops(3);
@@ -347,6 +346,7 @@ standard_model::StandardModel<Shooting>
    const int loops =
       settings.get(Spectrum_generator_settings::eft_matching_loop_order_down);
 
+   /// TODO: use class member
    standard_model::StandardModel<Shooting> sm;
    sm.set_precision(model.get_precision());
    sm.set_scale(model.get_scale());
@@ -438,9 +438,9 @@ void @ModelName@_spectrum_generator<Shooting>::fill_parameters(
 
    const auto Q_input = constraint.get_scale();
 
-   VERBOSE_MSG("\t[1] setting input scale to Q_input = " << Q_input << " GeV");
+   VERBOSE_MSG("\t[1] running input scale Q_input = " << Q_input << " GeV ...");
 
-   model.set_scale(Q_input);
+   model.run_to(Q_input);
 
    VERBOSE_MSG("\t[2] imposing susy-scale constraint ...");
 
