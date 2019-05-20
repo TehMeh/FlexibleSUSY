@@ -911,7 +911,7 @@ double Standard_model::calculate_delta_alpha_s(double alphaS) const
  *
  * @return GF
  */
-double Standard_model::calculate_G_fermi(const softsusy::QedQcd& qedqcd) const
+double Standard_model::calculate_G_fermi(const softsusy::QedQcd& qedqcd)
 {
    double g_fermi = 0.;
 
@@ -983,11 +983,12 @@ double Standard_model::calculate_G_fermi(const softsusy::QedQcd& qedqcd) const
 
    g_fermi = weinberg.get_G_fermi();
 
-/*   if (error)
-      problems.flag_no_G_fermi_convergence();  //TODO: create flag for convergence
-   else
+   if (error) {
+      problems.flag_no_G_fermi_convergence();
+   } else {
       problems.unflag_no_G_fermi_convergence();
-*/
+   }
+
    return g_fermi;
 }
 
