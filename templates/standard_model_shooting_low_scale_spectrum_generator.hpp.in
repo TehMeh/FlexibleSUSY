@@ -61,7 +61,7 @@ private:
    /// calculate pole mass spectrum
    void calculate_spectrum(double);
    /// calculate deviation from observables
-   Vec_t deviation_from_observables(const Vec_t&, Single_scale_constraint&, const softsusy::QedQcd&);
+   Vec_t deviation_from_observables(const softsusy::QedQcd&);
    /// returns pole mass scale in the EFT
    double get_eft_pole_mass_scale(double, double) const;
    /// returns matching scale
@@ -77,7 +77,7 @@ private:
    /// run whole tower down
    void run_down(const Vec_t&, const softsusy::QedQcd&, Single_scale_constraint&);
    /// create SM and run it down
-   standard_model::StandardModel<Shooting> run_down(const @ModelName@<Shooting>&) const;
+   standard_model::StandardModel<Shooting> run_down() const;
    /// overwrite SM-like BSM parameters
    void set_SM_parameters(const Vec_t&);
    /// impose BSM boundary condition

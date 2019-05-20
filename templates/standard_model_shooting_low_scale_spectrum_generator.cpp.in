@@ -151,7 +151,9 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
 
    // function to find root of
    auto dev_from_input = [&](const Vec_t& pars) {
-      return deviation_from_observables(pars, susy_scale_constraint, qedqcd);
+      VERBOSE_MSG("Running SM-like BSM parameters: " << pars.transpose());
+      run_down(pars, qedqcd, susy_scale_constraint);
+      return deviation_from_observables(qedqcd);
    };
 
    VERBOSE_MSG("Setting up shooting solver ...");
@@ -298,8 +300,7 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
  * @return SM at Q_low
  */
 standard_model::StandardModel<Shooting>
-@ModelName@_spectrum_generator<Shooting>::run_down(
-   const @ModelName@<Shooting>& model) const
+@ModelName@_spectrum_generator<Shooting>::run_down() const
 {
    using namespace @ModelName@_standard_model_matching;
 
@@ -365,7 +366,7 @@ void @ModelName@_spectrum_generator<Shooting>::run_down(
    VERBOSE_MSG("\t[5] start matching to SM ...");
 
    // calculate lambda and run down
-   eft = run_down(model);
+   eft = run_down();
 }
 
 void @ModelName@_spectrum_generator<Shooting>::set_SM_parameters(
@@ -410,30 +411,22 @@ void @ModelName@_spectrum_generator<Shooting>::set_BSM_parameters(
 
 @ModelName@_spectrum_generator<Shooting>::Vec_t
 @ModelName@_spectrum_generator<Shooting>::deviation_from_observables(
-   const Vec_t& bsm_pars,
-   Single_scale_constraint& constraint,
    const softsusy::QedQcd& qedqcd)
 {
    VERBOSE_MSG("Calculating deviation from SM input observables ...");
-   VERBOSE_MSG("\t[0] using the SM-like BSM parameters: " << bsm_pars.transpose());
 
    const double Q_low = get_low_scale();
 
-   VERBOSE_MSG("\t[1] running down ...");
-
-   run_down(bsm_pars, qedqcd, constraint);
-
-   VERBOSE_MSG("\t[2] running to electroweak matching scale Q_low = "
-               << Q_low << " GeV ...");
+   VERBOSE_MSG("\t[1] running SM to Q_low = " << Q_low << " GeV ...");
 
    eft.run_to(Q_low);
 
-   VERBOSE_MSG("\t[3] calculating pole masses ...");
+   VERBOSE_MSG("\t[2] calculating pole masses ...");
 
    eft.solve_ewsb();
    eft.calculate_pole_masses();
 
-   VERBOSE_MSG("\t[4] calculating observables ...");
+   VERBOSE_MSG("\t[3] calculating observables ...");
 
    Vec_t diff(Vec_t::Zero());
 
@@ -472,7 +465,7 @@ void @ModelName@_spectrum_generator<Shooting>::set_BSM_parameters(
    diff(5) = (eft.calculate_MFd_DRbar(mb_qedqcd, 2) - eft.get_MFd(2))/eft.calculate_MFd_DRbar(mb_qedqcd, 2) ;
    diff(6) = (qedqcd.displayPoleMtau() - eft.get_physical().MFe(2))/(qedqcd.displayPoleMtau());
 
-   VERBOSE_MSG("\t[5] relative deviation from input observables: " <<  diff.transpose());
+   VERBOSE_MSG("\t[4] relative deviation from input observables: " <<  diff.transpose());
 
    return diff;
 }
