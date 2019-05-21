@@ -30,7 +30,7 @@
 #include "lowe.h"
 #include "numerics2.hpp"
 #include "rkf_integrator.hpp"
-#include "shooting_solver.hpp"
+#include "composite_root_finder.hpp"
 
 #include <limits>
 #include <tuple>
@@ -158,7 +158,7 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
 
    VERBOSE_MSG("Setting up shooting solver ...");
 
-   Shooting_solver<N> solver;
+   Composite_root_solver<N> solver;
 
    const int max_it = settings.get(Spectrum_generator_settings::max_iterations);
 
