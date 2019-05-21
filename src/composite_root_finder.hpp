@@ -16,10 +16,10 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
-#ifndef SHOOTING_SOLVER_H
-#define SHOOTING_SOLVER_H
+#ifndef COMPOSITE_ROOT_FINDER_H
+#define COMPOSITE_ROOT_FINDER_H
 
-#include "composite_root_finder.hpp"
+#include "root_finder.hpp"
 #include <cstddef>
 #include <vector>
 #include <Eigen/Core>
@@ -27,17 +27,17 @@
 namespace flexiblesusy {
 
 /**
- * @class Shooting_solver
- * @brief Solves the BVP using the shooting method
+ * @class Composite_root_solver
+ * @brief Encapsulates several root finders.
  */
 template<std::size_t N>
-class Shooting_solver {
+class Composite_root_solver {
 public:
    using Vec_t = Eigen::Matrix<double, N, 1>;
    using Fun_t = std::function<Vec_t(const Vec_t&)>;
 
    /// returns solution
-   Vec_t get_solution() const { return solution; }
+   Vec_t get_solution() const { return point; }
    /// set precision goal
    void set_precision(double p) { precision = p; }
    /// set maximum number of iterations
@@ -48,26 +48,39 @@ public:
    void solve(const Fun_t&, const Vec_t&);
 
 private:
-   Vec_t solution{Vec_t::Zero()};
+   Vec_t point{Vec_t::Zero()};
    double precision{1e-3};
    std::size_t max_it{100};
 };
 
 template<std::size_t N>
-void Shooting_solver<N>::reset()
+void Composite_root_solver<N>::reset()
 {
-   *this = Shooting_solver<N>();
+   *this = Composite_root_solver<N>();
 }
 
 template<std::size_t N>
-void Shooting_solver<N>::solve(const Fun_t& fun, const Vec_t& v0)
+void Composite_root_solver<N>::solve(const Fun_t& fun, const Vec_t& v0)
 {
-   Composite_root_solver<N> crs;
-   crs.set_precision(precision);
-   crs.set_max_iterations(max_it);
-   crs.solve(fun, v0);
+   std::vector<Root_finder<N>> rfs = {
+      Root_finder<N>(fun, max_it, precision, Root_finder<N>::GSLHybridS),
+      Root_finder<N>(fun, max_it, precision, Root_finder<N>::GSLHybrid),
+      Root_finder<N>(fun, max_it, precision, Root_finder<N>::GSLBroyden)
+   };
 
-   solution = crs.get_solution();
+   auto err = !GSL_SUCCESS;
+
+   for (auto& rf: rfs) {
+      err = rf.solve(v0);
+
+      if (err == GSL_SUCCESS) {
+         point = rf.get_solution();
+         break;
+      }
+   }
+
+   if (err != GSL_SUCCESS)
+      throw NoConvergenceError(max_it);
 }
 
 } // namespace flexiblesusy
