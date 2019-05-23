@@ -58,8 +58,6 @@ private:
    double susy_scale{0.};
    double low_scale{0.};
 
-   /// impose BSM boundary condition
-   void apply_constraint(@ModelName@<Shooting>&, Single_scale_constraint&) const;
    /// calculate pole mass spectrum
    void calculate_spectrum(double);
    /// calculate deviation from observables

@@ -156,8 +156,6 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
    Shooting_solver<N>::Set_t setter = [&](const Vec_t& pars) {
       VERBOSE_MSG("Running SM-like BSM parameters: " << pars.transpose());
       set_SM_parameters(pars);
-      // TODO: put this into a BC slider for the shooting solver
-      apply_constraint(model, susy_scale_constraint);
    };
 
    // function to find root of
@@ -175,6 +173,7 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
       solver.set_max_iterations(max_it);
 
    solver.set_precision(settings.get(Spectrum_generator_settings::precision));
+   solver.add(&susy_scale_constraint, &model);
    solver.add(setter);
    solver.add(predictor);
 
@@ -380,23 +379,6 @@ void @ModelName@_spectrum_generator<Shooting>::set_SM_parameters(
    VERBOSE_MSG("Imposing user-defined matching condition ...");
 
    impose_user_matching(model, VEV);
-}
-
-void @ModelName@_spectrum_generator<Shooting>::apply_constraint(
-   @ModelName@<Shooting>& model,
-   Single_scale_constraint& constraint) const
-{
-   VERBOSE_MSG("Setting BSM parameters ... ");
-
-   const auto Q_input = constraint.get_scale();
-
-   VERBOSE_MSG("\t[1] running input scale Q_input = " << Q_input << " GeV ...");
-
-   model.run_to(Q_input);
-
-   VERBOSE_MSG("\t[2] imposing susy-scale constraint ...");
-
-   constraint.apply();
 }
 
 @ModelName@_spectrum_generator<Shooting>::Vec_t
