@@ -158,12 +158,12 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
       set_SM_parameters(pars);
       // TODO: put this into a BC slider for the shooting solver
       apply_constraint(model, susy_scale_constraint);
-      // TODO: put this into a MC slider for the shooting solver
-      match(qedqcd, susy_scale_constraint);
    };
 
    // function to find root of
    Shooting_solver<N>::Pre_t predictor = [&]() -> Vec_t {
+      // TODO: put this into a MC slider for the shooting solver
+      match(qedqcd, susy_scale_constraint);
       return deviation_from_observables(eft, qedqcd);
    };
 
