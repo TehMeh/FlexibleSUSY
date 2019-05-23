@@ -341,17 +341,17 @@ void @ModelName@_spectrum_generator<Shooting>::match(
 
    const auto Q_match = get_matching_scale(constraint);
 
-   VERBOSE_MSG("\t[3] running to matching scale Q_match = "
+   VERBOSE_MSG("\t[1] running to matching scale Q_match = "
                << Q_match << " GeV ...");
 
    model.run_to(Q_match);
 
-   VERBOSE_MSG("\t[4] calculate BSM tree-level mass spectrum ...");
+   VERBOSE_MSG("\t[2] calculate BSM tree-level mass spectrum ...");
 
    model.calculate_DRbar_masses();
    model.solve_ewsb();
 
-   VERBOSE_MSG("\t[5] start matching to SM ...");
+   VERBOSE_MSG("\t[3] start matching to SM ...");
 
    // calculate lambda and run down
    eft = match_to_SM();
