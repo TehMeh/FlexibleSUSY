@@ -328,9 +328,6 @@ standard_model::StandardModel<Shooting>
    match_high_to_low_scale_model(sm, model, loops, index);
 
    VERBOSE_MSG("\t[2] lambda(Q_match = " << sm.get_scale() << ") = " << sm.get_Lambdax());
-   VERBOSE_MSG("\t[3] running SM down to Q_low = " << get_low_scale() << " ...");
-
-   sm.run_to(get_low_scale());
 
    return sm;
 }
