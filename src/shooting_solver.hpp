@@ -194,7 +194,7 @@ void Shooting_solver<N>::solve(const Vec_t& v0)
       return predictor();
    };
 
-   Composite_root_solver<N> crs;
+   Composite_root_finder<N> crs;
    crs.set_precision(precision);
    crs.set_max_iterations(max_it);
    crs.solve(fun, v0);

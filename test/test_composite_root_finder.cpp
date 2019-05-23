@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE( test_parabola_2dim )
    Eigen::Matrix<double,2,1> start;
    start << 10, 10;
 
-   Composite_root_solver<2> ss;
+   Composite_root_finder<2> ss;
    ss.set_precision(1e-5);
 
    BOOST_REQUIRE_NO_THROW(ss.solve(parabola, start));

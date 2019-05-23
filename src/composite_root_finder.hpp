@@ -27,11 +27,11 @@
 namespace flexiblesusy {
 
 /**
- * @class Composite_root_solver
+ * @class Composite_root_finder
  * @brief Encapsulates several root finders.
  */
 template<std::size_t N>
-class Composite_root_solver {
+class Composite_root_finder {
 public:
    using Vec_t = Eigen::Matrix<double, N, 1>;
    using Fun_t = std::function<Vec_t(const Vec_t&)>;
@@ -54,13 +54,13 @@ private:
 };
 
 template<std::size_t N>
-void Composite_root_solver<N>::reset()
+void Composite_root_finder<N>::reset()
 {
-   *this = Composite_root_solver<N>();
+   *this = Composite_root_finder<N>();
 }
 
 template<std::size_t N>
-void Composite_root_solver<N>::solve(const Fun_t& fun, const Vec_t& v0)
+void Composite_root_finder<N>::solve(const Fun_t& fun, const Vec_t& v0)
 {
    std::vector<Root_finder<N>> rfs = {
       Root_finder<N>(fun, max_it, precision, Root_finder<N>::GSLHybridS),
