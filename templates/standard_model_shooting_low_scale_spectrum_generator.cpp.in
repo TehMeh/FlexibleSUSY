@@ -149,16 +149,20 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
 
    const Vec_t ig = initial_guess(qedqcd);
 
+   VERBOSE_MSG("Setting up shooting solver ...");
+
    // function to find root of
-   auto dev_from_input = [&](const Vec_t& pars) {
+   Shooting_solver<N>::Set_t setter = [&](const Vec_t& pars) {
       VERBOSE_MSG("Running SM-like BSM parameters: " << pars.transpose());
       run_down(pars, qedqcd, susy_scale_constraint);
+   };
+
+   // function to find root of
+   Shooting_solver<N>::Pre_t predictor = [&]() -> Vec_t {
       return deviation_from_observables(qedqcd);
    };
 
-   VERBOSE_MSG("Setting up shooting solver ...");
-
-   Composite_root_finder<N> solver;
+   Shooting_solver<N> solver;
 
    const int max_it = settings.get(Spectrum_generator_settings::max_iterations);
 
@@ -166,10 +170,12 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
       solver.set_max_iterations(max_it);
 
    solver.set_precision(settings.get(Spectrum_generator_settings::precision));
+   solver.add(setter);
+   solver.add(predictor);
 
    VERBOSE_MSG("\t[1] starting shooting solver ...");
 
-   solver.solve(dev_from_input, ig);
+   solver.solve(ig);
 
    VERBOSE_MSG("\t[2] shooting solver has finished ...");
    VERBOSE_MSG("\t[3] running to electroweak scale one last time ...");
