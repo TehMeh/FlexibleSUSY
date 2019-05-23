@@ -156,8 +156,9 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
    Shooting_solver<N>::Set_t setter = [&](const Vec_t& pars) {
       VERBOSE_MSG("Running SM-like BSM parameters: " << pars.transpose());
       set_SM_parameters(pars);
-      // TODO: put this into a slider for the shooting solver
+      // TODO: put this into a BC slider for the shooting solver
       apply_constraint(model, susy_scale_constraint);
+      // TODO: put this into a MC slider for the shooting solver
       match(qedqcd, susy_scale_constraint);
    };
 
