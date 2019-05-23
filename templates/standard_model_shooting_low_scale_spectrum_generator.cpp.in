@@ -364,16 +364,14 @@ void @ModelName@_spectrum_generator<Shooting>::set_SM_parameters(
 
    VERBOSE_MSG("Overwriting SM-like BSM parameters with " << vec.transpose());
 
-   int idx = 0;
+   model.set_@hyperchargeCoupling@(vec(0));
+   model.set_@leftCoupling@(vec(1));
+   model.set_@strongCoupling@(vec(2));
+   model.set_@UpYukawa@(2, 2, vec(3));
+   model.set_@DownYukawa@(2, 2, vec(4));
+   model.set_@ElectronYukawa@(2, 2, vec(5));
 
-   model.set_@hyperchargeCoupling@(vec(idx++));
-   model.set_@leftCoupling@(vec(idx++));
-   model.set_@strongCoupling@(vec(idx++));
-   model.set_@UpYukawa@(2, 2, vec(idx++));
-   model.set_@DownYukawa@(2, 2, vec(idx++));
-   model.set_@ElectronYukawa@(2, 2, vec(idx++));
-
-   const double VEV = vec(idx++);
+   const double VEV = vec(6);
 
    VERBOSE_MSG("Imposing user-defined matching condition ...");
 
