@@ -154,7 +154,8 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
    // function to find root of
    Shooting_solver<N>::Set_t setter = [&](const Vec_t& pars) {
       VERBOSE_MSG("Running SM-like BSM parameters: " << pars.transpose());
-      run_down(pars, qedqcd, susy_scale_constraint);
+      set_SM_parameters(pars);
+      run_down(qedqcd, susy_scale_constraint);
    };
 
    // function to find root of
@@ -178,9 +179,6 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
    solver.solve(ig);
 
    VERBOSE_MSG("\t[2] shooting solver has finished ...");
-   VERBOSE_MSG("\t[3] running to electroweak scale one last time ...");
-
-   run_down(solver.get_solution(), qedqcd, susy_scale_constraint);
 
    susy_scale = model.get_scale();
 
@@ -333,7 +331,6 @@ standard_model::StandardModel<Shooting>
 }
 
 void @ModelName@_spectrum_generator<Shooting>::run_down(
-   const Vec_t& bsm_pars,
    const softsusy::QedQcd& qedqcd,
    Single_scale_constraint& constraint)
 {
@@ -341,8 +338,6 @@ void @ModelName@_spectrum_generator<Shooting>::run_down(
 
    VERBOSE_MSG("\t[1] initializing the BSM model parameters ...");
 
-   // overwrite SM-like parameters
-   set_SM_parameters(bsm_pars);
    // impose susy-scale boundary condition
    set_BSM_parameters(constraint);
 
