@@ -339,7 +339,7 @@ void @ModelName@_spectrum_generator<Shooting>::run_down(
    VERBOSE_MSG("\t[1] initializing the BSM model parameters ...");
 
    // impose susy-scale boundary condition
-   set_BSM_parameters(constraint);
+   apply_constraint(model, constraint);
 
    model.solve_ewsb_tree_level();
    model.calculate_DRbar_masses();
@@ -391,8 +391,9 @@ void @ModelName@_spectrum_generator<Shooting>::set_SM_parameters(
    impose_user_matching(model, VEV);
 }
 
-void @ModelName@_spectrum_generator<Shooting>::set_BSM_parameters(
-   Single_scale_constraint& constraint)
+void @ModelName@_spectrum_generator<Shooting>::apply_constraint(
+   @ModelName@<Shooting>& model,
+   Single_scale_constraint& constraint) const
 {
    VERBOSE_MSG("Setting BSM parameters ... ");
 

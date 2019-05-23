@@ -81,7 +81,7 @@ private:
    /// overwrite SM-like BSM parameters
    void set_SM_parameters(const Vec_t&);
    /// impose BSM boundary condition
-   void set_BSM_parameters(Single_scale_constraint&);
+   void apply_constraint(@ModelName@<Shooting>&, Single_scale_constraint&) const;
 };
 
 } // namespace flexiblesusy
