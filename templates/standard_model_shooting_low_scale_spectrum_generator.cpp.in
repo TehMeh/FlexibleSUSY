@@ -158,7 +158,7 @@ void @ModelName@_spectrum_generator<Shooting>::run_except(const softsusy::QedQcd
       set_SM_parameters(pars);
       // TODO: put this into a slider for the shooting solver
       apply_constraint(model, susy_scale_constraint);
-      run_down(qedqcd, susy_scale_constraint);
+      match(qedqcd, susy_scale_constraint);
    };
 
    // function to find root of
@@ -333,15 +333,11 @@ standard_model::StandardModel<Shooting>
    return sm;
 }
 
-void @ModelName@_spectrum_generator<Shooting>::run_down(
+void @ModelName@_spectrum_generator<Shooting>::match(
    const softsusy::QedQcd& qedqcd,
    Single_scale_constraint& constraint)
 {
    VERBOSE_MSG("Running down ...");
-
-   model.solve_ewsb_tree_level();
-   model.calculate_DRbar_masses();
-   model.solve_ewsb();
 
    const auto Q_match = get_matching_scale(constraint);
 
