@@ -306,7 +306,7 @@ void @ModelName@_spectrum_generator<Shooting>::calculate_spectrum(double Mt)
  * @return SM at Q_low
  */
 standard_model::StandardModel<Shooting>
-@ModelName@_spectrum_generator<Shooting>::run_down() const
+@ModelName@_spectrum_generator<Shooting>::match_to_SM() const
 {
    using namespace @ModelName@_standard_model_matching;
 
@@ -369,7 +369,7 @@ void @ModelName@_spectrum_generator<Shooting>::run_down(
    VERBOSE_MSG("\t[5] start matching to SM ...");
 
    // calculate lambda and run down
-   eft = run_down();
+   eft = match_to_SM();
 }
 
 void @ModelName@_spectrum_generator<Shooting>::set_SM_parameters(

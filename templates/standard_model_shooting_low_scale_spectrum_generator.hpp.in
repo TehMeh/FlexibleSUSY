@@ -77,7 +77,7 @@ private:
    /// run whole tower down
    void run_down(const Vec_t&, const softsusy::QedQcd&, Single_scale_constraint&);
    /// create SM and run it down
-   standard_model::StandardModel<Shooting> run_down() const;
+   standard_model::StandardModel<Shooting> match_to_SM() const;
    /// overwrite SM-like BSM parameters
    void set_SM_parameters(const Vec_t&);
    /// impose BSM boundary condition
