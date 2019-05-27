@@ -132,7 +132,19 @@ FSFancyPrint::usage = "Print text in fancy headline style";
 
 FSFancyLine::usage = "Print separator line in command line mode";
 
+PrintHeadline::usage = "Print fancy head line";
+
 PrintAndReturn::usage = "Print result and return it";
+
+AssertWithMessage::usage = "AssertWithMessage[assertion_, message_String]:
+If assertion does not evaluate to True, print message and Quit[1].";
+
+ReadLinesInFile::usage = "ReadLinesInFile[fileName_String]:
+Read the entire contents of the file given by fileName and return it
+as a list of Strings representing the lines in the file.
+Warning: This function may ignore empty lines.";
+
+FSReIm::usage = "FS replacement for the mathematica's function ReIm";
 
 Begin["`Private`"];
 
@@ -263,7 +275,37 @@ FSFancyPrint[text_, level_:1] :=
 FSFancyLine[type_:"-", style__:Bold] :=
     If[!$Notebooks, Print[Style[StringJoin[Array[type&, 70]], style]]];
 
+PrintHeadline[text__] :=
+    Block[{},
+          Print[""];
+          FSFancyLine[];
+          FSFancyPrint[text];
+          FSFancyLine[];
+         ];
+
 PrintAndReturn[e___] := (Print[e]; e)
+
+AssertWithMessage[assertion_?BooleanQ, message_String] :=
+	If[assertion =!= True, Print[message]; Quit[1]];
+
+ReadLinesInFile[fileName_String] :=
+	Module[{fileHandle, lines = {}, line},
+		fileHandle = OpenRead[fileName, BinaryFormat -> True];
+		
+		While[(line = Read[fileHandle, String]) =!= EndOfFile,
+			AssertWithMessage[line =!= $Failed,
+				"Utils`ReadLinesInFile[]: Unable to read line from file '" <>
+				fileName <> "'"];
+			AppendTo[lines, line]]
+		
+    Close[fileHandle];
+    lines
+	]
+
+FSReIm[z_] := If[$VersionNumber >= 10.1,
+   ReIm[z],
+   {Re[z], Im[z]}
+];
 
 End[];
 

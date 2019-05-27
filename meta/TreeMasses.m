@@ -85,6 +85,8 @@ CreateMassArraySetter::usage="";
 CreateMixingArrayGetter::usage="";
 CreateMixingArraySetter::usage="";
 
+GetSMVEVExpr::usage = "Returns expression for SM-like VEV";
+
 GetParticles::usage="returns list of particles";
 
 GetSusyParticles::usage="returns list of susy particles";
@@ -155,13 +157,18 @@ CreateDependencePrototypes::usage="";
 CreateDependenceFunctions::usage="";
 
 ColorChargedQ::usage="";
+
 FieldInfo::usage="";
+includeLorentzIndices::usage="";
+includeColourIndices::usage="";
+
 IsScalar::usage="";
 IsFermion::usage="";
 IsVector::usage="";
 IsGhost::usage="";
 IsGoldstone::usage="";
 IsSMGoldstone::usage="";
+IsSMHiggs::usage="";
 IsAuxiliary::usage="";
 IsMajoranaFermion::usage="";
 IsDiracFermion::usage="";
@@ -178,6 +185,11 @@ IsSMUpQuark::usage="";
 IsSMDownQuark::usage="";
 IsSMQuark::usage="";
 IsSMParticle::usage="";
+IsSMParticleElementwise::usage=
+"For a given multiplet this function returns a list indicating whether
+the element is a SM-like field or not.  The function assumes that BSM
+fields are always heavier than the SM fields.";
+
 IsElectricallyCharged::usage="";
 ContainsGoldstone::usage="";
 
@@ -210,6 +222,7 @@ GetPhoton::usage           = "returns the photon";
 GetGluon::usage            = "returns the gluon";
 GetZBoson::usage           = "returns the Z boson";
 GetWBoson::usage           = "returns the W boson";
+GetHiggsBoson::usage       = "return Higgs boson(s)";
 
 GetSMTopQuarkMultiplet::usage    = "Returns multiplet containing the top quark, Fu or Ft";
 GetSMBottomQuarkMultiplet::usage = "Returns multiplet containing the bottom quark, Fd or Fb";
@@ -281,14 +294,19 @@ GetSMParticles[states_:FlexibleSUSY`FSEigenstates] :=
 ParticleQ[p_, states_:FlexibleSUSY`FSEigenstates] :=
     MemberQ[GetParticles[states], p];
 
-FieldInfo[field_,OptionsPattern[{includeLorentzIndices -> False}]] :=
-    Module[{fieldInfo = Cases[SARAH`Particles[FlexibleSUSY`FSEigenstates],
-                                {SARAH`getParticleName @ field, ___}][[1]]},
-            fieldInfo = DeleteCases[fieldInfo, {SARAH`generation, 1}, {2}];
-            If[!OptionValue[includeLorentzIndices],
-               DeleteCases[fieldInfo, {SARAH`lorentz, _}, {2}],
-               fieldInfo]
-          ]
+FieldInfo[field_, OptionsPattern[{includeLorentzIndices -> False,
+	includeColourIndices -> False}]] := 
+	Module[{fieldInfo = Cases[SARAH`Particles[FlexibleSUSY`FSEigenstates],
+		{SARAH`getParticleName @ field, ___}][[1]]},
+		fieldInfo = DeleteCases[fieldInfo, {SARAH`generation, 1}, {2}];
+		
+		fieldInfo = If[!OptionValue[includeLorentzIndices],
+			DeleteCases[fieldInfo, {SARAH`lorentz, _}, {2}],
+			fieldInfo];
+		If[!OptionValue[includeColourIndices],
+			DeleteCases[fieldInfo, {SARAH`color, _}, {2}],
+			fieldInfo]
+	]
 
 IsOfType[sym_Symbol, type_Symbol, states_:FlexibleSUSY`FSEigenstates] :=
     SARAH`getType[sym, False, states] === type;
@@ -299,6 +317,26 @@ IsOfType[sym_[__], type_Symbol, states_:FlexibleSUSY`FSEigenstates] :=
 IsSMParticle[sym_List] := And @@ (IsSMParticle /@ sym);
 IsSMParticle[sym_[__]] := IsSMParticle[sym];
 IsSMParticle[sym_] := SARAH`SMQ[sym, Higgs -> True];
+
+MakeTrueFalse[n_, t_] :=
+    Join[Array[True&, n]] /; t >= n;
+
+MakeTrueFalse[n_, t_] :=
+    Join[Array[True&, t], Array[False&, n - t]];
+
+Options[IsSMParticleElementwise] :=
+    {
+        IncludeHiggs -> False
+    };
+
+IsSMParticleElementwise[sym_, OptionsPattern[]] :=
+    Which[
+        IsSMLepton[sym], MakeTrueFalse[GetDimension[sym], 3],
+        IsSMQuark[sym], MakeTrueFalse[GetDimension[sym], 3],
+        True, (IsSMParticle[#] || IsSMGoldstone[#] ||
+               (OptionValue[IncludeHiggs] && IsSMHiggs[#]))& /@
+              Table[sym[i], {i, GetDimension[sym]}]
+    ];
 
 IsScalar[Susyno`LieGroups`conj[sym_]] := IsScalar[sym];
 IsScalar[SARAH`bar[sym_]] := IsScalar[sym];
@@ -336,6 +374,16 @@ IsSMGoldstone[Susyno`LieGroups`conj[sym_]] := IsSMGoldstone[sym];
 IsSMGoldstone[SARAH`bar[sym_]] := IsSMGoldstone[sym];
 IsSMGoldstone[sym_] :=
     MemberQ[GetSMGoldstones[], sym];
+
+IsSMHiggs[Susyno`LieGroups`conj[sym_]] := IsSMHiggs[sym];
+IsSMHiggs[SARAH`bar[sym_]] := IsSMHiggs[sym];
+IsSMHiggs[sym_] :=
+    Module[{higgs = Parameters`GetParticleFromDescription["Higgs"]},
+           If[GetDimension[sym] == 1,
+              SameQ[sym, higgs],
+              SameQ[sym, higgs[GetDimensionStartSkippingGoldstones[higgs]]]
+           ]
+    ];
 
 IsChargino[Susyno`LieGroups`conj[p_]] := IsChargino[p];
 IsChargino[SARAH`bar[p_]] := IsChargino[p];
@@ -411,7 +459,7 @@ ContainsMassless[sym_List, states_:FlexibleSUSY`FSEigenstates] :=
     Or @@ (IsMassless[#,states]& /@ sym);
 
 ColorChargedQ[field_] :=
-    !FreeQ[FieldInfo[field], SARAH`color];
+    !FreeQ[FieldInfo[field, includeColourIndices -> True], SARAH`color];
 
 GetColoredParticles[] :=
     Select[GetParticles[], ColorChargedQ];
@@ -1825,16 +1873,37 @@ FindLeftGaugeCoupling[] := SARAH`leftCoupling;
 
 FindHyperchargeGaugeCoupling[] := SARAH`hyperchargeCoupling;
 
+GetSMVEVExpr[symbIfUndefined_:Undefined] :=
+    Module[{vexp},
+           If[ValueQ[SARAH`VEVSM],
+              vexp = Cases[Parameters`GetAllDependenceSPhenoRules[],
+                           RuleDelayed[SARAH`VEVSM, expr_] :> expr];
+              If[vexp === {},
+                 If[Parameters`IsParameter[SARAH`VEVSM],
+                    SARAH`VEVSM,
+                    DebugPrint["Warning: SM-like Higgs vev is not define in the SARAH model file!"];
+                    symbIfUndefined]
+                 ,
+                 First[vexp]
+              ]
+              ,
+              DebugPrint["Warning: SM-like Higgs vev is not define in the SARAH model file!"];
+              symbIfUndefined
+           ]
+    ];
+
+PrivateGetDependenceSPhenoRules[] :=
+    DecreaseIndexLiterals @ Join[
+        Parameters`GetDependenceSPhenoRules[],
+        { FlexibleSUSY`VEV -> GetSMVEVExpr[0] }
+    ];
+
 CreateDependencePrototype[(Rule | RuleDelayed)[parameter_, _]] :=
     CConversion`CreateCType[CConversion`ScalarType[CConversion`realScalarCType]] <>
     " " <> CConversion`ToValidCSymbolString[parameter] <> "() const;\n";
 
-CreateDependencePrototypes[massMatrices_List] :=
-    Module[{dependencies, result = ""},
-           dependencies = Parameters`DecreaseIndexLiterals[Parameters`GetDependenceSPhenoRules[]];
-           (result = result <> CreateDependencePrototype[#])& /@ dependencies;
-           Return[result];
-          ];
+CreateDependencePrototypes[] :=
+    StringJoin[CreateDependencePrototype /@ PrivateGetDependenceSPhenoRules[]]
 
 CreateDependenceFunction[(Rule | RuleDelayed)[parameter_, value_]] :=
     Module[{result, body, parStr},
@@ -1847,12 +1916,8 @@ CreateDependenceFunction[(Rule | RuleDelayed)[parameter_, value_]] :=
            Return[result];
           ];
 
-CreateDependenceFunctions[massMatrices_List] :=
-    Module[{dependencies, result = ""},
-           dependencies = Parameters`DecreaseIndexLiterals[Parameters`GetDependenceSPhenoRules[]];
-           (result = result <> CreateDependenceFunction[#])& /@ dependencies;
-           Return[result];
-          ];
+CreateDependenceFunctions[] :=
+    StringJoin[CreateDependenceFunction /@ PrivateGetDependenceSPhenoRules[]]
 
 CreateDependencyFunctionSymbols[] :=
     RuleDelayed[#,#[]]& /@ Parameters`GetDependenceSPhenoSymbols[];
