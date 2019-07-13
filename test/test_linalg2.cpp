@@ -72,30 +72,24 @@ typedef boost::mpl::list<
     Test_svd<complex<double>, 1, 1, svd, svd>,
     Test_svd<complex<double>, 2, 2, svd, svd>,
     Test_svd<complex<double>, 3, 3, svd, svd>,
+    Test_svd<complex<double>, 4, 4, svd, svd>,
+    Test_svd<complex<double>, 6, 6, svd, svd>,
     Test_svd<double	    , 1, 1, svd, svd>,
     Test_svd<double	    , 2, 2, svd, svd>,
     Test_svd<double	    , 3, 3, svd, svd>,
+    Test_svd<double	    , 4, 4, svd, svd>,
+    Test_svd<double	    , 6, 6, svd, svd>,
 
     Test_svd<complex<double>, 1, 1, reorder_svd, reorder_svd, true>,
     Test_svd<complex<double>, 2, 2, reorder_svd, reorder_svd, true>,
     Test_svd<complex<double>, 3, 3, reorder_svd, reorder_svd, true>,
-    Test_svd<double	    , 1, 1, reorder_svd, reorder_svd, true>,
-    Test_svd<double	    , 2, 2, reorder_svd, reorder_svd, true>,
-    Test_svd<double	    , 3, 3, reorder_svd, reorder_svd, true>,
-
-    // use ZGESVD of LAPACK
-    Test_svd<complex<double>, 4, 4, svd, svd>,
-    Test_svd<complex<double>, 6, 6, svd, svd>,
-
     Test_svd<complex<double>, 4, 4, reorder_svd, reorder_svd, true>,
     Test_svd<complex<double>, 6, 6, reorder_svd, reorder_svd, true>,
     Test_svd<complex<double>, 4, 6, reorder_svd, reorder_svd, true>,
     Test_svd<complex<double>, 6, 4, reorder_svd, reorder_svd, true>,
-
-    // use DGESVD of LAPACK
-    Test_svd<double	    , 4, 4, svd, svd>,
-    Test_svd<double	    , 6, 6, svd, svd>,
-
+    Test_svd<double	    , 1, 1, reorder_svd, reorder_svd, true>,
+    Test_svd<double	    , 2, 2, reorder_svd, reorder_svd, true>,
+    Test_svd<double	    , 3, 3, reorder_svd, reorder_svd, true>,
     Test_svd<double	    , 4, 4, reorder_svd, reorder_svd, true>,
     Test_svd<double	    , 6, 6, reorder_svd, reorder_svd, true>,
     Test_svd<double	    , 4, 6, reorder_svd, reorder_svd, true>,
@@ -158,6 +152,10 @@ typedef boost::mpl::list<
 	<complex<double>, 2, diagonalize_symmetric, diagonalize_symmetric>,
     Test_diagonalize_symmetric
 	<complex<double>, 3, diagonalize_symmetric, diagonalize_symmetric>,
+    Test_diagonalize_symmetric
+	<complex<double>, 4, diagonalize_symmetric, diagonalize_symmetric>,
+    Test_diagonalize_symmetric
+	<complex<double>, 6, diagonalize_symmetric, diagonalize_symmetric>,
 
     Test_diagonalize_symmetric
 	<complex<double>, 1,
@@ -168,6 +166,12 @@ typedef boost::mpl::list<
     Test_diagonalize_symmetric
 	<complex<double>, 3,
 	 reorder_diagonalize_symmetric, reorder_diagonalize_symmetric, true>,
+    Test_diagonalize_symmetric
+	<complex<double>, 4,
+	 reorder_diagonalize_symmetric, reorder_diagonalize_symmetric, true>,
+    Test_diagonalize_symmetric
+	<complex<double>, 6,
+	 reorder_diagonalize_symmetric, reorder_diagonalize_symmetric, true>,
 
     // use Eigen::SelfAdjointEigenSolver
     Test_diagonalize_symmetric
@@ -175,18 +179,7 @@ typedef boost::mpl::list<
 
     Test_diagonalize_symmetric
 	<double, 6,
-	 reorder_diagonalize_symmetric, reorder_diagonalize_symmetric, true>,
-
-    // use ZGESVD of LAPACK
-    Test_diagonalize_symmetric
-	<complex<double>, 4, diagonalize_symmetric, diagonalize_symmetric>,
-    Test_diagonalize_symmetric
-	<complex<double>, 6, diagonalize_symmetric, diagonalize_symmetric>,
-
-    Test_diagonalize_symmetric<complex<double>, 4,
-	reorder_diagonalize_symmetric, reorder_diagonalize_symmetric, true>,
-    Test_diagonalize_symmetric<complex<double>, 6,
-	reorder_diagonalize_symmetric, reorder_diagonalize_symmetric, true>
+	 reorder_diagonalize_symmetric, reorder_diagonalize_symmetric, true>
 > diagonalize_symmetric_tests;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE
@@ -236,14 +229,6 @@ typedef boost::mpl::list<
     // use Eigen::SelfAdjointEigenSolver
     Test_diagonalize_hermitian<complex<double>, 6, hermitian_eigen>,
     Test_diagonalize_hermitian<double	      , 6, hermitian_eigen>
-
-#ifdef ENABLE_LAPACK
-    ,
-    // use ZHEEV of LAPACK
-    Test_diagonalize_hermitian<complex<double>, 6, hermitian_lapack>,
-    // use DSYEV of LAPACK
-    Test_diagonalize_hermitian<double	      , 6, hermitian_lapack>
-#endif
 > diagonalize_hermitian_tests;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE
@@ -386,16 +371,14 @@ typedef boost::mpl::list<
     Test_fs<double, complex<double>, 1>,
     Test_fs<double, complex<double>, 2>,
     Test_fs<double, complex<double>, 3>,
+    Test_fs<double, complex<double>, 4>,
+    Test_fs<double, complex<double>, 6>,
 
     Test_fs<long double, complex<long double>, 1>,
     Test_fs<long double, complex<long double>, 2>,
     Test_fs<long double, complex<long double>, 3>,
     Test_fs<long double, complex<long double>, 4>,
     Test_fs<long double, complex<long double>, 6>,
-
-    // use ZGESVD of LAPACK
-    Test_fs<double, complex<double>, 4>,
-    Test_fs<double, complex<double>, 6>,
 
     // use Eigen::SelfAdjointEigenSolver
     Test_fs<double, double, 6>,
