@@ -263,23 +263,19 @@ struct Test_fs {
 #ifdef TEST_LINALG2_PART4
 typedef boost::mpl::list<
     Test_fs<double, complex<double>, 1>,
-    Test_fs<double, complex<double>, 3>,
     Test_fs<double, complex<double>, 6>,
     Test_fs<double, complex<double>, 4, 6>,
     Test_fs<double, complex<double>, 6, 4>,
     Test_fs<double, double	   , 1>,
-    Test_fs<double, double	   , 3>,
     Test_fs<double, double	   , 6>,
     Test_fs<double, double	   , 4, 6>,
     Test_fs<double, double	   , 6, 4>,
 
     Test_fs<long double, complex<long double>, 1>,
-    Test_fs<long double, complex<long double>, 3>,
     Test_fs<long double, complex<long double>, 6>,
     Test_fs<long double, complex<long double>, 4, 6>,
     Test_fs<long double, complex<long double>, 6, 4>,
     Test_fs<long double, long double	     , 1>,
-    Test_fs<long double, long double	     , 3>,
     Test_fs<long double, long double	     , 6>,
     Test_fs<long double, long double	     , 4, 6>,
     Test_fs<long double, long double	     , 6, 4>
@@ -320,15 +316,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_fs_svd, T, fs_svd_tests)
 #ifdef TEST_LINALG2_PART5
 typedef boost::mpl::list<
     Test_fs<double, double, 1>,
-    Test_fs<double, double, 2>,
-    Test_fs<double, double, 3>,
-    Test_fs<double, double, 4>,
     Test_fs<double, double, 6>,
     Test_fs<double, double, 4, 6>,
     Test_fs<double, double, 6, 4>,
 
     Test_fs<long double, long double, 1>,
-    Test_fs<long double, long double, 3>,
     Test_fs<long double, long double, 6>,
     Test_fs<long double, long double, 4, 6>,
     Test_fs<long double, long double, 6, 4>
@@ -369,15 +361,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_casting_fs_svd, T, casting_fs_svd_tests)
 typedef boost::mpl::list<
     // use Eigen::JacobiSVD
     Test_fs<double, complex<double>, 1>,
-    Test_fs<double, complex<double>, 2>,
     Test_fs<double, complex<double>, 3>,
-    Test_fs<double, complex<double>, 4>,
     Test_fs<double, complex<double>, 6>,
 
     Test_fs<long double, complex<long double>, 1>,
-    Test_fs<long double, complex<long double>, 2>,
     Test_fs<long double, complex<long double>, 3>,
-    Test_fs<long double, complex<long double>, 4>,
     Test_fs<long double, complex<long double>, 6>,
 
     // use Eigen::SelfAdjointEigenSolver
