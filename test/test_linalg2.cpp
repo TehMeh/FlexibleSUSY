@@ -64,6 +64,7 @@ struct Test_svd {
     { svs_(m, s); }
 };
 
+#ifdef TEST_LINALG2_PART1
 typedef boost::mpl::list<
     // use Eigen::JacobiSVD
     Test_svd<complex<double>, 1, 1, svd, svd>,
@@ -118,6 +119,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_svd, T, svd_tests)
 	for (size_t j = 0; j < sigma.cols(); j++)
 	    BOOST_CHECK_SMALL(abs(sigma(i,j) - (i==j ? s(i) : 0)), 1e-13);
 }
+#endif // TEST_LINALG2_PART1
 
 template<class S_, int N_,
 	 void fxn_(const Matrix<S_, N_, N_>&,
@@ -137,6 +139,7 @@ struct Test_diagonalize_symmetric {
     { svs_(m, s); }
 };
 
+#ifdef TEST_LINALG2_PART2
 typedef boost::mpl::list<
     // use Eigen::JacobiSVD
     Test_diagonalize_symmetric
@@ -204,6 +207,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE
 	for (size_t j = 0; j < N; j++)
 	    BOOST_CHECK_SMALL(abs(diag(i,j) - (i==j ? s(i) : 0)), 1e-12);
 }
+#endif // TEST_LINALG2_PART2
 
 template<class S_, int N_,
 	 void fxn_(const Matrix<S_, N_, N_>&,
@@ -218,6 +222,7 @@ struct Test_diagonalize_hermitian {
     { fxn_(m, w, z); }
 };
 
+#ifdef TEST_LINALG2_PART3
 typedef boost::mpl::list<
     // use Eigen::SelfAdjointEigenSolver
     Test_diagonalize_hermitian<complex<double>, 6, hermitian_eigen>,
@@ -245,6 +250,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE
     for (size_t i = 0; i < N-1; i++)
 	BOOST_CHECK(w[i] <= w[i+1]);
 }
+#endif // TEST_LINALG2_PART3
 
 template<class R_, class S_, int M_, int N_ = M_>
 struct Test_fs {
@@ -254,6 +260,7 @@ struct Test_fs {
     enum { N = N_ };
 };
 
+#ifdef TEST_LINALG2_PART4
 typedef boost::mpl::list<
     Test_fs<double, complex<double>, 1>,
     Test_fs<double, complex<double>, 3>,
@@ -308,7 +315,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_fs_svd, T, fs_svd_tests)
 	for (size_t j = 0; j < sigma.cols(); j++)
 	    BOOST_CHECK_SMALL(abs(sigma(i,j) - (i==j ? s(i) : 0)), 50*eps);
 }
+#endif // TEST_LINALG2_PART4
 
+#ifdef TEST_LINALG2_PART5
 typedef boost::mpl::list<
     Test_fs<double, double, 1>,
     Test_fs<double, double, 2>,
@@ -354,7 +363,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_casting_fs_svd, T, casting_fs_svd_tests)
 	for (size_t j = 0; j < sigma.cols(); j++)
 	    BOOST_CHECK_SMALL(abs(sigma(i,j) - (i==j ? s(i) : 0)), 50*eps);
 }
+#endif // TEST_LINALG2_PART5
 
+#ifdef TEST_LINALG2_PART6
 typedef boost::mpl::list<
     // use Eigen::JacobiSVD
     Test_fs<double, complex<double>, 1>,
@@ -485,7 +496,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE
     m = u.transpose() * s.matrix().asDiagonal() * u;
     check_fs_diagonalize_symmetric<R, S, N>(m);
 }
+#endif // TEST_LINALG2_PART6
 
+#ifdef TEST_LINALG2_PART7
 using namespace boost::mpl::placeholders;
 
 typedef boost::mpl::fold<
@@ -531,7 +544,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE
 	for (size_t j = 0; j < N; j++)
 	    BOOST_CHECK_SMALL(abs(diag(i,j) - (i==j ? w(i) : 0)), 50000*eps);
 }
+#endif // TEST_LINALG2_PART7
 
+#ifdef TEST_LINALG2_PART8
 template<int N>
 double angle(const Matrix<double, 1, N>& u, const Matrix<double, 1, N>& v)
 {
@@ -702,3 +717,4 @@ BOOST_AUTO_TEST_CASE(test_fs_diagonalize_hermitian_errbd)
 	BOOST_CHECK_LE(z_error, z_errbd[i] * 10);
     }
 }
+#endif // TEST_LINALG2_PART8
