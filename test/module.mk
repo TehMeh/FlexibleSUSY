@@ -657,6 +657,9 @@ $(DIR)/test_linalg2_part%.o: $(DIR)/test_linalg2.cpp
 	@$(MSG)
 	$(Q)$(CXX) $(CPPFLAGS) -DTEST_LINALG2_PART$* $(CXXFLAGS) -c $< -o $@
 
+$(foreach i, 2 3 4 5 6 7 8, $(eval \
+$(DIR)/test_linalg2_part$(i).o: | $(DIR)/test_linalg2_part$(shell echo $$(($(i)-1))).o))
+
 TEST_DEP := \
 		$(TEST_OBJ:.o=.d)
 
