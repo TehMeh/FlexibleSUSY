@@ -5,7 +5,7 @@
 
 PROGRAM_NAME=FlexibleSUSY
 FLEXIBLESUSY_MAJOR=2
-FLEXIBLESUSY_MINOR=3
+FLEXIBLESUSY_MINOR=4
 FLEXIBLESUSY_PATCH=0
 FLEXIBLESUSY_EXTRA=""
 FLEXIBLESUSY_VERSION="${FLEXIBLESUSY_MAJOR}.${FLEXIBLESUSY_MINOR}.${FLEXIBLESUSY_PATCH}${FLEXIBLESUSY_EXTRA}"
@@ -877,6 +877,18 @@ is_empty_dir() {
 }
 
 #_____________________________________________________________________
+is_posix_platform() {
+    case "$operating_system" in
+        *BSD*)     return 0 ;;
+        Darwin)    return 0 ;;
+        DragonFly) return 0 ;;
+        GNU*)      return 0 ;;
+        Linux)     return 0 ;;
+    esac
+    return 1
+}
+
+#_____________________________________________________________________
 check_install() {
     if test -z "${INSTALL_DIR}"; then
         return 0
@@ -1308,6 +1320,18 @@ check_multiarch() {
 
 #_____________________________________________________________________
 check_boost() {
+    [ -z "$boost_inc_dir" ] && \
+    [ -z "$boost_lib_dir" ] && \
+    type pkg-config > /dev/null && \
+    [ -f boost.pc ] && \
+    {
+        message -n "Checking boost library using local boost.pc ... "
+        BOOSTFLAGS=$(PKG_CONFIG_PATH=. pkg-config boost --cflags)
+        BOOSTTESTLIBS=$(PKG_CONFIG_PATH=. pkg-config boost --libs)
+        message "ok"
+        return
+    }
+
     check_header "boost/version.hpp" "$boost_inc_dir" \
 	"$default_inc_paths"
     if test "x$found_hdr" = "x" ; then
@@ -1320,6 +1344,10 @@ check_boost() {
             BOOSTFLAGS="${BOOSTFLAGS} -I$found_dir"
         fi
     fi
+
+    check_boost_version
+    check_boost_test_incl
+    check_boost_test_libs
 }
 
 #_____________________________________________________________________
@@ -1460,22 +1488,20 @@ check_std_threads() {
 
 #_____________________________________________________________________
 check_thread_libs() {
-    # link libpthread only if $enable_threads = yes
-    # I'm assuming here, that no other library we link needs libpthread.
-    if [ "x$enable_threads" = "xyes" -o -n "$pthread_lib_dir" ] ; then
-        check_library "libpthread" "$pthread_lib_dir" "$default_lib_paths"
-        if [ -z "$found_lib" ]; then
-            message "Error: libpthread must be installed to enable multithreading!"
-            exit 1
-        fi
-        THREADLIBS=-l$(echo "$found_lib" | sed 's/^lib\(.*\)\..*$/\1/')
-        # need to link whole libpthread.a for static linking
-        if [ "x$enable_static" = xyes ] ; then
-            THREADLIBS="-Wl,--push-state,-z,muldefs,--whole-archive ${THREADLIBS} -Wl,--pop-state"
-        fi
-        if [ -n "$pthread_lib_dir" ]; then
-            THREADLIBS="-L$pthread_lib_dir $THREADLIBS"
-        fi
+    is_posix_platform || return
+
+    check_library "libpthread" "$pthread_lib_dir" "$default_lib_paths"
+    if [ -z "$found_lib" ]; then
+        message "Error: libpthread must be installed to enable multithreading!"
+        exit 1
+    fi
+    THREADLIBS=-l$(echo "$found_lib" | sed 's/^lib\(.*\)\..*$/\1/')
+    # need to link whole libpthread.a for static linking
+    if [ "x$enable_static" = xyes ] ; then
+        THREADLIBS="-Wl,--push-state,-z,muldefs,--whole-archive ${THREADLIBS} -Wl,--pop-state"
+    fi
+    if [ -n "$pthread_lib_dir" ]; then
+        THREADLIBS="-L$pthread_lib_dir $THREADLIBS"
     fi
 }
 
@@ -1760,6 +1786,22 @@ int main() {
 }
 
 #_____________________________________________________________________
+check_eigen() {
+    [ -z "$eigen_inc_dir" ] && \
+    type pkg-config > /dev/null && \
+    [ -f eigen.pc ] && \
+    {
+        message -n "Checking Eigen library using local eigen.pc ... "
+        EIGENFLAGS=$(PKG_CONFIG_PATH=. pkg-config eigen --cflags)
+        message "ok"
+        return
+    }
+
+    check_eigen_incl
+    check_eigen_version
+}
+
+#_____________________________________________________________________
 check_gsl_config() {
     checking_msg "GSL configuration $gsl_config"
     exists_in_path "$gsl_config"
@@ -1950,6 +1992,19 @@ check_himalaya_libs() {
 #_____________________________________________________________________
 check_himalaya() {
     if test "x$enable_himalaya" != "xno" ; then
+        [ -z "$himalaya_inc_dir" ] && \
+        [ -z "$himalaya_lib_dir" ] && \
+        type pkg-config > /dev/null && \
+        [ -f Himalaya.pc ] && \
+        {
+            message -n "Checking Himalaya using local Himalaya.pc ... "
+            HIMALAYAFLAGS=$(PKG_CONFIG_PATH=. pkg-config Himalaya --cflags)
+            HIMALAYALIBS=$(PKG_CONFIG_PATH=. pkg-config Himalaya --libs)
+            enable_himalaya=yes
+            message "ok"
+            return
+        }
+
         if check_himalaya_incl && check_himalaya_libs ; then
             enable_himalaya=yes
         else
@@ -1968,12 +2023,12 @@ check_required_libs() {
             local model_file="models/${model_name}/FlexibleSUSY.m"
 
             mma_symbol_is "${model_file}" "${MATH}" "UseSMYukawa2Loop" "True" && {
-                message "    TSIL is required to build $model_name"
+                message "   TSIL is required to build $model_name"
                 enable_tsil=yes
             }
 
             mma_symbol_is "${model_file}" "${MATH}" "UseHiggs3LoopMSSM" "True" && {
-                message "    Himalaya is required to build $model_name";
+                message "   Himalaya is required to build $model_name";
                 enable_himalaya=yes
             }
 
@@ -1989,7 +2044,7 @@ If[FreeQ[HighScaleInput, FSHimalayaMh23L] &&
 EOF
 
             [ "x$?" = "x0" ] && {
-                message "    Himalaya is required to build $model_name";
+                message "   Himalaya is required to build $model_name";
                 enable_himalaya=yes
             }
 
@@ -2049,6 +2104,27 @@ check_looptools_incl() {
         if [ -n "$looptools_inc_dir" ]; then
             LOOPTOOLSFLAGS="-I$looptools_inc_dir"
         fi
+    fi
+}
+
+#_____________________________________________________________________
+check_looptools() {
+    if [ "x$enable_looptools" = "xyes" ] ; then
+        [ -z "$looptools_inc_dir" ] && \
+        [ -z "$looptools_lib_dir" ] && \
+        type pkg-config > /dev/null && \
+        [ -f LoopTools.pc ] && \
+        {
+            message -n "Checking LoopTools using local LoopTools.pc ... "
+            LOOPTOOLSFLAGS=$(PKG_CONFIG_PATH=. pkg-config LoopTools --cflags)
+            LOOPTOOLSLIBS=$(PKG_CONFIG_PATH=. pkg-config LoopTools --libs)
+            enable_looptools=yes
+            message "ok"
+            return
+        }
+
+        check_looptools_incl
+        check_looptools_libs
     fi
 }
 
@@ -2206,6 +2282,19 @@ check_tsil_size() {
 
 #_____________________________________________________________________
 check_tsil() {
+    [ -z "$tsil_inc_dir" ] && \
+    [ -z "$tsil_lib_dir" ] && \
+    type pkg-config > /dev/null && \
+    [ -f TSIL.pc ] && \
+    {
+        message -n "Checking TSIL using local TSIL.pc ... "
+        TSILFLAGS=$(PKG_CONFIG_PATH=. pkg-config TSIL --cflags)
+        TSILLIBS=$(PKG_CONFIG_PATH=. pkg-config TSIL --libs)
+        enable_tsil=yes
+        message "ok"
+        return
+    }
+
     if test "x$enable_tsil" != "xno" ; then
         if check_tsil_incl && check_tsil_libs && check_tsil_size ; then
             enable_tsil=yes
@@ -2651,6 +2740,7 @@ get_model_specific_corrections() {
     mma_symbol_is "$model_file" "$math_cmd" "UseHiggs3LoopSM" "True"    && ho="${ho} SM"
     mma_symbol_is "$model_file" "$math_cmd" "UseHiggs4LoopSM" "True"    && ho="${ho} SM"
     mma_symbol_is "$model_file" "$math_cmd" "UseSMAlphaS3Loop" "True"   && ho="${ho} SM"
+    mma_symbol_is "$model_file" "$math_cmd" "UseSMAlphaS4Loop" "True"   && ho="${ho} SM"
     mma_symbol_is "$model_file" "$math_cmd" "FlexibleEFTHiggs" "True"   && ho="${ho} SM"
     mma_symbol_is "$model_file" "$math_cmd" "UseSMYukawa2Loop" "True"   && ho="${ho} SM_thresholds"
 
@@ -3194,11 +3284,7 @@ if test "x${enable_compile}" = "xyes"; then
     check_linking
     check_librarylink
     check_boost
-    check_boost_version
-    check_boost_test_incl
-    check_boost_test_libs
-    check_eigen_incl
-    check_eigen_version
+    check_eigen
     check_fortran_libs
     check_gsl_config
     check_himalaya
@@ -3206,8 +3292,7 @@ if test "x${enable_compile}" = "xyes"; then
         check_boost_thread_incl
         check_boost_thread_libs
     fi
-    check_looptools_incl
-    check_looptools_libs
+    check_looptools
     check_loop_functions
     check_odeint
     check_sqlite
