@@ -110,7 +110,7 @@ EDMCreateInterfaceFunctionForField[field_,gTaggedDiagrams_List] :=
 							CXXDiagrams`ColourFactorForIndexedDiagramFromGraph[indexedDiagram, graph]] <>
 						" * " <> 
 						CXXEvaluatorForFieldAndDiagramFromGraph[field, diagram, graph] <>
-						"::value(indices, context);"
+						"(indices, context);"
 					] & /@ diagrams, "\n"]
 				] & /@ gTaggedDiagrams, "\n"] <> "\n\n" <>
 

@@ -244,7 +244,7 @@ CalculateDeltaAlphaS[renormalizationScheme_] :=
            If[FlexibleSUSY`UseSMAlphaS3Loop === True, CalculateDeltaAlpha2LSM[], ""] <>
            If[FlexibleSUSY`UseSMAlphaS3Loop === True, CalculateDeltaAlpha3LSM[], ""] <>
            If[FlexibleSUSY`UseSMAlphaS4Loop === True, CalculateDeltaAlpha4LSM[], ""] <>
-           "return delta_alpha_s_1loop + delta_alpha_s_2loop + delta_alpha_s_3loop + delta_alpha_s_4loop;\n"
+           "return delta_alpha_s_1loop + delta_alpha_s_2loop + delta_alpha_s_3loop;\n"
           ];
 
 GetPrefactor[expr_Plus, _] := 1;

@@ -230,7 +230,7 @@ CreateFields[] :=
                 "static constexpr int numberOfFieldIndices = " <>
                    ToString @ NumberOfFieldIndices[#] <> ";\n" <>
                 "static constexpr double electric_charge = " <> (*static constexpr -> const; does not really do the job S.D. *)
-                   CConversion`RValueToCFormString[TreeMasses`GetElectricCharge[#]] <> ";\n" <>
+                   StringReplace[CConversion`RValueToCFormString[TreeMasses`GetElectricCharge[#]], a:DigitCharacter..~~"."~~b:DigitCharacter..~~"_p" -> a~~"."~~b] <> ";\n" <>
                 "using lorentz_conjugate = " <>
                    CXXNameOfField[LorentzConjugate[#]] <> ";\n"] <>
               "};" &) /@ fields, "\n\n"] <> "\n\n" <>
@@ -1096,11 +1096,11 @@ VertexFunctionBodyForFields[fields_List] :=
 
 			DeclareIndices[StripUnbrokenGaugeIndices /@ indexedFields, "indices"] <>
 			Parameters`CreateLocalConstRefs[{exprL, exprR}] <> "\n" <>
-			"const " <> GetComplexScalarCType[] <> " left = " <>
-				Parameters`ExpressionToString[exprL] <> ";\n\n" <>
-			"const " <> GetComplexScalarCType[] <> " right = " <>
-			Parameters`ExpressionToString[exprR] <> ";\n\n" <>
-			"return {left, right};",
+      "const " <> GetComplexScalarCType[] <> " left = " <>
+        Parameters`MarkerReplacerSUM[Parameters`ExpressionToString[exprL], CConversion`complexScalarCType]<> ";\n\n" <>
+      "const " <> GetComplexScalarCType[] <> " right = " <>
+        Parameters`MarkerReplacerSUM[Parameters`ExpressionToString[exprR], CConversion`complexScalarCType] <> ";\n\n" <>
+      "return {left, right};",
 
 			_MomentumVertex,
 			incomingGhost = gaugeStructure[[3,1]];

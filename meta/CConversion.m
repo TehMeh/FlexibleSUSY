@@ -716,7 +716,7 @@ Protect[Complex];
 
 Unprotect[Power];
 Format[Power[E,z_],CForm] :=
-    Format["Exp(" <> ToString[CForm[z]] <> ")", OutputForm];
+    Format["exp(" <> ToString[CForm[z]] <> ")", OutputForm];
 Format[Power[b_,2],CForm] :=
     Format["Sqr(" <> ToString[CForm[b]] <> ")", OutputForm];
 Format[Power[b_,0.5 | 1/2],CForm] :=
