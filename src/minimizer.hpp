@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef MINIMIZER_H
 #define MINIMIZER_H
 

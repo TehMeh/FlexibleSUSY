@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 /**
  * @file cxx_qft/@ModelName@_context_base.hpp
  *
@@ -40,7 +42,7 @@ namespace @ModelName@_cxx_diagrams {
       @ModelName@_mass_eigenstates model; ///< The model object.
 
       template <class Field>
-      double mass(const typename field_indices<Field>::type& indices) const
+      precise_real_type mass(const typename field_indices<Field>::type& indices) const
       {
          using CleanField =
             typename fields::remove_lorentz_conjugation<Field>::type;
@@ -58,7 +60,7 @@ namespace @ModelName@_cxx_diagrams {
 
    private:
       template <class Field>
-      double
+      precise_real_type
       mass_impl(const typename field_indices<Field>::type& indices) const;
    };
 

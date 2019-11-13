@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef SM_TWOLOOPHIGGS_H
 #define SM_TWOLOOPHIGGS_H
 
@@ -23,73 +25,73 @@ namespace flexiblesusy {
 namespace sm_twoloophiggs {
 
 /// SM Higgs 1-loop contribution
-double delta_mh_1loop_sm(
-   double p, double scale, double mt, double yt,
-   double v, double gY, double g2, double lambda);
+precise_real_type delta_mh_1loop_sm(
+   precise_real_type p, precise_real_type scale, precise_real_type mt, precise_real_type yt,
+   precise_real_type v, precise_real_type gY, precise_real_type g2, precise_real_type lambda);
 
 /// SM Higgs 1-loop contribution, only O(alpha_t)
-double delta_mh_1loop_at_sm(
-   double p, double scale, double mt, double yt);
+precise_real_type delta_mh_1loop_at_sm(
+   precise_real_type p, precise_real_type scale, precise_real_type mt, precise_real_type yt);
 
 /// SM Higgs self-energy 2-loop, only O(alpha_t alpha_s)
-double self_energy_higgs_2loop_at_as_sm(
-   double p2, double scale, double mt, double yt, double g3);
+precise_real_type self_energy_higgs_2loop_at_as_sm(
+   precise_real_type p2, precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type g3);
 
 /// SM Higgs self-energy 2-loop, only O(alpha_b alpha_s)
-double self_energy_higgs_2loop_ab_as_sm(
-   double p2, double scale, double mb, double yb, double g3);
+precise_real_type self_energy_higgs_2loop_ab_as_sm(
+   precise_real_type p2, precise_real_type scale, precise_real_type mb, precise_real_type yb, precise_real_type g3);
 
 /// SM Higgs self-energy 2-loop, only O((alpha_b + alpha_t)^2)
-double self_energy_higgs_2loop_at_at_sm(
-   double p2, double scale, double mt, double yt, double mb);
+precise_real_type self_energy_higgs_2loop_at_at_sm(
+   precise_real_type p2, precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type mb);
 
 /// SM Higgs self-energy 2-loop, only O(alpha_tau^2)
-double self_energy_higgs_2loop_atau_atau_sm(
-   double p2, double scale, double mtau, double ytau);
+precise_real_type self_energy_higgs_2loop_atau_atau_sm(
+   precise_real_type p2, precise_real_type scale, precise_real_type mtau, precise_real_type ytau);
 
 /// SM Higgs tadpole 1-loop, only O(alpha_t)
-double tadpole_higgs_1loop_at_sm(
-   double scale, double mt, double yt);
+precise_real_type tadpole_higgs_1loop_at_sm(
+   precise_real_type scale, precise_real_type mt, precise_real_type yt);
 
 /// SM Higgs tadpole 2-loop, only O(alpha_t alpha_s)
-double tadpole_higgs_2loop_at_as_sm(
-   double scale, double mt, double yt, double g3);
+precise_real_type tadpole_higgs_2loop_at_as_sm(
+   precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type g3);
 
 /// SM Higgs tadpole 2-loop, only O(alpha_b alpha_s)
-double tadpole_higgs_2loop_ab_as_sm(
-   double scale, double mb, double yb, double g3);
+precise_real_type tadpole_higgs_2loop_ab_as_sm(
+   precise_real_type scale, precise_real_type mb, precise_real_type yb, precise_real_type g3);
 
 /// SM Higgs tadpole 2-loop, only O((alpha_b + alpha_t)^2)
-double tadpole_higgs_2loop_at_at_sm(
-   double scale, double mt, double yt, double mb);
+precise_real_type tadpole_higgs_2loop_at_at_sm(
+   precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type mb);
 
 /// SM Higgs tadpole 2-loop, only O(alpha_tau^2)
-double tadpole_higgs_2loop_atau_atau_sm(
-   double scale, double mtau, double ytau);
+precise_real_type tadpole_higgs_2loop_atau_atau_sm(
+   precise_real_type scale, precise_real_type mtau, precise_real_type ytau);
 
 /// SM Higgs 2-loop contribution, only O(alpha_t alpha_s)
-double delta_mh_2loop_at_as_sm(
-   double p2, double scale, double mt, double yt, double g3);
+precise_real_type delta_mh_2loop_at_as_sm(
+   precise_real_type p2, precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type g3);
 
 /// SM Higgs 2-loop contribution, only O(alpha_t alpha_s)
-double delta_mh_2loop_ab_as_sm(
-   double p2, double scale, double mb, double yb, double g3);
+precise_real_type delta_mh_2loop_ab_as_sm(
+   precise_real_type p2, precise_real_type scale, precise_real_type mb, precise_real_type yb, precise_real_type g3);
 
 /// SM Higgs 2-loop contribution, only O((alpha_b + alpha_t)^2)
-double delta_mh_2loop_at_at_sm(
-   double p2, double scale, double mt, double yt, double mb);
+precise_real_type delta_mh_2loop_at_at_sm(
+   precise_real_type p2, precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type mb);
 
 /// SM Higgs 2-loop contribution, only O(alpha_tau^2)
-double delta_mh_2loop_atau_atau_sm(
-   double p2, double scale, double mtau, double ytau);
+precise_real_type delta_mh_2loop_atau_atau_sm(
+   precise_real_type p2, precise_real_type scale, precise_real_type mtau, precise_real_type ytau);
 
 /// SM Higgs 1-loop contribution from SUSYHD 1.0.2
-double delta_mh_1loop_sm_SUSYHD(
-   double vev, double Mt, double mh, double MW, double MZ, double Q);
+precise_real_type delta_mh_1loop_sm_SUSYHD(
+   precise_real_type vev, precise_real_type Mt, precise_real_type mh, precise_real_type MW, precise_real_type MZ, precise_real_type Q);
 
 /// SM Higgs 2-loop contribution from SUSYHD 1.0.2
-double delta_mh_2loop_sm_SUSYHD(
-   double vev, double Mt, double Mh, double g3);
+precise_real_type delta_mh_2loop_sm_SUSYHD(
+   precise_real_type vev, precise_real_type Mt, precise_real_type Mh, precise_real_type g3);
 
 } // namespace sm_twoloophiggs
 } // namespace flexiblesusy

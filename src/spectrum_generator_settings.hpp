@@ -16,12 +16,14 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef SPECTRUM_GENERATOR_SETTINGS_H
 #define SPECTRUM_GENERATOR_SETTINGS_H
 
 #include "threshold_corrections.hpp"
 #include "loop_corrections.hpp"
-#include <array>
+#include <boost/array.hpp>
 #include <iosfwd>
 #include <string>
 #include <Eigen/Core>
@@ -70,17 +72,18 @@ public:
       higgs_3loop_correction_at2_as, ///< [28] Higgs 3-loop correction O(alpha_t^2 alpha_s)
       higgs_3loop_correction_at3,    ///< [29] Higgs 3-loop correction O(alpha_t^3)
       higgs_4loop_correction_at_as3, ///< [30] Higgs 4-loop correction O(alpha_t alpha_s^3)
+      NumberOfDigits,         ///< [31] Number of Digits in the mantisse / precision S.D.
       NUMBER_OF_OPTIONS      ///< number of possible options
    };
 
-   using Settings_t = Eigen::Array<double,NUMBER_OF_OPTIONS,1>;
+   using Settings_t = Eigen::Array<precise_real_type,NUMBER_OF_OPTIONS,1>;
 
    Spectrum_generator_settings();
 
-   double get(Settings) const; ///< get value of spectrum generator setting
+   precise_real_type get(Settings) const; ///< get value of spectrum generator setting
    Settings_t get() const;     ///< get all spectrum generator settings
    std::string get_description(Settings) const; ///< get description of spectrum generator setting
-   void set(Settings, double); ///< set value of spectrum generator setting
+   void set(Settings, precise_real_type); ///< set value of spectrum generator setting
    void set(const Settings_t&);///< set all spectrum generator settings
    void reset();               ///< resets all settings to their defaults
 
@@ -90,7 +93,7 @@ public:
    void set_threshold_corrections(const Threshold_corrections&);
 
 private:
-   std::array<double, NUMBER_OF_OPTIONS> values; ///< spectrum generator settings
+   boost::array<precise_real_type, NUMBER_OF_OPTIONS> values; ///< spectrum generator settings
 };
 
 std::ostream& operator<<(std::ostream&, const Spectrum_generator_settings&);

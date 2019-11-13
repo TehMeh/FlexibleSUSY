@@ -234,16 +234,16 @@ void @ModelName@_slha_io::set_mixing_matrices(const @ModelName@_physical& physic
 }
 
 void @ModelName@_slha_io::set_ckm(
-   const Eigen::Matrix<std::complex<double>,3,3>& ckm_matrix,
-   double scale)
+   const Eigen::Matrix<precise_complex_type,3,3>& ckm_matrix,
+   precise_real_type scale)
 {
    slha_io.set_block("VCKM"  , ckm_matrix.real(), "Re(CKM)", scale);
    slha_io.set_block("IMVCKM", ckm_matrix.imag(), "Im(CKM)", scale);
 }
 
 void @ModelName@_slha_io::set_pmns(
-   const Eigen::Matrix<std::complex<double>,3,3>& pmns_matrix,
-   double scale)
+   const Eigen::Matrix<precise_complex_type,3,3>& pmns_matrix,
+   precise_real_type scale)
 {
    slha_io.set_block("VPMNS"  , pmns_matrix.real(), "Re(PMNS)", scale);
    slha_io.set_block("IMVPMNS", pmns_matrix.imag(), "Im(PMNS)", scale);
@@ -344,7 +344,7 @@ void @ModelName@_slha_io::write_to(const std::string& output) const
 /**
  * Read (DR-bar) model parameter output scale from MODSEL entry 12
  */
-double @ModelName@_slha_io::get_parameter_output_scale() const
+precise_real_type @ModelName@_slha_io::get_parameter_output_scale() const
 {
    return slha_io.get_modsel().parameter_output_scale;
 }
@@ -389,19 +389,19 @@ void @ModelName@_slha_io::read_from_stream(std::istream& istr)
  */
 void @ModelName@_slha_io::fill(@ModelName@_input_parameters& input) const
 {
-   SLHA_io::Tuple_processor minpar_processor = [&input, this] (int key, double value) {
+   SLHA_io::Tuple_processor minpar_processor = [&input, this] (int key, precise_real_type value) {
       return fill_minpar_tuple(input, key, value);
    };
 
-   SLHA_io::Tuple_processor extpar_processor = [&input, this] (int key, double value) {
+   SLHA_io::Tuple_processor extpar_processor = [&input, this] (int key, precise_real_type value) {
       return fill_extpar_tuple(input, key, value);
    };
 
-   SLHA_io::Tuple_processor imminpar_processor = [&input, this] (int key, double value) {
+   SLHA_io::Tuple_processor imminpar_processor = [&input, this] (int key, precise_real_type value) {
       return fill_imminpar_tuple(input, key, value);
    };
 
-   SLHA_io::Tuple_processor imextpar_processor = [&input, this] (int key, double value) {
+   SLHA_io::Tuple_processor imextpar_processor = [&input, this] (int key, precise_real_type value) {
       return fill_imextpar_tuple(input, key, value);
    };
 
@@ -464,25 +464,25 @@ void @ModelName@_slha_io::fill(Spectrum_generator_settings& settings) const
 }
 
 void @ModelName@_slha_io::fill_minpar_tuple(@ModelName@_input_parameters& input,
-                                                int key, double value)
+                                                int key, precise_real_type value)
 {
 @fillInputParametersFromMINPAR@
 }
 
 void @ModelName@_slha_io::fill_extpar_tuple(@ModelName@_input_parameters& input,
-                                                int key, double value)
+                                                int key, precise_real_type value)
 {
 @fillInputParametersFromEXTPAR@
 }
 
 void @ModelName@_slha_io::fill_imminpar_tuple(@ModelName@_input_parameters& input,
-                                                int key, double value)
+                                                int key, precise_real_type value)
 {
 @fillInputParametersFromIMMINPAR@
 }
 
 void @ModelName@_slha_io::fill_imextpar_tuple(@ModelName@_input_parameters& input,
-                                                int key, double value)
+                                                int key, precise_real_type value)
 {
 @fillInputParametersFromIMEXTPAR@
 }
@@ -502,15 +502,15 @@ void @ModelName@_slha_io::fill_physical(@ModelName@_physical& physical) const
  *
  * @return common renormalization scale
  */
-double @ModelName@_slha_io::read_scale() const
+precise_real_type @ModelName@_slha_io::read_scale() const
 {
    static const std::array<std::string, @numberOfDRbarBlocks@> drbar_blocks =
       @drBarBlockNames@;
 
-   double scale = 0.;
+   precise_real_type scale = 0.;
 
    for (const auto& block: drbar_blocks) {
-      const double block_scale = slha_io.read_scale(block);
+      const precise_real_type block_scale = slha_io.read_scale(block);
       if (!is_zero(block_scale)) {
          if (!is_zero(scale) && !is_equal(scale, block_scale))
             WARNING("DR-bar parameters defined at different scales");

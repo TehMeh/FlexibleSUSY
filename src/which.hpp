@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef WHICH_H
 #define WHICH_H
 

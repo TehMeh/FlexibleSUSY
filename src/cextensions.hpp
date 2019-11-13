@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef cextensions_hpp
 #define cextensions_hpp
 

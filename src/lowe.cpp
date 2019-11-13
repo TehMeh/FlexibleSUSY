@@ -36,11 +36,12 @@ namespace softsusy {
 
 namespace {
 
-constexpr double sqr(double a) noexcept { return a*a; }
+//constexpr //S.D. no multiprecision support for constexpr here?
+precise_real_type sqr(precise_real_type a) noexcept { return a*a; }
 
 // Given a value of mt, and alphas(MZ), find alphas(mt) to 1 loops in qcd:
 // it's a very good approximation at these scales, better than 10^-3 accuracy
-double getAsmt(double mtop, double alphasMz, double mz) {
+precise_real_type getAsmt(precise_real_type mtop, precise_real_type alphasMz, precise_real_type mz) {
   using std::log;
   return alphasMz /
       (1.0 - 23.0 * alphasMz / (6.0 * M_PI) * log(mz / mtop));
@@ -48,12 +49,12 @@ double getAsmt(double mtop, double alphasMz, double mz) {
 
 // Input pole mass of top and alphaS(mt), outputs running mass mt(mt)
 // including one-loop standard model correction only
-double getRunMt(double poleMt, double asmt) {
+precise_real_type getRunMt(precise_real_type poleMt, precise_real_type asmt) {
   return poleMt / (1.0 + (4.0 / (3.0 * M_PI)) * asmt);
 }
 
 // Given pole mass and alphaS(MZ), returns running top mass -- one loop qcd
-double getRunMtFromMz(double poleMt, double asMZ, double mz) {
+precise_real_type getRunMtFromMz(precise_real_type poleMt, precise_real_type asMZ, precise_real_type mz) {
   return getRunMt(poleMt, getAsmt(poleMt, asMZ, mz));
 }
 
@@ -108,9 +109,9 @@ QedQcd::QedQcd()
   set_thresholds(1);
 }
 
-Eigen::ArrayXd QedQcd::get() const
+Eigen::ArrayXdp QedQcd::get() const
 {
-   Eigen::ArrayXd y(a.size() + mf.size());
+   Eigen::ArrayXdp y(a.size() + mf.size());
    y(0) = a(0);
    y(1) = a(1);
    for (int i = 0; i < mf.size(); i++)
@@ -118,7 +119,7 @@ Eigen::ArrayXd QedQcd::get() const
    return y;
 }
 
-void QedQcd::set(const Eigen::ArrayXd& y)
+void QedQcd::set(const Eigen::ArrayXdp& y)
 {
    a(0) = y(0);
    a(1) = y(1);
@@ -126,9 +127,9 @@ void QedQcd::set(const Eigen::ArrayXd& y)
       mf(i) = y(i + 2);
 }
 
-Eigen::ArrayXd QedQcd::beta() const
+Eigen::ArrayXdp QedQcd::beta() const
 {
-   Eigen::ArrayXd dydx(a.size() + mf.size());
+   Eigen::ArrayXdp dydx(a.size() + mf.size());
    dydx(0) = qedBeta();
    dydx(1) = qcdBeta();
    const auto y = massBeta();
@@ -137,7 +138,7 @@ Eigen::ArrayXd QedQcd::beta() const
    return dydx;
 }
 
-void QedQcd::runto_safe(double scale, double eps)
+void QedQcd::runto_safe(precise_real_type scale, precise_real_type eps)
 {
    try {
       run_to(scale, eps);
@@ -150,7 +151,7 @@ void QedQcd::runto_safe(double scale, double eps)
 }
 
 //  Active flavours at energy mu
-int QedQcd::flavours(double mu) const {
+int QedQcd::flavours(precise_real_type mu) const {
   int k = 0;
   // if (mu > mf(mTop - 1)) k++;
   if (mu > mf(mCharm - 1)) k++;
@@ -229,8 +230,8 @@ std::ostream& operator<<(std::ostream &left, const QedQcd &m) {
 }
 
 /// returns QED beta function in SM(5) (without the top quark)
-double QedQcd::qedBeta() const {
-  double x;
+precise_real_type QedQcd::qedBeta() const {
+  precise_real_type x;
   x = 24.0 / 9.0;
   if (get_scale() > mf(mCharm - 1)) x += 8.0 / 9.0;
   // if (get_scale() > mf(mTop - 1)) x += 8.0 / 9.0;
@@ -244,23 +245,23 @@ double QedQcd::qedBeta() const {
 /// Returns QCD beta function to 3 loops in QCD for the SM(5). Note
 /// that if quark masses are running, the number of active quarks will
 /// be taken into account.
-double QedQcd::qcdBeta() const {
-  static const double INVPI = 1.0 / M_PI;
+precise_real_type QedQcd::qcdBeta() const {
+  static const precise_real_type INVPI = 1.0 / M_PI;
   const int quarkFlavours = flavours(get_scale());
-  double qb0, qb1, qb2;
+  precise_real_type qb0, qb1, qb2;
   qb0 = (11.0e0 - (2.0e0 / 3.0e0 * quarkFlavours)) / 4.0;
   qb1 = (102.0e0 - (38.0e0 * quarkFlavours) / 3.0e0) / 16.0;
   qb2 = (2.857e3 * 0.5 - (5.033e3 * quarkFlavours) / 18.0  +
          (3.25e2 * sqr(quarkFlavours) ) / 5.4e1) / 64;
 
-  double qa0 = 0., qa1 = 0., qa2 = 0.;
+  precise_real_type qa0 = 0., qa1 = 0., qa2 = 0.;
 
   if (get_loops() > 0) qa0 = qb0 * INVPI;
   if (get_loops() > 1) qa1 = qb1 * sqr(INVPI);
   if (get_loops() > 2) qa2 = qb2 * sqr(INVPI) * INVPI;
 
   // add contributions of the one, two and three loop constributions resp.
-  double beta;
+  precise_real_type beta;
   beta = -2.0 * sqr(displayAlpha(ALPHAS)) *
     (qa0 + qa1 * displayAlpha(ALPHAS) + qa2 *
      sqr(displayAlpha(ALPHAS)));
@@ -268,11 +269,11 @@ double QedQcd::qcdBeta() const {
 }
 
 /// returns fermion mass beta functions
-Eigen::Array<double,9,1> QedQcd::massBeta() const {
-  static const double INVPI = 1.0 / M_PI, ZETA3 = 1.202056903159594;
+Eigen::Array<precise_real_type,9,1> QedQcd::massBeta() const {
+  static const precise_real_type INVPI = 1.0 / M_PI, ZETA3 = 1.202056903159594;
 
   // qcd bits: 1,2,3 loop resp.
-  double qg1 = 0., qg2 = 0., qg3 = 0.;
+  precise_real_type qg1 = 0., qg2 = 0., qg3 = 0.;
   const int quarkFlavours = flavours(get_scale());
   if (get_loops() > 0) qg1 = INVPI;
   if (get_loops() > 1)
@@ -283,11 +284,11 @@ Eigen::Array<double,9,1> QedQcd::massBeta() const {
            140.0e0 * quarkFlavours * quarkFlavours / 81.0e0) * sqr(INVPI) *
       INVPI / 64.0;
 
-  const double qcd = -2.0 * a(ALPHAS - 1) * (
+  const precise_real_type qcd = -2.0 * a(ALPHAS - 1) * (
      qg1  + qg2 * a(ALPHAS - 1) + qg3 * sqr(a(ALPHAS - 1)));
-  const double qed = -a(ALPHA - 1) * INVPI / 2;
+  const precise_real_type qed = -a(ALPHA - 1) * INVPI / 2;
 
-  Eigen::Array<double,9,1> x(Eigen::Array<double,9,1>::Zero());
+  Eigen::Array<precise_real_type,9,1> x(Eigen::Array<precise_real_type,9,1>::Zero());
 
   for (int i = 0; i < 3; i++)   // up quarks
     x(i) = (qcd + 4.0 * qed / 3.0) * mf(i);
@@ -310,7 +311,7 @@ Eigen::Array<double,9,1> QedQcd::massBeta() const {
 }
 
 /// Supposed to be done at mb(mb) -- MSbar, calculates pole mass
-double QedQcd::extractPoleMb(double alphasMb)
+precise_real_type QedQcd::extractPoleMb(precise_real_type alphasMb)
 {
   if (get_scale() != displayMass(mBottom)) {
     throw flexiblesusy::SetupError(
@@ -319,7 +320,7 @@ double QedQcd::extractPoleMb(double alphasMb)
   }
 
   // Following is the MSbar correction from QCD, hep-ph/9912391
-  double delta = 0.0;
+  precise_real_type delta = 0.0;
   if (get_loops() > 0) delta = delta + 4.0 / 3.0 * alphasMb / M_PI;
   if (get_loops() > 1) delta = delta + sqr(alphasMb / M_PI) *
     (9.2778 + (displayMass(mUp) + displayMass(mDown) + displayMass(mCharm) +
@@ -327,7 +328,7 @@ double QedQcd::extractPoleMb(double alphasMb)
   if (get_loops() > 2)
     delta = delta + 94.4182 * alphasMb / M_PI * sqr(alphasMb / M_PI);
 
-  const double mbPole = displayMass(mBottom) * (1.0 + delta);
+  const precise_real_type mbPole = displayMass(mBottom) * (1.0 + delta);
 
   return mbPole;
 }
@@ -347,12 +348,13 @@ void QedQcd::toMz()
  * @param precision_goal precision goal
  * @param max_iterations maximum number of iterations
  */
-void QedQcd::to(double scale, double precision_goal, int max_iterations) {
+void QedQcd::to(precise_real_type scale, precise_real_type precision_goal, int max_iterations) {
    int it = 0;
    bool converged = false;
-   auto qedqcd_old(get()), qedqcd_new(get());
-   const double running_precision = 0.1 * precision_goal;
 
+   auto qedqcd_old(get()), qedqcd_new(get());
+   const precise_real_type running_precision = precise_real_type(0.1) * precision_goal;
+   
    while (!converged && it < max_iterations) {
       // set alpha_i(MZ)
       runto_safe(displayPoleMZ(), running_precision);
@@ -396,12 +398,12 @@ void QedQcd::to(double scale, double precision_goal, int max_iterations) {
    setAlpha(ALPHAS, input(alpha_s_MSbar_at_MZ));
 
    runto_safe(scale, precision_goal);
-
    if (!converged && max_iterations > 0) {
+
       std::string msg =
          "Iteration to determine SM(5) parameters did not"
          " converge after " + std::to_string(max_iterations) +
-         " iterations (precision goal: " + std::to_string(precision_goal)
+         " iterations (precision goal: " + std::to_string((double)(precision_goal))
          + ").";
       throw flexiblesusy::NoConvergenceError(max_iterations, msg);
    }
@@ -417,17 +419,17 @@ void QedQcd::to(double scale, double precision_goal, int max_iterations) {
  *
  * @return {alpha_1, alpha_2, alpha_3}
  */
-Eigen::Array<double,3,1> QedQcd::guess_alpha_SM5(double scale) const
+Eigen::Array<precise_real_type,3,1> QedQcd::guess_alpha_SM5(precise_real_type scale) const
 {
   auto oneset = *this;
   oneset.runto_safe(scale);
 
-  const double aem = oneset.displayAlpha(ALPHA);
-  const double MW = oneset.displayPoleMW();
-  const double MZ = oneset.displayPoleMZ();
-  const double sin2th = 1. - sqr(MW / MZ);
+  const precise_real_type aem = oneset.displayAlpha(ALPHA);
+  const precise_real_type MW = oneset.displayPoleMW();
+  const precise_real_type MZ = oneset.displayPoleMZ();
+  const precise_real_type sin2th = 1. - sqr(MW / MZ);
 
-  Eigen::Array<double,3,1> alpha(Eigen::Array<double,3,1>::Zero());
+  Eigen::Array<precise_real_type,3,1> alpha(Eigen::Array<precise_real_type,3,1>::Zero());
 
   alpha(0) = 5.0 * aem / (3.0 * (1.0 - sin2th));
   alpha(1) = aem / sin2th;
@@ -443,32 +445,32 @@ std::array<std::string, NUMBER_OF_LOW_ENERGY_INPUT_PARAMETERS> QedQcd::display_i
 
 bool operator ==(const QedQcd& a, const QedQcd& b)
 {
-   const double eps = 1e-10;
+   const precise_real_type eps = 1e-10;
 
    return
-      std::fabs(a.get_scale() - b.get_scale()) < eps &&
-      std::fabs(a.get_loops() - b.get_loops()) < eps &&
-      std::fabs(a.get_thresholds() - b.get_thresholds()) < eps &&
-      std::fabs(a.displayAlpha(ALPHA) - b.displayAlpha(ALPHA)) < eps &&
-      std::fabs(a.displayAlpha(ALPHAS) - b.displayAlpha(ALPHAS)) < eps &&
-      std::fabs(a.displayMass(mUp) - b.displayMass(mUp)) < eps &&
-      std::fabs(a.displayMass(mCharm) - b.displayMass(mCharm)) < eps &&
-      std::fabs(a.displayMass(mTop) - b.displayMass(mTop)) < eps &&
-      std::fabs(a.displayMass(mDown) - b.displayMass(mDown)) < eps &&
-      std::fabs(a.displayMass(mStrange) - b.displayMass(mStrange)) < eps &&
-      std::fabs(a.displayMass(mBottom) - b.displayMass(mBottom)) < eps &&
-      std::fabs(a.displayMass(mElectron) - b.displayMass(mElectron)) < eps &&
-      std::fabs(a.displayMass(mMuon) - b.displayMass(mMuon)) < eps &&
-      std::fabs(a.displayMass(mTau) - b.displayMass(mTau)) < eps &&
-      std::fabs(a.displayNeutrinoPoleMass(1) - b.displayNeutrinoPoleMass(1)) < eps &&
-      std::fabs(a.displayNeutrinoPoleMass(2) - b.displayNeutrinoPoleMass(2)) < eps &&
-      std::fabs(a.displayNeutrinoPoleMass(3) - b.displayNeutrinoPoleMass(3)) < eps &&
-      std::fabs(a.displayPoleMt() - b.displayPoleMt()) < eps &&
-      std::fabs(a.displayPoleMb() - b.displayPoleMb()) < eps &&
-      std::fabs(a.displayPoleMtau() - b.displayPoleMtau()) < eps &&
-      std::fabs(a.displayPoleMW() - b.displayPoleMW()) < eps &&
-      std::fabs(a.displayPoleMZ() - b.displayPoleMZ()) < eps &&
-      std::fabs(a.displayFermiConstant() - b.displayFermiConstant()) < eps;
+      fabs(a.get_scale() - b.get_scale()) < eps &&
+      fabs(a.get_loops() - b.get_loops()) < eps &&
+      fabs(a.get_thresholds() - b.get_thresholds()) < eps &&
+      fabs(a.displayAlpha(ALPHA) - b.displayAlpha(ALPHA)) < eps &&
+      fabs(a.displayAlpha(ALPHAS) - b.displayAlpha(ALPHAS)) < eps &&
+      fabs(a.displayMass(mUp) - b.displayMass(mUp)) < eps &&
+      fabs(a.displayMass(mCharm) - b.displayMass(mCharm)) < eps &&
+      fabs(a.displayMass(mTop) - b.displayMass(mTop)) < eps &&
+      fabs(a.displayMass(mDown) - b.displayMass(mDown)) < eps &&
+      fabs(a.displayMass(mStrange) - b.displayMass(mStrange)) < eps &&
+      fabs(a.displayMass(mBottom) - b.displayMass(mBottom)) < eps &&
+      fabs(a.displayMass(mElectron) - b.displayMass(mElectron)) < eps &&
+      fabs(a.displayMass(mMuon) - b.displayMass(mMuon)) < eps &&
+      fabs(a.displayMass(mTau) - b.displayMass(mTau)) < eps &&
+      fabs(a.displayNeutrinoPoleMass(1) - b.displayNeutrinoPoleMass(1)) < eps &&
+      fabs(a.displayNeutrinoPoleMass(2) - b.displayNeutrinoPoleMass(2)) < eps &&
+      fabs(a.displayNeutrinoPoleMass(3) - b.displayNeutrinoPoleMass(3)) < eps &&
+      fabs(a.displayPoleMt() - b.displayPoleMt()) < eps &&
+      fabs(a.displayPoleMb() - b.displayPoleMb()) < eps &&
+      fabs(a.displayPoleMtau() - b.displayPoleMtau()) < eps &&
+      fabs(a.displayPoleMW() - b.displayPoleMW()) < eps &&
+      fabs(a.displayPoleMZ() - b.displayPoleMZ()) < eps &&
+      fabs(a.displayFermiConstant() - b.displayFermiConstant()) < eps;
 }
 
 } // namespace softsusy

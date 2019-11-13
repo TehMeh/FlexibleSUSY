@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef SINGLE_SCALE_MATCHING_H
 #define SINGLE_SCALE_MATCHING_H
 
@@ -27,7 +29,7 @@ class Single_scale_matching {
 public:
    virtual ~Single_scale_matching() = default;
    virtual void match() = 0;
-   virtual double get_scale() const = 0;
+   virtual precise_real_type get_scale() const = 0;
    virtual void set_models(Model*, Model*) = 0;
 };
 

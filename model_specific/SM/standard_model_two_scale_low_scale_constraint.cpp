@@ -52,12 +52,12 @@ void Standard_model_low_scale_constraint<Two_scale>::apply()
    qedqcd.run_to(scale, 1.0e-5);
    model->calculate_DRbar_masses();
 
-   const double alpha_em = qedqcd.displayAlpha(softsusy::ALPHA);
-   const double alpha_s  = qedqcd.displayAlpha(softsusy::ALPHAS);
-   const double mz_pole  = qedqcd.displayPoleMZ();
+   const precise_real_type alpha_em = qedqcd.displayAlpha(softsusy::ALPHA);
+   const precise_real_type alpha_s  = qedqcd.displayAlpha(softsusy::ALPHAS);
+   const precise_real_type mz_pole  = qedqcd.displayPoleMZ();
 
-   double delta_alpha_em = 0.;
-   double delta_alpha_s  = 0.;
+   precise_real_type delta_alpha_em = 0.;
+   precise_real_type delta_alpha_s  = 0.;
 
    if (model->get_thresholds() && model->get_threshold_corrections().alpha_em > 0)
       delta_alpha_em = model->calculate_delta_alpha_em(alpha_em);
@@ -65,17 +65,17 @@ void Standard_model_low_scale_constraint<Two_scale>::apply()
    if (model->get_thresholds() && model->get_threshold_corrections().alpha_s > 0)
       delta_alpha_s  = model->calculate_delta_alpha_s(alpha_s);
 
-   const double alpha_em_drbar = alpha_em / (1.0 - delta_alpha_em);
-   const double alpha_s_drbar  = alpha_s  / (1.0 - delta_alpha_s);
-   const double e_drbar        = Sqrt(4.0 * Pi * alpha_em_drbar);
-   const double g1 = model->get_g1();
-   const double g2 = model->get_g2();
-   const double mZ = model->get_thresholds() && model->get_threshold_corrections().mz > 0 ?
+   const precise_real_type alpha_em_drbar = alpha_em / (1.0 - delta_alpha_em);
+   const precise_real_type alpha_s_drbar  = alpha_s  / (1.0 - delta_alpha_s);
+   const precise_real_type e_drbar        = Sqrt(4.0 * Pi * alpha_em_drbar);
+   const precise_real_type g1 = model->get_g1();
+   const precise_real_type g2 = model->get_g2();
+   const precise_real_type mZ = model->get_thresholds() && model->get_threshold_corrections().mz > 0 ?
       model->calculate_MVZ_DRbar(mz_pole) : mz_pole;
-   const double theta_w = model->calculate_theta_w(qedqcd, alpha_em_drbar);
+   const precise_real_type theta_w = model->calculate_theta_w(qedqcd, alpha_em_drbar);
 
-   double new_g1 = 1.2909944487358056*e_drbar*Sec(theta_w);
-   double new_g2 = e_drbar*Csc(theta_w);
+   precise_real_type new_g1 = 1.2909944487358056*e_drbar*Sec(theta_w);
+   precise_real_type new_g2 = e_drbar*Csc(theta_w);
 
    if (IsFinite(new_g1)) {
       model->get_problems().unflag_non_perturbative_parameter(standard_model_info::g1);
@@ -105,7 +105,7 @@ void Standard_model_low_scale_constraint<Two_scale>::apply()
       qedqcd.setPoleMW(model->recalculate_mw_pole(qedqcd.displayPoleMW()));
 }
 
-double Standard_model_low_scale_constraint<Two_scale>::get_scale() const
+precise_real_type Standard_model_low_scale_constraint<Two_scale>::get_scale() const
 {
    return scale;
 }

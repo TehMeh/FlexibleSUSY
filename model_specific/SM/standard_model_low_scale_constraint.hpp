@@ -16,6 +16,7 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
 
 #ifndef STANDARD_MODEL_LOW_SCALE_CONSTRAINT_H
 #define STANDARD_MODEL_LOW_SCALE_CONSTRAINT_H

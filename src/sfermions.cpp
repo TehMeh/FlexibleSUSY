@@ -30,17 +30,17 @@
 namespace flexiblesusy {
 namespace sfermions {
 
-static const double oneOverRoot2 = 0.7071067811865475; // 1/sqrt(2.)
+static const precise_real_type oneOverRoot2 = 0.7071067811865475; // 1/sqrt(2.)
 
-const std::array<double, NUMBER_OF_MSSM_SPARTICLES> Isospin = {
+const boost::array<precise_real_type, NUMBER_OF_MSSM_SPARTICLES> Isospin = {
    0.5, -0.5, 0.5, -0.5
 };
 
-const std::array<double, NUMBER_OF_MSSM_SPARTICLES> Hypercharge_left = {
+const boost::array<precise_real_type, NUMBER_OF_MSSM_SPARTICLES> Hypercharge_left = {
    1./3., 1./3., -1., -1.
 };
 
-const std::array<double, NUMBER_OF_MSSM_SPARTICLES> Hypercharge_right = {
+const boost::array<precise_real_type, NUMBER_OF_MSSM_SPARTICLES> Hypercharge_right = {
    -4./3., 2./3., 0., 2.
 };
 
@@ -49,23 +49,23 @@ const std::array<double, NUMBER_OF_MSSM_SPARTICLES> Hypercharge_right = {
  * and diagonalises it.  Fills the second argument with the eigenvalues
  * and returns the mixing angle.
  */ 
-double diagonalize_sfermions_2x2(const Mass_data& pars,
-                                 Eigen::Array<double,2,1>& msf)
+precise_real_type diagonalize_sfermions_2x2(const Mass_data& pars,
+                                 Eigen::Array<precise_real_type,2,1>& msf)
 {
-   const double ml2    = pars.ml2;
-   const double mr2    = pars.mr2;
-   const double yf     = pars.yf;
-   const double vd     = pars.vd;
-   const double vu     = pars.vu;
-   const double gY     = pars.gY;
-   const double g2     = pars.g2;
-   const double Tyf    = pars.Tyf;
-   const double mu     = pars.mu;
-   const double T3     = pars.T3;
-   const double Yl     = pars.Yl;
-   const double Yr     = pars.Yr;
-   const double vev2   = 0.25 * (Sqr(vd) - Sqr(vu));
-   Eigen::Matrix<double,2,2> mass_matrix;
+   const precise_real_type ml2    = pars.ml2;
+   const precise_real_type mr2    = pars.mr2;
+   const precise_real_type yf     = pars.yf;
+   const precise_real_type vd     = pars.vd;
+   const precise_real_type vu     = pars.vu;
+   const precise_real_type gY     = pars.gY;
+   const precise_real_type g2     = pars.g2;
+   const precise_real_type Tyf    = pars.Tyf;
+   const precise_real_type mu     = pars.mu;
+   const precise_real_type T3     = pars.T3;
+   const precise_real_type Yl     = pars.Yl;
+   const precise_real_type Yr     = pars.Yr;
+   const precise_real_type vev2   = 0.25 * (Sqr(vd) - Sqr(vu));
+   Eigen::Matrix<precise_real_type,2,2> mass_matrix;
    /// fill sfermion phi in mass matix in basis (phi_L phi_R)
    if (Sign(T3) > 0) {
       mass_matrix(0,0) = ml2 + 0.5 * AbsSqr(yf) * Sqr(vu)
@@ -83,7 +83,7 @@ double diagonalize_sfermions_2x2(const Mass_data& pars,
          - 0.5 * Yr * Sqr(gY) * vev2;
    }
 
-   Eigen::Matrix<double, 2, 2> Zf;
+   Eigen::Matrix<precise_real_type, 2, 2> Zf;
    diagonalize_hermitian(mass_matrix, msf, Zf);
 
 #ifdef ENABLE_VERBOSE
@@ -93,7 +93,7 @@ double diagonalize_sfermions_2x2(const Mass_data& pars,
 
    msf = AbsSqrt(msf);
 
-   double theta;
+   precise_real_type theta;
 
    if (Sign(Zf(0,0)) == Sign(Zf(1,1))) {
       theta = ArcCos(Abs(Zf(0,0)));

@@ -149,7 +149,7 @@ void RGFlow<Two_scale>::run_sliders()
  *
  * @return RG running precision
  */
-double RGFlow<Two_scale>::get_precision()
+precise_real_type RGFlow<Two_scale>::get_precision()
 {
    return running_precision;
 }
@@ -222,13 +222,13 @@ int RGFlow<Two_scale>::get_max_iterations() const
  * @param scale scale for which corresponding model to return
  * @return model at scale
  */
-Model* RGFlow<Two_scale>::get_model(double scale) const
+Model* RGFlow<Two_scale>::get_model(precise_real_type scale) const
 {
    const auto sorted_sliders = sort_sliders();
 
    auto it = std::lower_bound(sorted_sliders.begin(), sorted_sliders.end(),
                               scale,
-                              [](const std::shared_ptr<Slider>& s, double scale)
+                              [](const std::shared_ptr<Slider>& s, precise_real_type scale)
                               { return s->get_scale() < scale; });
 
    if (it == sorted_sliders.end())
@@ -286,7 +286,7 @@ std::vector<std::shared_ptr<RGFlow<Two_scale>::Slider> > RGFlow<Two_scale>::sort
  *
  * @param scale_ scale to run to
  */
-void RGFlow<Two_scale>::run_to(double scale_)
+void RGFlow<Two_scale>::run_to(precise_real_type scale_)
 {
    scale = scale_;
 
@@ -306,7 +306,7 @@ Model* RGFlow<Two_scale>::Constraint_slider::get_model() {
    return model;
 }
 
-double RGFlow<Two_scale>::Constraint_slider::get_scale() {
+precise_real_type RGFlow<Two_scale>::Constraint_slider::get_scale() {
    return constraint->get_scale();
 }
 
@@ -317,7 +317,7 @@ void RGFlow<Two_scale>::Constraint_slider::slide() {
    constraint->apply();
 }
 
-void RGFlow<Two_scale>::Constraint_slider::set_precision(double p) {
+void RGFlow<Two_scale>::Constraint_slider::set_precision(precise_real_type p) {
    model->set_precision(p);
 }
 
@@ -330,7 +330,7 @@ Model* RGFlow<Two_scale>::Matching_slider::get_model() {
    return m1;
 }
 
-double RGFlow<Two_scale>::Matching_slider::get_scale() {
+precise_real_type RGFlow<Two_scale>::Matching_slider::get_scale() {
    return matching->get_scale();
 }
 
@@ -343,7 +343,7 @@ void RGFlow<Two_scale>::Matching_slider::slide() {
    matching->match();
 }
 
-void RGFlow<Two_scale>::Matching_slider::set_precision(double p) {
+void RGFlow<Two_scale>::Matching_slider::set_precision(precise_real_type p) {
    m1->set_precision(p);
    m2->set_precision(p);
 }

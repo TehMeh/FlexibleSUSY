@@ -67,12 +67,12 @@ void @ModelName@_spectrum_generator<Semi_analytic>::run_except(const softsusy::Q
    auto& model = this->model;
    model.clear();
    model.set_input_parameters(input);
-   model.do_calculate_sm_pole_masses(
-      settings.get(Spectrum_generator_settings::calculate_sm_masses));
-   model.do_calculate_bsm_pole_masses(
-      settings.get(Spectrum_generator_settings::calculate_bsm_masses));
-   model.do_force_output(
-      settings.get(Spectrum_generator_settings::force_output));
+   model.do_calculate_sm_pole_masses((bool)(
+      settings.get(Spectrum_generator_settings::calculate_sm_masses)));
+   model.do_calculate_bsm_pole_masses((bool)(
+      settings.get(Spectrum_generator_settings::calculate_bsm_masses)));
+   model.do_force_output((bool)(
+      settings.get(Spectrum_generator_settings::force_output)));
    model.set_loops(
       settings.get(Spectrum_generator_settings::beta_loop_order));
    model.set_thresholds(
@@ -119,10 +119,10 @@ void @ModelName@_spectrum_generator<Semi_analytic>::run_except(const softsusy::Q
    }
 
    if (settings.get(Spectrum_generator_settings::max_iterations) > 0) {
-      inner_ct.set_max_iterations(
-         settings.get(Spectrum_generator_settings::max_iterations));
-      outer_ct.set_max_iterations(
-         settings.get(Spectrum_generator_settings::max_iterations));
+      inner_ct.set_max_iterations((int)(
+         settings.get(Spectrum_generator_settings::max_iterations)));
+      outer_ct.set_max_iterations((int)(
+         settings.get(Spectrum_generator_settings::max_iterations)));
    }
 
    @ModelName@_initial_guesser<Semi_analytic> initial_guesser(&model, qedqcd,
@@ -131,7 +131,7 @@ void @ModelName@_spectrum_generator<Semi_analytic>::run_except(const softsusy::Q
                                                               high_scale_constraint);
 
    Two_scale_increasing_precision precision(
-      10.0, settings.get(Spectrum_generator_settings::precision));
+      precise_real_type(10.0), settings.get(Spectrum_generator_settings::precision));
 
    RGFlow<Semi_analytic> solver;
    solver.set_inner_convergence_tester(&inner_ct);

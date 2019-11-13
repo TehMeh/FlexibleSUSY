@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef EIGEN_UTILS_H
 #define EIGEN_UTILS_H
 
@@ -29,7 +31,7 @@
 namespace flexiblesusy {
 
 template <typename Derived>
-int closest_index(double mass, const Eigen::ArrayBase<Derived>& v)
+int closest_index(precise_real_type mass, const Eigen::ArrayBase<Derived>& v)
 {
    int pos;
    typename Derived::PlainObject tmp;
@@ -71,7 +73,7 @@ Derived div_safe(
 
    return binary_map(a, b, [](Scalar x, Scalar y){
          const Scalar q = x / y;
-         return std::isfinite(q) ? q : Scalar{};
+         return isfinite(q) ? q : Scalar{};
       });
 }
 
@@ -85,7 +87,7 @@ Derived div_safe(
  * @param z corresponding mixing matrix
  */
 template <typename DerivedArray, typename DerivedMatrix>
-void move_goldstone_to(int idx, double mass, Eigen::ArrayBase<DerivedArray>& v,
+void move_goldstone_to(int idx, precise_real_type mass, Eigen::ArrayBase<DerivedArray>& v,
                        Eigen::MatrixBase<DerivedMatrix>& z)
 {
    int pos = closest_index(mass, v);
@@ -93,7 +95,7 @@ void move_goldstone_to(int idx, double mass, Eigen::ArrayBase<DerivedArray>& v,
       return;
 
    const int sign = (idx - pos) < 0 ? -1 : 1;
-   int steps = std::abs(idx - pos);
+   int steps = abs(idx - pos);
 
    // now we shuffle the states
    while (steps--) {
@@ -114,7 +116,7 @@ void move_goldstone_to(int idx, double mass, Eigen::ArrayBase<DerivedArray>& v,
  * @param max maximum
  */
 template <int M, int N>
-void normalize_to_interval(Eigen::Matrix<double,M,N>& m, double min = -1., double max = 1.)
+void normalize_to_interval(Eigen::Matrix<precise_real_type,M,N>& m, precise_real_type min = -1., precise_real_type max = 1.)
 {
    auto data = m.data();
    const auto size = m.size();
@@ -137,21 +139,21 @@ void normalize_to_interval(Eigen::Matrix<double,M,N>& m, double min = -1., doubl
  * @param max_mag maximum magnitude
  */
 template <int M, int N>
-void normalize_to_interval(Eigen::Matrix<std::complex<double>,M,N>& m, double max_mag = 1.)
+void normalize_to_interval(Eigen::Matrix<precise_complex_type,M,N>& m, precise_real_type max_mag = 1.)
 {
    auto data = m.data();
    const auto size = m.size();
 
    for (int i = 0; i < size; i++) {
-      if (std::abs(data[i]) > max_mag)
-         data[i] = std::polar(max_mag, std::arg(data[i]));
+      if (abs(data[i]) > max_mag)
+         data[i] = polar(max_mag, arg(data[i]));
    }
 }
 
 namespace {
 template <class T>
 struct Is_not_finite {
-   bool operator()(T x) const noexcept { return !std::isfinite(x); }
+   bool operator()(T x) const noexcept { return !isfinite(x); }
 };
 } // anonymous namespace
 
@@ -174,7 +176,7 @@ Eigen::Array<Real,Nsrc - Ncmp,1> remove_if_equal(
 
    for (int i = 0; i < Ncmp; i++) {
       const int idx = closest_index(cmp(i), non_equal);
-      non_equal(idx) = std::numeric_limits<double>::infinity();
+      non_equal(idx) = std::numeric_limits<precise_real_type>::infinity();
    }
 
    std::remove_copy_if(non_equal.data(), non_equal.data() + Nsrc,
@@ -212,7 +214,7 @@ void reorder_vector(
  */
 template<class Derived>
 void reorder_vector(
-   Eigen::Array<double,Eigen::MatrixBase<Derived>::RowsAtCompileTime,1>& v,
+   Eigen::Array<precise_real_type,Eigen::MatrixBase<Derived>::RowsAtCompileTime,1>& v,
    const Eigen::MatrixBase<Derived>& matrix)
 {
    reorder_vector(v, matrix.diagonal().array().eval());
@@ -220,10 +222,10 @@ void reorder_vector(
 
 /// sorts an Eigen array
 template<int N>
-void sort(Eigen::Array<double, N, 1>& v)
+void sort(Eigen::Array<precise_real_type, N, 1>& v)
 {
    std::sort(v.data(), v.data() + v.size(),
-             [] (double a, double b) { return std::abs(a) < std::abs(b); });
+             [] (precise_real_type a, precise_real_type b) { return abs(a) < abs(b); });
 }
 
 } // namespace flexiblesusy

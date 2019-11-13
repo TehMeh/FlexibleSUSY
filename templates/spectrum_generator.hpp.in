@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_SPECTRUM_GENERATOR_H
 #define @ModelName@_SPECTRUM_GENERATOR_H
 

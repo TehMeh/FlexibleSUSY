@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef SEMI_ANALYTIC_SOLVER_H
 #define SEMI_ANALYTIC_SOLVER_H
 
@@ -80,7 +82,7 @@ public:
    /// clear all internal data
    void reset();
    /// run model at given scale to given scale
-   void run_to(double);
+   void run_to(precise_real_type);
    /// set convergence tester for inner two-scale iteration
    void set_inner_convergence_tester(Convergence_tester*);
    /// set convergence tester for overall iteration
@@ -99,9 +101,9 @@ private:
       virtual void clear_problems() {}
       virtual Model* get_model() = 0;
       virtual void add_constraint_to_solver(RGFlow<Two_scale>&) = 0;
-      virtual double get_scale() = 0;
+      virtual precise_real_type get_scale() = 0;
       virtual void slide() {}
-      virtual void set_precision(double) {}
+      virtual void set_precision(precise_real_type) {}
    };
 
    struct Constraint_slider : public Slider {
@@ -112,9 +114,9 @@ private:
       virtual void clear_problems() override;
       virtual Model* get_model() override;
       virtual void add_constraint_to_solver(RGFlow<Two_scale>&) override;
-      virtual double get_scale() override;
+      virtual precise_real_type get_scale() override;
       virtual void slide() override;
-      virtual void set_precision(double) override;
+      virtual void set_precision(precise_real_type) override;
    private:
       Model* model;
       Single_scale_constraint* constraint;
@@ -128,9 +130,9 @@ private:
       virtual void clear_problems() override;
       virtual Model* get_model() override;
       virtual void add_constraint_to_solver(RGFlow<Two_scale>&) override;
-      virtual double get_scale() override;
+      virtual precise_real_type get_scale() override;
       virtual void slide() override;
-      virtual void set_precision(double) override;
+      virtual void set_precision(precise_real_type) override;
    private:
       Model *m1, *m2;
       Single_scale_matching* matching;
@@ -143,17 +145,17 @@ private:
    Convergence_tester* outer_convergence_tester{nullptr}; ///< the convergence tester for the main iteration
    Initial_guesser* initial_guesser{nullptr};       ///< does initial guess
    Two_scale_running_precision* running_precision_calculator{nullptr}; ///< RG running precision calculator
-   double running_precision{1.0e-3};           ///< RG running precision
-   double scale{0.};                           ///< current scale
+   precise_real_type running_precision{1.0e-3};           ///< RG running precision
+   precise_real_type scale{0.};                           ///< current scale
 
    bool accuracy_goal_reached() const; ///< check if accuracy goal is reached
    void check_setup() const;           ///< check the setup
    void clear_problems();              ///< clear model problems
    void prepare_inner_iteration(RGFlow<Two_scale>& solver) const; ///< set-up inner two-scale iteration
    int get_max_iterations() const; ///< returns max. number of iterations
-   Model* get_model(double) const;     ///< returns model at given scale
+   Model* get_model(precise_real_type) const;     ///< returns model at given scale
    void initial_guess();               ///< initial guess
-   double get_precision();             ///< returns running precision
+   precise_real_type get_precision();             ///< returns running precision
    void update_running_precision();    ///< update the RG running precision
    std::vector<std::shared_ptr<Slider> > sort_sliders(
       const std::vector<std::shared_ptr<Slider> >&) const; ///< sort the outer sliders w.r.t. scale

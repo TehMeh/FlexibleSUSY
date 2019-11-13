@@ -36,19 +36,19 @@ namespace sm_fourloophiggs {
  *
  * @return real part of 4-loop correction \f$O(\alpha_t \alpha_s^3)\f$
  */
-double delta_mh_4loop_at_as_as_as_sm(
-   double scale, double mt, double yt, double g3)
+precise_real_type delta_mh_4loop_at_as_as_as_sm(
+   precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type g3)
 {
-   const double yt2 = Sqr(yt);
-   const double mt2 = Sqr(mt);
-   const double g36 = Power6(g3);
-   const double Q2 = Sqr(scale);
-   const double LogT = FiniteLog(mt2 / Q2);
-   const double LogT2 = Sqr(LogT);
-   const double LogT3 = Power3(LogT);
-   const double LogT4 = Power4(LogT);
+   const precise_real_type yt2 = Sqr(yt);
+   const precise_real_type mt2 = Sqr(mt);
+   const precise_real_type g36 = Power6(g3);
+   const precise_real_type Q2 = Sqr(scale);
+   const precise_real_type LogT = FiniteLog(mt2 / Q2);
+   const precise_real_type LogT2 = Sqr(LogT);
+   const precise_real_type LogT3 = Power3(LogT);
+   const precise_real_type LogT4 = Power4(LogT);
 
-   const double result =
+   const precise_real_type result =
       g36*yt2*mt2 * (23925.974863118638
                      + 6435.327201984095*LogT
                      - 20675.746270332107*LogT2

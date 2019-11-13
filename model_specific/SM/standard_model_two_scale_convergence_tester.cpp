@@ -27,12 +27,12 @@ namespace flexiblesusy {
 namespace standard_model {
 
 Standard_model_convergence_tester<Two_scale>::Standard_model_convergence_tester(
-   StandardModel<Two_scale>* model, double accuracy_goal, const Scale_getter& sg)
+   StandardModel<Two_scale>* model, precise_real_type accuracy_goal, const Scale_getter& sg)
    : Convergence_tester_DRbar<StandardModel<Two_scale> >(model, accuracy_goal, sg)
 {
 }
 
-double Standard_model_convergence_tester<Two_scale>::max_rel_diff() const
+precise_real_type Standard_model_convergence_tester<Two_scale>::max_rel_diff() const
 {
    const StandardModel<Two_scale>& ol = get_last_iteration_model();
    const StandardModel<Two_scale>& ne = get_current_iteration_model();

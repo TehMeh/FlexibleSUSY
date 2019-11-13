@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef GSL_UTILS_H
 #define GSL_UTILS_H
 
@@ -31,30 +33,31 @@ namespace flexiblesusy {
 bool is_finite(const GSL_vector&);
 /// Returns true if GSL vector contains only finite elements, false otherwise
 bool is_finite(const gsl_vector*);
-Eigen::ArrayXd to_eigen_array(const gsl_vector*);
-Eigen::ArrayXd to_eigen_array(const GSL_vector&);
-Eigen::VectorXd to_eigen_vector(const gsl_vector*);
-Eigen::VectorXd to_eigen_vector(const GSL_vector&);
+Eigen::ArrayXdp to_eigen_array(const gsl_vector*);
+Eigen::ArrayXdp to_eigen_array(const GSL_vector&);
+Eigen::VectorXdp to_eigen_vector(const gsl_vector*);
+Eigen::VectorXdp to_eigen_vector(const GSL_vector&);
 GSL_vector to_GSL_vector(const gsl_vector*);
 
 template <typename Derived>
 GSL_vector to_GSL_vector(const Eigen::DenseBase<Derived>& v)
-{
+{ 
    using Index_t = typename Derived::Index;
    GSL_vector v2(v.rows());
 
-   for (Index_t i = 0; i < v.rows(); i++)
-      v2[i] = v(i);
+   for (Index_t i = 0; i < v.rows(); i++){
 
+      v2[i] = v(i);
+   }
    return v2;
 }
 
 template <int Size>
-Eigen::Matrix<double,Size,1> to_eigen_vector_fixed(const gsl_vector* v)
+Eigen::Matrix<precise_real_type,Size,1> to_eigen_vector_fixed(const gsl_vector* v)
 {
    assert(Size == v->size);
 
-   using Result_t = Eigen::Matrix<double,Size,1>;
+   using Result_t = Eigen::Matrix<precise_real_type,Size,1>;
    using Index_t = typename Result_t::Index;
    Result_t result;
 
@@ -65,11 +68,11 @@ Eigen::Matrix<double,Size,1> to_eigen_vector_fixed(const gsl_vector* v)
 }
 
 template <int Size>
-Eigen::Matrix<double,Size,1> to_eigen_vector_fixed(const GSL_vector& v)
+Eigen::Matrix<precise_real_type,Size,1> to_eigen_vector_fixed(const GSL_vector& v)
 {
    assert(Size == v.size());
 
-   using Result_t = Eigen::Matrix<double,Size,1>;
+   using Result_t = Eigen::Matrix<precise_real_type,Size,1>;
    using Index_t = typename Result_t::Index;
    Result_t result;
 
@@ -95,7 +98,7 @@ void copy(const Eigen::DenseBase<Derived>& src, gsl_vector* dst)
    assert(dim == dst->size);
 
    for (Index_t i = 0; i < dim; i++)
-      gsl_vector_set(dst, i, src(i));
+      gsl_vector_set(dst, i, (double)src(i)); //S.D. 
 }
 
 } // namespace flexiblesusy

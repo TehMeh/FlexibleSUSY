@@ -44,7 +44,7 @@ CLASSNAME::@ModelName@_standard_model_matching_up(
    set_loop_order(loop_order_);
 }
 
-double CLASSNAME::get_scale() const
+precise_real_type CLASSNAME::get_scale() const
 {
    if (scale != 0.)
       return scale;
@@ -116,7 +116,7 @@ void CLASSNAME::set_scale(Scale_getter&& scale_getter_)
    scale_getter = std::move(scale_getter_);
 }
 
-void CLASSNAME::set_scale(double scale_)
+void CLASSNAME::set_scale(precise_real_type scale_)
 {
    scale = scale_;
 }
@@ -142,7 +142,7 @@ CLASSNAME::@ModelName@_standard_model_matching_down(
    set_loop_order(loop_order_);
 }
 
-double CLASSNAME::get_scale() const
+precise_real_type CLASSNAME::get_scale() const
 {
    if (scale != 0.)
       return scale;
@@ -214,7 +214,7 @@ void CLASSNAME::set_scale(Scale_getter&& scale_getter_)
    scale_getter = std::move(scale_getter_);
 }
 
-void CLASSNAME::set_scale(double scale_)
+void CLASSNAME::set_scale(precise_real_type scale_)
 {
    scale = scale_;
 }

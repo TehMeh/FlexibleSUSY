@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_TWO_SCALE_SUSY_SCALE_CONSTRAINT_H
 #define @ModelName@_TWO_SCALE_SUSY_SCALE_CONSTRAINT_H
 
@@ -40,12 +42,12 @@ public:
    @ModelName@_susy_scale_constraint(@ModelName@<Two_scale>*, const softsusy::QedQcd&);
    virtual ~@ModelName@_susy_scale_constraint() = default;
    virtual void apply() override;
-   virtual double get_scale() const override;
+   virtual precise_real_type get_scale() const override;
    virtual std::string name() const override { return "@ModelName@ SUSY-scale constraint"; }
    virtual void set_model(Model*) override;
 
    void clear();
-   double get_initial_scale_guess() const;
+   precise_real_type get_initial_scale_guess() const;
    const @ModelName@_input_parameters& get_input_parameters() const;
    @ModelName@<Two_scale>* get_model() const;
    void initialize();
@@ -56,8 +58,8 @@ protected:
    void update_scale();
 
 private:
-   double scale{0.};
-   double initial_scale_guess{0.};
+   precise_real_type scale{0.};
+   precise_real_type initial_scale_guess{0.};
    @ModelName@<Two_scale>* model{nullptr};
    softsusy::QedQcd qedqcd{};
 

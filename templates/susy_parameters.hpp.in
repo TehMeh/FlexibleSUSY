@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_susy_parameters_H
 #define @ModelName@_susy_parameters_H
 
@@ -39,17 +41,17 @@ namespace flexiblesusy {
 class @ModelName@_susy_parameters : public Beta_function {
 public:
    explicit @ModelName@_susy_parameters(const @ModelName@_input_parameters& input_ = @ModelName@_input_parameters());
-   @ModelName@_susy_parameters(double scale_, int loops_, int thresholds_, const @ModelName@_input_parameters& input_@cCtorParameterList@);
+   @ModelName@_susy_parameters(precise_real_type scale_, int loops_, int thresholds_, const @ModelName@_input_parameters& input_@cCtorParameterList@);
    @ModelName@_susy_parameters(const @ModelName@_susy_parameters&) = default;
    @ModelName@_susy_parameters(@ModelName@_susy_parameters&&) = default;
    virtual ~@ModelName@_susy_parameters() = default;
    @ModelName@_susy_parameters& operator=(const @ModelName@_susy_parameters&) = default;
    @ModelName@_susy_parameters& operator=(@ModelName@_susy_parameters&&) = default;
 
-   virtual Eigen::ArrayXd beta() const override;
-   virtual Eigen::ArrayXd get() const override;
+   virtual Eigen::ArrayXdp beta() const override;
+   virtual Eigen::ArrayXdp get() const override;
    virtual void print(std::ostream&) const;
-   virtual void set(const Eigen::ArrayXd&) override;
+   virtual void set(const Eigen::ArrayXdp&) override;
    const @ModelName@_input_parameters& get_input() const;
    @ModelName@_input_parameters& get_input();
    void set_input_parameters(const @ModelName@_input_parameters&);

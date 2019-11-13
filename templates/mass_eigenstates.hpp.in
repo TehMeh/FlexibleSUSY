@@ -32,6 +32,7 @@
 #ifndef @ModelName@_MASS_EIGENSTATES_H
 #define @ModelName@_MASS_EIGENSTATES_H
 
+#include "precise.hpp"
 #include "@ModelName@_info.hpp"
 #include "@ModelName@_physical.hpp"
 #include "@ModelName@_soft_parameters.hpp"
@@ -43,7 +44,7 @@
 #include <memory>
 #include <string>
 
-#include <Eigen/Core>
+//#include <Eigen/Core>
 
 namespace flexiblesusy {
 
@@ -69,9 +70,9 @@ public:
    void check_pole_masses_for_tachyons();
    virtual void clear() override;
    void clear_DRbar_parameters();
-   Eigen::ArrayXd get_DRbar_masses() const;
-   Eigen::ArrayXd get_DRbar_masses_and_mixings() const;
-   Eigen::ArrayXd get_extra_parameters() const;
+   Eigen::ArrayXdp get_DRbar_masses() const;
+   Eigen::ArrayXdp get_DRbar_masses_and_mixings() const;
+   Eigen::ArrayXdp get_extra_parameters() const;
    void do_calculate_sm_pole_masses(bool);
    bool do_calculate_sm_pole_masses() const;
    void do_calculate_bsm_pole_masses(bool);
@@ -80,20 +81,21 @@ public:
    bool do_force_output() const;
    void reorder_DRbar_masses();
    void reorder_pole_masses();
-   void set_ewsb_iteration_precision(double);
-   void set_ewsb_loop_order(int);
+   void set_ewsb_iteration_precision(precise_real_type);
+   void set_ewsb_loop_order(precise_real_type);
    void set_loop_corrections(const Loop_corrections&);
    const Loop_corrections& get_loop_corrections() const;
    void set_threshold_corrections(const Threshold_corrections&);
    const Threshold_corrections& get_threshold_corrections() const;
-   void set_DRbar_masses(const Eigen::ArrayXd&);
-   void set_DRbar_masses_and_mixings(const Eigen::ArrayXd&);
-   void set_extra_parameters(const Eigen::ArrayXd&);
-   void set_pole_mass_loop_order(int);
+   void set_DRbar_masses(const Eigen::ArrayXdp&);
+   void set_DRbar_masses_and_mixings(const Eigen::ArrayXdp&);
+   void set_extra_parameters(const Eigen::ArrayXdp&);
+   void set_pole_mass_loop_order(precise_real_type);
    int get_pole_mass_loop_order() const;
    void set_physical(const @ModelName@_physical&);
-   double get_ewsb_iteration_precision() const;
-   double get_ewsb_loop_order() const;
+   int get_number_of_digits(); /// added S.D.
+   precise_real_type get_ewsb_iteration_precision() const;
+   precise_real_type get_ewsb_loop_order() const;
    const @ModelName@_physical& get_physical() const;
    @ModelName@_physical& get_physical();
    const Problems& get_problems() const;
@@ -106,10 +108,10 @@ public:
    void calculate_spectrum();
    void clear_problems();
    std::string name() const;
-   void run_to(double scale, double eps = -1.0) override;
+   void run_to(precise_real_type scale, precise_real_type eps = -1.0) override;
    void print(std::ostream& out = std::cerr) const override;
-   void set_precision(double);
-   double get_precision() const;
+   void set_precision(precise_real_type);
+   precise_real_type get_precision() const;
 
 @lspGetters@
 @massGetters@
@@ -123,11 +125,11 @@ public:
 @selfEnergyPrototypes@
 
    /// calculates the tadpoles at current loop order
-   void tadpole_equations(double[number_of_ewsb_equations]) const;
+   void tadpole_equations(precise_real_type[number_of_ewsb_equations]) const;
    /// calculates the tadpoles at current loop order
-   Eigen::Matrix<double,number_of_ewsb_equations,1> tadpole_equations() const;
+   Eigen::Matrix<precise_real_type,number_of_ewsb_equations,1> tadpole_equations() const;
    /// calculates the tadpoles divided by VEVs at current loop order
-   Eigen::Matrix<double,number_of_ewsb_equations,1> tadpole_equations_over_vevs() const;
+   Eigen::Matrix<precise_real_type,number_of_ewsb_equations,1> tadpole_equations_over_vevs() const;
 
 @secondGenerationHelperPrototypes@
 @thirdGenerationHelperPrototypes@
@@ -140,13 +142,14 @@ public:
 @dependencePrototypes@
 
 private:
+   int number_of_digits; /// added S.D. 
    int ewsb_loop_order{4};           ///< loop order for EWSB
    int pole_mass_loop_order{4};      ///< loop order for pole masses
    bool calculate_sm_pole_masses{false};  ///< switch to calculate the pole masses of the Standard Model particles
    bool calculate_bsm_pole_masses{true};  ///< switch to calculate the pole masses of the BSM particles
    bool force_output{false};              ///< switch to force output of pole masses
-   double precision{1.e-4};               ///< RG running precision
-   double ewsb_iteration_precision{1.e-5};///< precision goal of EWSB solution
+   precise_real_type precision{1.e-4};               ///< RG running precision
+   precise_real_type ewsb_iteration_precision{1.e-5};///< precision goal of EWSB solution
    @ModelName@_physical physical{}; ///< contains the pole masses and mixings
    Problems problems{@ModelName@_info::model_name,
                      &@ModelName@_info::particle_names_getter,
@@ -161,14 +164,14 @@ private:
    void copy_DRbar_masses_to_pole_masses();
 
    // Passarino-Veltman loop functions
-   double A0(double) const noexcept;
-   double B0(double, double, double) const noexcept;
-   double B1(double, double, double) const noexcept;
-   double B00(double, double, double) const noexcept;
-   double B22(double, double, double) const noexcept;
-   double H0(double, double, double) const noexcept;
-   double F0(double, double, double) const noexcept;
-   double G0(double, double, double) const noexcept;
+   precise_real_type A0(precise_real_type) const noexcept;
+   precise_real_type B0(precise_real_type, precise_real_type, precise_real_type) const noexcept;
+   precise_real_type B1(precise_real_type, precise_real_type, precise_real_type) const noexcept;
+   precise_real_type B00(precise_real_type, precise_real_type, precise_real_type) const noexcept;
+   precise_real_type B22(precise_real_type, precise_real_type, precise_real_type) const noexcept;
+   precise_real_type H0(precise_real_type, precise_real_type, precise_real_type) const noexcept;
+   precise_real_type F0(precise_real_type, precise_real_type, precise_real_type) const noexcept;
+   precise_real_type G0(precise_real_type, precise_real_type, precise_real_type) const noexcept;
 
    // DR-bar masses
 @physicalMassesDef@

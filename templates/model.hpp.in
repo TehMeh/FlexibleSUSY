@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_H
 #define @ModelName@_H
 

@@ -17,6 +17,8 @@
 // ====================================================================
 
 
+#include "precise.hpp"
+
 #ifndef STANDARD_MODEL_EFFECTIVE_COUPLINGS_H
 #define STANDARD_MODEL_EFFECTIVE_COUPLINGS_H
 
@@ -45,24 +47,24 @@ public:
    void set_low_energy_data(const softsusy::QedQcd& qedqcd_) { qedqcd = qedqcd_; }
    void set_model(const Standard_model& model_);
 
-   double get_hhVPVP_partial_width() const;
-   double get_hhVGVG_partial_width() const;
-   double get_AhVPVP_partial_width() const;
-   double get_AhVGVG_partial_width() const;
-   std::complex<double> get_eff_CphhVPVP() const { return eff_CphhVPVP; }
-   std::complex<double> get_eff_CphhVGVG() const { return eff_CphhVGVG; }
-   std::complex<double> get_eff_CpAhVPVP() const { return eff_CpAhVPVP; }
-   std::complex<double> get_eff_CpAhVGVG() const { return eff_CpAhVGVG; }
+   precise_real_type get_hhVPVP_partial_width() const;
+   precise_real_type get_hhVGVG_partial_width() const;
+   precise_real_type get_AhVPVP_partial_width() const;
+   precise_real_type get_AhVGVG_partial_width() const;
+   precise_complex_type get_eff_CphhVPVP() const { return eff_CphhVPVP; }
+   precise_complex_type get_eff_CphhVGVG() const { return eff_CphhVGVG; }
+   precise_complex_type get_eff_CpAhVPVP() const { return eff_CpAhVPVP; }
+   precise_complex_type get_eff_CpAhVGVG() const { return eff_CpAhVGVG; }
 
    void calculate_effective_couplings();
 
-   std::complex<double> CpFdhhbarFdPL(int gt1, int gt3) const;
-   std::complex<double> CpFuhhbarFuPL(int gt1, int gt3) const;
-   std::complex<double> CpFehhbarFePL(int gt1, int gt3) const;
-   double CphhVWpconjVWp() const;
-   std::complex<double> CpAhFdbarFdPL(int gt2, int gt3) const;
-   std::complex<double> CpAhFubarFuPL(int gt2, int gt3) const;
-   std::complex<double> CpAhFebarFePL(int gt2, int gt3) const;
+   precise_complex_type CpFdhhbarFdPL(int gt1, int gt3) const;
+   precise_complex_type CpFuhhbarFuPL(int gt1, int gt3) const;
+   precise_complex_type CpFehhbarFePL(int gt1, int gt3) const;
+   precise_real_type CphhVWpconjVWp() const;
+   precise_complex_type CpAhFdbarFdPL(int gt2, int gt3) const;
+   precise_complex_type CpAhFubarFuPL(int gt2, int gt3) const;
+   precise_complex_type CpAhFebarFePL(int gt2, int gt3) const;
    void calculate_eff_CphhVPVP();
    void calculate_eff_CphhVGVG();
    void calculate_eff_CpAhVPVP();
@@ -78,32 +80,32 @@ private:
    void copy_mixing_matrices_from_model();
 
    standard_model::Standard_model initialise_SM() const;
-   void run_SM_strong_coupling_to(standard_model::Standard_model, double m);
+   void run_SM_strong_coupling_to(standard_model::Standard_model, precise_real_type m);
 
    // higher order corrections to the amplitudes for
    // effective coupling to photons
-   std::complex<double> scalar_scalar_qcd_factor(double, double) const;
-   std::complex<double> scalar_fermion_qcd_factor(double, double) const;
-   std::complex<double> pseudoscalar_fermion_qcd_factor(double, double) const;
+   precise_complex_type scalar_scalar_qcd_factor(precise_real_type, precise_real_type) const;
+   precise_complex_type scalar_fermion_qcd_factor(precise_real_type, precise_real_type) const;
+   precise_complex_type pseudoscalar_fermion_qcd_factor(precise_real_type, precise_real_type) const;
 
    // higher order corrections to the leading order
    // effective couplings to gluons
-   double number_of_active_flavours(double) const;
-   double scalar_scaling_factor(double) const;
-   double pseudoscalar_scaling_factor(double) const;
+   precise_real_type number_of_active_flavours(precise_real_type) const;
+   precise_real_type scalar_scaling_factor(precise_real_type) const;
+   precise_real_type pseudoscalar_scaling_factor(precise_real_type) const;
 
-   Eigen::Matrix<std::complex<double>,3,3> Vd;
-   Eigen::Matrix<std::complex<double>,3,3> Ud;
-   Eigen::Matrix<std::complex<double>,3,3> Vu;
-   Eigen::Matrix<std::complex<double>,3,3> Uu;
-   Eigen::Matrix<std::complex<double>,3,3> Ve;
-   Eigen::Matrix<std::complex<double>,3,3> Ue;
-   Eigen::Matrix<double,2,2> ZZ;
+   Eigen::Matrix<precise_complex_type,3,3> Vd;
+   Eigen::Matrix<precise_complex_type,3,3> Ud;
+   Eigen::Matrix<precise_complex_type,3,3> Vu;
+   Eigen::Matrix<precise_complex_type,3,3> Uu;
+   Eigen::Matrix<precise_complex_type,3,3> Ve;
+   Eigen::Matrix<precise_complex_type,3,3> Ue;
+   Eigen::Matrix<precise_real_type,2,2> ZZ;
 
-   std::complex<double> eff_CphhVPVP;
-   std::complex<double> eff_CphhVGVG;
-   std::complex<double> eff_CpAhVPVP;
-   std::complex<double> eff_CpAhVGVG;
+   precise_complex_type eff_CphhVPVP;
+   precise_complex_type eff_CphhVGVG;
+   precise_complex_type eff_CpAhVPVP;
+   precise_complex_type eff_CpAhVGVG;
 
 };
 

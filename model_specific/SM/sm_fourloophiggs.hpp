@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef SM_FOURLOOPHIGGS_H
 #define SM_FOURLOOPHIGGS_H
 
@@ -23,8 +25,8 @@ namespace flexiblesusy {
 namespace sm_fourloophiggs {
 
 /// SM Higgs mass 4-loop contribution, only O(alpha_t alpha_s^3)
-double delta_mh_4loop_at_as_as_as_sm(
-   double scale, double mt, double yt, double g3);
+precise_real_type delta_mh_4loop_at_as_as_as_sm(
+   precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type g3);
 
 } // namespace sm_fourloophiggs
 } // namespace flexiblesusy

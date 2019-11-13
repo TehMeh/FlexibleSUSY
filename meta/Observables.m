@@ -222,7 +222,7 @@ CreateSetAndDisplayObservablesFunctions[observables_List] :=
             display = "", displayNames = "", set = ""},
            numObservables = CountNumberOfObservables[observables];
            If[numObservables != 0,
-              display = "Eigen::ArrayXd vec(" <> FlexibleSUSY`FSModelName
+              display = "Eigen::ArrayXdp vec(" <> FlexibleSUSY`FSModelName
                         <> "_observables::NUMBER_OF_OBSERVABLES);\n\n";
               displayNames = "std::vector<std::string> names("
                              <> FlexibleSUSY`FSModelName
@@ -243,7 +243,7 @@ CreateSetAndDisplayObservablesFunctions[observables_List] :=
                      Print["Warning: ignoring invalid observable ", observables[[i]]];
                     ];
                  ];,
-               display = "Eigen::ArrayXd vec(1);\n\nvec(0) = 0.;\n";
+               display = "Eigen::ArrayXdp vec(1);\n\nvec(0) = 0.;\n";
                set = "";
                displayNames = "std::vector<std::string> names(1);\n\n"
                               <> "names[0] = \"no observables defined\";\n";

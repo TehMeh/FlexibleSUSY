@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef MODEL_H
 #define MODEL_H
 
@@ -32,8 +34,8 @@ public:
    virtual void clear_problems() = 0;
    virtual std::string name() const = 0;
    virtual void print(std::ostream& out = std::cerr) const = 0;
-   virtual void run_to(double, double eps = -1.0) = 0;
-   virtual void set_precision(double) = 0;
+   virtual void run_to(precise_real_type, precise_real_type eps = -1.0) = 0;
+   virtual void set_precision(precise_real_type) = 0;
 };
 
 template <class TargetModel, class InputModel>

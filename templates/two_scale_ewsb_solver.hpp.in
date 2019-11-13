@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 /**
  * @file @ModelName@_two_scale_ewsb_solver.hpp
  *
@@ -55,16 +57,16 @@ public:
 
    virtual void set_loop_order(int l) override { loop_order = l; }
    virtual void set_number_of_iterations(int n) override { number_of_iterations = n; }
-   virtual void set_precision(double p) override { precision = p; }
+   virtual void set_precision(precise_real_type p) override { precision = p; }
 
    virtual int get_loop_order() const override { return loop_order; }
    virtual int get_number_of_iterations() const override { return number_of_iterations; }
-   virtual double get_precision() const override { return precision; }
+   virtual precise_real_type get_precision() const override { return precision; }
 
    virtual int solve(@ModelName@_mass_eigenstates&) override;
 private:
    static const int number_of_ewsb_equations = @numberOfEWSBEquations@;
-   using EWSB_vector_t = Eigen::Matrix<double,number_of_ewsb_equations,1>;
+   using EWSB_vector_t = Eigen::Matrix<precise_real_type,number_of_ewsb_equations,1>;
 
    class EEWSBStepFailed : public Error {
    public:
@@ -74,7 +76,7 @@ private:
 
    int number_of_iterations{100}; ///< maximum number of iterations
    int loop_order{2};             ///< loop order to solve EWSB at
-   double precision{1.e-5};       ///< precision goal
+   precise_real_type precision{1.e-5};       ///< precision goal
 
    void set_ewsb_solution(@ModelName@_mass_eigenstates&, const EWSB_solver*);
    template <typename It> void set_best_ewsb_solution(@ModelName@_mass_eigenstates&, It, It);

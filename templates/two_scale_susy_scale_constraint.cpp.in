@@ -74,12 +74,12 @@ void @ModelName@_susy_scale_constraint<Two_scale>::apply()
 @applyConstraint@
 }
 
-double @ModelName@_susy_scale_constraint<Two_scale>::get_scale() const
+precise_real_type @ModelName@_susy_scale_constraint<Two_scale>::get_scale() const
 {
    return scale;
 }
 
-double @ModelName@_susy_scale_constraint<Two_scale>::get_initial_scale_guess() const
+precise_real_type @ModelName@_susy_scale_constraint<Two_scale>::get_initial_scale_guess() const
 {
    return initial_scale_guess;
 }

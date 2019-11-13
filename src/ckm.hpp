@@ -16,10 +16,12 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef CKM_H
 #define CKM_H
 
-#include <Eigen/Core>
+//#include <Eigen/Core>
 
 namespace flexiblesusy {
 
@@ -27,32 +29,32 @@ struct CKM_parameters {
    void reset_to_diagonal();
    void reset_to_observation();
 
-   void set_from_wolfenstein(double, double, double, double);
-   void get_wolfenstein(double&, double&, double&, double&);
+   void set_from_wolfenstein(precise_real_type, precise_real_type, precise_real_type, precise_real_type);
+   void get_wolfenstein(precise_real_type&, precise_real_type&, precise_real_type&, precise_real_type&);
 
-   Eigen::Matrix<double,3,3> get_real_ckm() const;
-   Eigen::Matrix<std::complex<double>,3,3> get_complex_ckm() const;
+   Eigen::Matrix<precise_real_type,3,3> get_real_ckm() const;
+   Eigen::Matrix<precise_complex_type,3,3> get_complex_ckm() const;
 
-   static void to_pdg_convention(Eigen::Matrix<double,3,3>&,
-                                 Eigen::Matrix<double,3,3>&,
-                                 Eigen::Matrix<double,3,3>&,
-                                 Eigen::Matrix<double,3,3>&,
-                                 Eigen::Matrix<double,3,3>&);
-   static void to_pdg_convention(Eigen::Matrix<double,3,3>&,
-                                 Eigen::Matrix<double,3,3>&,
-                                 Eigen::Matrix<double,3,3>&,
-                                 Eigen::Matrix<double,3,3>&);
-   static void to_pdg_convention(Eigen::Matrix<std::complex<double>,3,3>&,
-                                 Eigen::Matrix<std::complex<double>,3,3>&,
-                                 Eigen::Matrix<std::complex<double>,3,3>&,
-                                 Eigen::Matrix<std::complex<double>,3,3>&,
-                                 Eigen::Matrix<std::complex<double>,3,3>&);
-   static void to_pdg_convention(Eigen::Matrix<std::complex<double>,3,3>&,
-                                 Eigen::Matrix<std::complex<double>,3,3>&,
-                                 Eigen::Matrix<std::complex<double>,3,3>&,
-                                 Eigen::Matrix<std::complex<double>,3,3>&);
+   static void to_pdg_convention(Eigen::Matrix<precise_real_type,3,3>&,
+                                 Eigen::Matrix<precise_real_type,3,3>&,
+                                 Eigen::Matrix<precise_real_type,3,3>&,
+                                 Eigen::Matrix<precise_real_type,3,3>&,
+                                 Eigen::Matrix<precise_real_type,3,3>&);
+   static void to_pdg_convention(Eigen::Matrix<precise_real_type,3,3>&,
+                                 Eigen::Matrix<precise_real_type,3,3>&,
+                                 Eigen::Matrix<precise_real_type,3,3>&,
+                                 Eigen::Matrix<precise_real_type,3,3>&);
+   static void to_pdg_convention(Eigen::Matrix<precise_complex_type,3,3>&,
+                                 Eigen::Matrix<precise_complex_type,3,3>&,
+                                 Eigen::Matrix<precise_complex_type,3,3>&,
+                                 Eigen::Matrix<precise_complex_type,3,3>&,
+                                 Eigen::Matrix<precise_complex_type,3,3>&);
+   static void to_pdg_convention(Eigen::Matrix<precise_complex_type,3,3>&,
+                                 Eigen::Matrix<precise_complex_type,3,3>&,
+                                 Eigen::Matrix<precise_complex_type,3,3>&,
+                                 Eigen::Matrix<precise_complex_type,3,3>&);
 
-   double theta_12{0.}, theta_13{0.}, theta_23{0.}, delta{0.};
+   precise_real_type theta_12{0.}, theta_13{0.}, theta_23{0.}, delta{0.};
 };
 
 } // namespace flexiblesusy

@@ -50,10 +50,10 @@ Standard_model_effective_couplings::Standard_model_effective_couplings(
 void Standard_model_effective_couplings::calculate_effective_couplings()
 {
    const standard_model::Standard_model sm(initialise_SM());
-   const double scale = model.get_scale();
-   const Eigen::ArrayXd saved_parameters(model.get());
+   const precise_real_type scale = model.get_scale();
+   const Eigen::ArrayXdp saved_parameters(model.get());
 
-   const double saved_mt = PHYSICAL(MFu(2));
+   const precise_real_type saved_mt = PHYSICAL(MFu(2));
    PHYSICAL(MFu(2)) = qedqcd.displayPoleMt();
 
    const auto Mhh = PHYSICAL(Mhh);
@@ -99,15 +99,15 @@ standard_model::Standard_model Standard_model_effective_couplings::initialise_SM
    return sm;
 }
 
-void Standard_model_effective_couplings::run_SM_strong_coupling_to(standard_model::Standard_model sm, double m)
+void Standard_model_effective_couplings::run_SM_strong_coupling_to(standard_model::Standard_model sm, precise_real_type m)
 {
    sm.run_to(m);
    model.set_g3(sm.get_g3());
 }
 
-std::complex<double> Standard_model_effective_couplings::scalar_scalar_qcd_factor(double m_decay, double m_loop) const
+precise_complex_type Standard_model_effective_couplings::scalar_scalar_qcd_factor(precise_real_type m_decay, precise_real_type m_loop) const
 {
-   std::complex<double> result(1.0, 0.0);
+   precise_complex_type result(1.0, 0.0);
 
    if (include_qcd_corrections) {
       const auto g3 = MODELPARAMETER(g3);
@@ -120,9 +120,9 @@ std::complex<double> Standard_model_effective_couplings::scalar_scalar_qcd_facto
    return result;
 }
 
-std::complex<double> Standard_model_effective_couplings::scalar_fermion_qcd_factor(double m_decay, double m_loop) const
+precise_complex_type Standard_model_effective_couplings::scalar_fermion_qcd_factor(precise_real_type m_decay, precise_real_type m_loop) const
 {
-   std::complex<double> result(1.0, 0.0);
+   precise_complex_type result(1.0, 0.0);
 
    if (include_qcd_corrections) {
       const auto g3 = MODELPARAMETER(g3);
@@ -134,9 +134,9 @@ std::complex<double> Standard_model_effective_couplings::scalar_fermion_qcd_fact
    return result;
 }
 
-std::complex<double> Standard_model_effective_couplings::pseudoscalar_fermion_qcd_factor(double m_decay, double m_loop) const
+precise_complex_type Standard_model_effective_couplings::pseudoscalar_fermion_qcd_factor(precise_real_type m_decay, precise_real_type m_loop) const
 {
-   std::complex<double> result(1.0, 0.0);
+   precise_complex_type result(1.0, 0.0);
 
    if (include_qcd_corrections) {
       const auto g3 = MODELPARAMETER(g3);
@@ -148,7 +148,7 @@ std::complex<double> Standard_model_effective_couplings::pseudoscalar_fermion_qc
    return result;
 }
 
-double Standard_model_effective_couplings::number_of_active_flavours(double m) const
+precise_real_type Standard_model_effective_couplings::number_of_active_flavours(precise_real_type m) const
 {
    if (m < qedqcd.displayMbMb()) {
       return 4.0;
@@ -159,77 +159,77 @@ double Standard_model_effective_couplings::number_of_active_flavours(double m) c
    }
 }
 
-double Standard_model_effective_couplings::scalar_scaling_factor(double m) const
+precise_real_type Standard_model_effective_couplings::scalar_scaling_factor(precise_real_type m) const
 {
-   const double Nf = number_of_active_flavours(m);
-   const double mtpole = qedqcd.displayPoleMt();
-   const double l = Log(Sqr(m) / Sqr(mtpole));
+   const precise_real_type Nf = number_of_active_flavours(m);
+   const precise_real_type mtpole = qedqcd.displayPoleMt();
+   const precise_real_type l = Log(Sqr(m) / Sqr(mtpole));
 
    const auto g3 = MODELPARAMETER(g3);
 
-   const double nlo_qcd = 0.025330295910584444*(23.75 - 1.1666666666666667*Nf)*
+   const precise_real_type nlo_qcd = 0.025330295910584444*(23.75 - 1.1666666666666667*Nf)*
       Sqr(g3);
-   const double nnlo_qcd = 0.000641623890917771*Power(g3,4)*(370.1956513893174
+   const precise_real_type nnlo_qcd = 0.000641623890917771*Power(g3,4)*(370.1956513893174
       + 2.375*l + (-47.18640261449638 + 0.6666666666666666*l)*Nf +
       0.9017702481178881*Sqr(Nf));
-   const double nnnlo_qcd = 0.000016252523020247696*Power(g3,6)*(467.683620788
+   const precise_real_type nnnlo_qcd = 0.000016252523020247696*Power(g3,6)*(467.683620788
       + 122.440972222*l + 10.9409722222*Sqr(l));
 
    return Sqrt(1.0 + nlo_qcd + nnlo_qcd + nnnlo_qcd);
 }
 
-double Standard_model_effective_couplings::pseudoscalar_scaling_factor(double m) const
+precise_real_type Standard_model_effective_couplings::pseudoscalar_scaling_factor(precise_real_type m) const
 {
-   const double Nf = number_of_active_flavours(m);
-   const double mtpole = qedqcd.displayPoleMt();
-   const double l = Log(Sqr(m) / Sqr(mtpole));
+   const precise_real_type Nf = number_of_active_flavours(m);
+   const precise_real_type mtpole = qedqcd.displayPoleMt();
+   const precise_real_type l = Log(Sqr(m) / Sqr(mtpole));
 
    const auto g3 = MODELPARAMETER(g3);
 
-   const double nlo_qcd = 0.025330295910584444*(24.25 - 1.1666666666666667*Nf)*
+   const precise_real_type nlo_qcd = 0.025330295910584444*(24.25 - 1.1666666666666667*Nf)*
       Sqr(g3);
-   const double nnlo_qcd = 0.000641623890917771*Power(g3,4)*(171.54400563089382
+   const precise_real_type nnlo_qcd = 0.000641623890917771*Power(g3,4)*(171.54400563089382
       + 5*l);
-   const double nnnlo_qcd = 0;
+   const precise_real_type nnnlo_qcd = 0;
 
    return Sqrt(1.0 + nlo_qcd + nnlo_qcd + nnnlo_qcd);
 }
 
-double Standard_model_effective_couplings::get_hhVPVP_partial_width() const
+precise_real_type Standard_model_effective_couplings::get_hhVPVP_partial_width() const
 {
-   const double mass = PHYSICAL(Mhh);
+   const precise_real_type mass = PHYSICAL(Mhh);
    return 0.0049735919716217296 * Power(mass, 3.0) * AbsSqr(eff_CphhVPVP);
 }
 
-double Standard_model_effective_couplings::get_hhVGVG_partial_width() const
+precise_real_type Standard_model_effective_couplings::get_hhVGVG_partial_width() const
 {
-   const double mass = PHYSICAL(Mhh);
+   const precise_real_type mass = PHYSICAL(Mhh);
    return 0.039788735772973836 * Power(mass, 3.0) * AbsSqr(eff_CphhVGVG);
 }
 
-double Standard_model_effective_couplings::get_AhVPVP_partial_width() const
+precise_real_type Standard_model_effective_couplings::get_AhVPVP_partial_width() const
 {
-   const double mass = PHYSICAL(MAh);
+   const precise_real_type mass = PHYSICAL(MAh);
    return 0.0049735919716217296 * Power(mass, 3.0) * AbsSqr(eff_CpAhVPVP);
 }
 
-double Standard_model_effective_couplings::get_AhVGVG_partial_width() const
+precise_real_type Standard_model_effective_couplings::get_AhVGVG_partial_width() const
 {
-   const double mass = PHYSICAL(MAh);
+   const precise_real_type mass = PHYSICAL(MAh);
    return 0.039788735772973836 * Power(mass, 3.0) * AbsSqr(eff_CpAhVGVG);
 }
 
-std::complex<double> Standard_model_effective_couplings::CpFdhhbarFdPL(int gt1, int gt3) const
+precise_complex_type Standard_model_effective_couplings::CpFdhhbarFdPL(int gt1, int gt3) const
 {
    const auto Yd = MODELPARAMETER(Yd);
 
-   std::complex<double> result;
+   precise_complex_type result;
 
-   std::complex<double> tmp_467;
-   std::complex<double> tmp_468;
+   precise_complex_type tmp_467;
+   precise_complex_type tmp_468;
    for (int j2 = 0; j2 < 3; ++j2) {
-      std::complex<double> tmp_469;
-      std::complex<double> tmp_470;
+      precise_complex_type tmp_469;
+      precise_complex_type tmp_470;
       for (int j1 = 0; j1 < 3; ++j1) {
          tmp_470 += Conj(Ud(gt3,j1))*Yd(j1,j2);
       }
@@ -242,17 +242,17 @@ std::complex<double> Standard_model_effective_couplings::CpFdhhbarFdPL(int gt1, 
    return result;
 }
 
-std::complex<double> Standard_model_effective_couplings::CpFuhhbarFuPL(int gt1, int gt3) const
+precise_complex_type Standard_model_effective_couplings::CpFuhhbarFuPL(int gt1, int gt3) const
 {
    const auto Yu = MODELPARAMETER(Yu);
 
-   std::complex<double> result;
+   precise_complex_type result;
 
-   std::complex<double> tmp_471;
-   std::complex<double> tmp_472;
+   precise_complex_type tmp_471;
+   precise_complex_type tmp_472;
    for (int j2 = 0; j2 < 3; ++j2) {
-      std::complex<double> tmp_473;
-      std::complex<double> tmp_474;
+      precise_complex_type tmp_473;
+      precise_complex_type tmp_474;
       for (int j1 = 0; j1 < 3; ++j1) {
          tmp_474 += Conj(Uu(gt3,j1))*Yu(j1,j2);
       }
@@ -265,17 +265,17 @@ std::complex<double> Standard_model_effective_couplings::CpFuhhbarFuPL(int gt1, 
    return result;
 }
 
-std::complex<double> Standard_model_effective_couplings::CpFehhbarFePL(int gt1, int gt3) const
+precise_complex_type Standard_model_effective_couplings::CpFehhbarFePL(int gt1, int gt3) const
 {
    const auto Ye = MODELPARAMETER(Ye);
 
-   std::complex<double> result;
+   precise_complex_type result;
 
-   std::complex<double> tmp_475;
-   std::complex<double> tmp_476;
+   precise_complex_type tmp_475;
+   precise_complex_type tmp_476;
    for (int j2 = 0; j2 < 3; ++j2) {
-      std::complex<double> tmp_477;
-      std::complex<double> tmp_478;
+      precise_complex_type tmp_477;
+      precise_complex_type tmp_478;
       for (int j1 = 0; j1 < 3; ++j1) {
          tmp_478 += Conj(Ue(gt3,j1))*Ye(j1,j2);
       }
@@ -288,29 +288,29 @@ std::complex<double> Standard_model_effective_couplings::CpFehhbarFePL(int gt1, 
    return result;
 }
 
-double Standard_model_effective_couplings::CphhVWpconjVWp() const
+precise_real_type Standard_model_effective_couplings::CphhVWpconjVWp() const
 {
    const auto g2 = MODELPARAMETER(g2);
    const auto v = MODELPARAMETER(v);
 
-   double result = 0.0;
+   precise_real_type result = 0.0;
 
    result = 0.5*v*Sqr(g2);
 
    return result;
 }
 
-std::complex<double> Standard_model_effective_couplings::CpAhFdbarFdPL(int gt2, int gt3) const
+precise_complex_type Standard_model_effective_couplings::CpAhFdbarFdPL(int gt2, int gt3) const
 {
    const auto Yd = MODELPARAMETER(Yd);
 
-   std::complex<double> result;
+   precise_complex_type result;
 
-   std::complex<double> tmp_479;
-   std::complex<double> tmp_480;
+   precise_complex_type tmp_479;
+   precise_complex_type tmp_480;
    for (int j2 = 0; j2 < 3; ++j2) {
-      std::complex<double> tmp_481;
-      std::complex<double> tmp_482;
+      precise_complex_type tmp_481;
+      precise_complex_type tmp_482;
       for (int j1 = 0; j1 < 3; ++j1) {
          tmp_482 += Conj(Ud(gt3,j1))*Yd(j1,j2);
       }
@@ -318,22 +318,22 @@ std::complex<double> Standard_model_effective_couplings::CpAhFdbarFdPL(int gt2, 
       tmp_480 += (Conj(Vd(gt2,j2))) * tmp_481;
    }
    tmp_479 += tmp_480;
-   result += (std::complex<double>(0.,0.7071067811865475)) * tmp_479;
+   result += (precise_complex_type(0.,0.7071067811865475)) * tmp_479;
 
    return result;
 }
 
-std::complex<double> Standard_model_effective_couplings::CpAhFubarFuPL(int gt2, int gt3) const
+precise_complex_type Standard_model_effective_couplings::CpAhFubarFuPL(int gt2, int gt3) const
 {
    const auto Yu = MODELPARAMETER(Yu);
 
-   std::complex<double> result;
+   precise_complex_type result;
 
-   std::complex<double> tmp_483;
-   std::complex<double> tmp_484;
+   precise_complex_type tmp_483;
+   precise_complex_type tmp_484;
    for (int j2 = 0; j2 < 3; ++j2) {
-      std::complex<double> tmp_485;
-      std::complex<double> tmp_486;
+      precise_complex_type tmp_485;
+      precise_complex_type tmp_486;
       for (int j1 = 0; j1 < 3; ++j1) {
          tmp_486 += Conj(Uu(gt3,j1))*Yu(j1,j2);
       }
@@ -341,22 +341,22 @@ std::complex<double> Standard_model_effective_couplings::CpAhFubarFuPL(int gt2, 
       tmp_484 += (Conj(Vu(gt2,j2))) * tmp_485;
    }
    tmp_483 += tmp_484;
-   result += (std::complex<double>(0.,0.7071067811865475)) * tmp_483;
+   result += (precise_complex_type(0.,0.7071067811865475)) * tmp_483;
 
    return result;
 }
 
-std::complex<double> Standard_model_effective_couplings::CpAhFebarFePL(int gt2, int gt3) const
+precise_complex_type Standard_model_effective_couplings::CpAhFebarFePL(int gt2, int gt3) const
 {
    const auto Ye = MODELPARAMETER(Ye);
 
-   std::complex<double> result;
+   precise_complex_type result;
 
-   std::complex<double> tmp_487;
-   std::complex<double> tmp_488;
+   precise_complex_type tmp_487;
+   precise_complex_type tmp_488;
    for (int j2 = 0; j2 < 3; ++j2) {
-      std::complex<double> tmp_489;
-      std::complex<double> tmp_490;
+      precise_complex_type tmp_489;
+      precise_complex_type tmp_490;
       for (int j1 = 0; j1 < 3; ++j1) {
          tmp_490 += Conj(Ue(gt3,j1))*Ye(j1,j2);
       }
@@ -364,7 +364,7 @@ std::complex<double> Standard_model_effective_couplings::CpAhFebarFePL(int gt2, 
       tmp_488 += (Conj(Ve(gt2,j2))) * tmp_489;
    }
    tmp_487 += tmp_488;
-   result += (std::complex<double>(0.,0.7071067811865475)) * tmp_487;
+   result += (precise_complex_type(0.,0.7071067811865475)) * tmp_487;
 
    return result;
 }
@@ -380,7 +380,7 @@ void Standard_model_effective_couplings::calculate_eff_CphhVPVP()
 
    const auto vev = 1.0 / Sqrt(qedqcd.displayFermiConstant() * Sqrt(2.0));
 
-   std::complex<double> result = 0;
+   precise_complex_type result = 0;
    for (int gI1 = 0; gI1 < 3; ++gI1) {
       result += 0.3333333333333333 * scalar_fermion_qcd_factor(decay_mass,
          MFd(gI1)) * CpFdhhbarFdPL(gI1, gI1) * vev * AS12(decay_scale / Sqr(MFd(
@@ -411,13 +411,13 @@ void Standard_model_effective_couplings::calculate_eff_CphhVGVG()
    const auto g3 = MODELPARAMETER(g3);
    const auto MFd = PHYSICAL(MFd);
    const auto MFu = PHYSICAL(MFu);
-   const double alpha_s = 0.07957747154594767*Sqr(g3);
+   const precise_real_type alpha_s = 0.07957747154594767*Sqr(g3);
    const auto decay_mass = PHYSICAL(Mhh);
    const auto decay_scale = 0.25 * Sqr(decay_mass);
 
    const auto vev = 1.0 / Sqrt(qedqcd.displayFermiConstant() * Sqrt(2.0));
 
-   std::complex<double> result = 0;
+   precise_complex_type result = 0;
    for (int gI1 = 0; gI1 < 3; ++gI1) {
       result += CpFdhhbarFdPL(gI1, gI1) * vev * AS12(decay_scale / Sqr(MFd(
          gI1))) / MFd(gI1);
@@ -426,7 +426,7 @@ void Standard_model_effective_couplings::calculate_eff_CphhVGVG()
       result += CpFuhhbarFuPL(gI1, gI1) * vev * AS12(decay_scale / Sqr(MFu(
          gI1))) / MFu(gI1);
    }
-   result *= std::complex<double>(0.75,0.);
+   result *= precise_complex_type(0.75,0.);
 
    if (include_qcd_corrections) {
       result *= scalar_scaling_factor(decay_mass);
@@ -450,7 +450,7 @@ void Standard_model_effective_couplings::calculate_eff_CpAhVPVP()
 
    const auto vev = 1.0 / Sqrt(qedqcd.displayFermiConstant() * Sqrt(2.0));
 
-   std::complex<double> result = 0;
+   precise_complex_type result = 0;
    for (int gI1 = 0; gI1 < 3; ++gI1) {
       result += 0.3333333333333333 * pseudoscalar_fermion_qcd_factor(
          decay_mass, MFd(gI1)) * CpAhFdbarFdPL(gI1, gI1) * vev * AP12(decay_scale
@@ -465,7 +465,7 @@ void Standard_model_effective_couplings::calculate_eff_CpAhVPVP()
       result += CpAhFebarFePL(gI1, gI1) * vev * AP12(decay_scale / Sqr(MFe(
          gI1))) / MFe(gI1);
    }
-   result *= std::complex<double>(2.0,0.);
+   result *= precise_complex_type(2.0,0.);
 
 
    result *= 0.18926819071273507 * physical_input.get(
@@ -480,13 +480,13 @@ void Standard_model_effective_couplings::calculate_eff_CpAhVGVG()
    const auto g3 = MODELPARAMETER(g3);
    const auto MFd = PHYSICAL(MFd);
    const auto MFu = PHYSICAL(MFu);
-   const double alpha_s = 0.07957747154594767*Sqr(g3);
+   const precise_real_type alpha_s = 0.07957747154594767*Sqr(g3);
    const auto decay_mass = PHYSICAL(MAh);
    const auto decay_scale = 0.25 * Sqr(decay_mass);
 
    const auto vev = 1.0 / Sqrt(qedqcd.displayFermiConstant() * Sqrt(2.0));
 
-   std::complex<double> result = 0;
+   precise_complex_type result = 0;
    for (int gI1 = 0; gI1 < 3; ++gI1) {
       result += CpAhFdbarFdPL(gI1, gI1) * vev * AP12(decay_scale / Sqr(MFd(
          gI1))) / MFd(gI1);
@@ -495,7 +495,7 @@ void Standard_model_effective_couplings::calculate_eff_CpAhVGVG()
       result += CpAhFubarFuPL(gI1, gI1) * vev * AP12(decay_scale / Sqr(MFu(
          gI1))) / MFu(gI1);
    }
-   result *= std::complex<double>(1.5,0.);
+   result *= precise_complex_type(1.5,0.);
 
    if (include_qcd_corrections) {
       result *= pseudoscalar_scaling_factor(decay_mass);

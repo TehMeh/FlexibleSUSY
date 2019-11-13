@@ -144,7 +144,7 @@ public:
 
    virtual const Spectrum_generator_problems& get_problems() const = 0;
    virtual void fill_slha_io(@ModelName@_slha_io&) const = 0;
-   virtual double get_model_scale() const = 0;
+   virtual precise_real_type get_model_scale() const = 0;
    virtual const @ModelName@_observables& get_observables() const = 0;
 
    virtual void calculate_spectrum(
@@ -163,7 +163,7 @@ public:
 
    virtual const Spectrum_generator_problems& get_problems() const override { return problems; }
    virtual void fill_slha_io(@ModelName@_slha_io&) const override;
-   virtual double get_model_scale() const override { return std::get<0>(models).get_scale(); }
+   virtual precise_real_type get_model_scale() const override { return std::get<0>(models).get_scale(); }
    virtual const @ModelName@_observables& get_observables() const override { return observables; }
 
    virtual void calculate_spectrum(
@@ -210,7 +210,7 @@ public:
    void check_spectrum(MLINK link) const;
    void calculate_model_observables();
 
-   double get_model_scale() const {
+   precise_real_type get_model_scale() const {
       check_spectrum_pointer();
       return spectrum->get_model_scale();
    }
@@ -634,8 +634,8 @@ void Model_data::put_warnings(MLINK link) const
    slha_io.set_physical_input(physical_input);
    slha_io.set_modsel(modsel);
    slha_io.set_input(input);
-   slha_io.set_print_imaginary_parts_of_majorana_mixings(
-      settings.get(Spectrum_generator_settings::force_positive_masses));
+   slha_io.set_print_imaginary_parts_of_majorana_mixings((bool)(
+      settings.get(Spectrum_generator_settings::force_positive_masses)));
 
    spectrum->fill_slha_io(slha_io);
 

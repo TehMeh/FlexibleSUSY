@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef DILOG_H
 #define DILOG_H
 
@@ -37,8 +39,16 @@ std::complex<double> dilog(const std::complex<double>&) DILOGATTR;
 /// complex dilogarithm
 std::complex<long double> dilog(const std::complex<long double>&) DILOGATTR;
 
+//S.D. precise types
+
+precise_real_type dilog(const precise_real_type) DILOGATTR;
+
+precise_complex_type dilog(const precise_complex_type&) DILOGATTR;
+
 /// Clausen function Cl_2(x)
 double clausen_2(double) DILOGATTR;
+
+precise_real_type clausen_2(precise_real_type) DILOGATTR;
 
 } // namespace flexiblesusy
 

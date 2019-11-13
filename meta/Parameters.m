@@ -173,7 +173,10 @@ DecreaseIndexLiterals::usage="";
 IncreaseIndexLiterals::usage="";
 
 DecreaseSumIndices::usage="";
-
+ExpressionMarker::usage="Finds strings to be MARKED according to starting positions and parentheses matching";
+MarkerReplacerSUM::usage="multiprecision types are sometimes ambigous with templates, need to provide types explicitly";
+MarkerReplacerSQR::usage="multiprecision types are sometimes ambigous with templates, need to provide types explicitly";
+MarkerReplacerIF::usage="multiprecision types are sometimes ambigous with templates, need to provide types explicitly";
 ExpressionToString::usage="Converts an expression to a valid C++
 string.";
 
@@ -1524,6 +1527,95 @@ DecreaseIndexLiterals[expr_, heads_List] :=
 DecreaseSumIndices[expr_] :=
     expr //. SARAH`sum[idx_, start_, stop_, exp_] :> FlexibleSUSY`SUM[idx, start - 1, stop - 1, exp];
 
+(* S.D. *)
+ExpressionMarker[expr_String, start_List] := 
+  Module[{sorted, deleted, rep = {}, cstart = 0, cend = 0,
+     pos = {}}, 
+   sorted = 
+    Sort[Flatten[{{#[[1]], "("} & /@ StringPosition[expr, "("], 
+                  {#[[1]], ")"} & /@ StringPosition[expr, ")"]}, 
+          1],
+      #1[[1]] < #2[[1]]&
+    ];
+
+   For[i = 1, i <= Length[start], i++,
+
+    deleted = Select[sorted, #[[1]] >= start[[i]] &];
+    cstart = 0;
+    cend = 0;
+    For[k = 1, k <= Length[deleted], k++,
+      If[deleted[[k, 2]] === "(", cstart = cstart + 1,
+          If[deleted[[k, 2]] === ")", cend = cend + 1]];
+      If[cstart === cend - 1,
+          AppendTo[pos, deleted[[k, 1]]];
+          k = Length[deleted];
+        ]
+     ];
+
+    AppendTo[rep, StringTake[expr, {start[[i]], pos[[i]] - 1}]];
+    ];
+    rep=DeleteDuplicates[rep];
+    rep
+  ];
+(*S.D.*)
+
+MarkerReplacerSUM[expr_String, type_] := 
+  Module[{res = expr, positions = {}, cases = {},rep={}}, 
+    cases = DeleteDuplicates[StringCases[expr,Shortest["SUM(" ~~ a__ ~~ "," ~~ b__ ~~ "," ~~ c__ ~~ ","]]];
+    If[cases =!= {},
+     positions =Flatten[{#[[2]] + 1} & /@ StringPosition[expr, cases]];
+    ];
+    If[positions =!= {},
+      rep = Parameters`ExpressionMarker[expr, positions];
+      rep = {#[[2]]}&/@Sort[{Length[StringPosition[#,"SUM"]], #}&/@rep, #1[[1]] >= #2[[1]] &]; (*takes care of nested expressions. Sorts according to the number of SUM's*)
+      For[i = 1, i <= Length[rep], i++,
+        res = StringReplace[res,rep[[i]] -> "(MARKER)(" <> rep[[i]] <> ")"]
+      ];
+      res = StringReplace[res,"MARKER"->CConversion`CreateCType[CConversion`ScalarType[type]]];
+    ];
+   res
+  ];
+
+MarkerReplacerIF[expr_String, type_] :=
+  
+  Module[{res = expr, rep = {}, repfix = {}, positions = {},cases = {}}, 
+    cases = DeleteDuplicates[StringCases[expr, Shortest["IF(" ~~ a__ ~~ ","]]];
+    If[cases =!= {}, 
+      positions = Flatten[{#[[2]] + 1} & /@ StringPosition[expr, cases]];
+    ];
+    If[positions =!= {},
+      rep = Parameters`ExpressionMarker[expr, positions]
+    ];
+    For[i = 1, i <= Length[rep], i++,
+      rep[[i]] = StringDrop[StringCases[rep[[i]], Longest[a___ ~~ "),0"]], -2];
+    ];
+    rep = Flatten[rep];
+    rep = DeleteCases[DeleteDuplicates[rep], {}];
+    For[i = 1, i <= Length[rep], i++,
+      res = StringReplace[res,rep[[i]] <> ",0" -> "(MARKER)(" <> rep[[i]] <> "),(MARKER)(0)"]
+    ];
+    res = StringReplace[res, "MARKER" -> CConversion`CreateCType[CConversion`ScalarType[type]]]
+  ];
+
+
+MarkerReplacerSQR[expr_String, type_] := 
+  Module[{res = expr, positions = {}, cases = {},rep={}}, 
+    cases = DeleteDuplicates[StringCases[expr,"Sqr("]];
+    If[cases =!= {},
+     positions = Flatten[{#[[2]]+1} & /@ StringPosition[expr, cases]]; (*need to deduce the length!*)
+    ];
+    If[positions =!= {},
+      rep = Parameters`ExpressionMarker[expr, positions];
+      rep = #[[2]]&/@Sort[{Length[StringPosition[#,"Sqr"]], #}&/@rep, #1[[1]] >= #2[[1]] &]; (*takes care of nested expressions. Sorts according to the number of SUM's*)
+      rep = DeleteCases[If[Length[StringPosition[#,Characters["+-*/"]]]>0,#,{}]&/@rep,{}]; (*gets rid of single character expressions*)
+      For[i = 1, i <= Length[rep], i++,
+        res = StringReplace[res,rep[[i]] -> "(MARKER)(" <> rep[[i]] <> ")"]
+      ];
+      res = StringReplace[res,"MARKER"->CConversion`CreateCType[CConversion`ScalarType[type]]];
+    ];
+   res
+  ];
+
 ReplaceThetaStep[expr_] := expr /; FreeQ[expr,ThetaStep];
 
 ReplaceThetaStep[expr_] :=
@@ -1802,7 +1894,7 @@ GetIntermediateOutputParameterDependencies[expr_] :=
     ];
 
 CreateExtraParameterArrayGetter[{}] :=
-    "return Eigen::ArrayXd();\n";
+    "return Eigen::ArrayXdp();\n";
 
 CreateExtraParameterArrayGetter[extraParameters_List] :=
     Module[{get = "", paramCount = 0, name = "", par,
@@ -1815,7 +1907,7 @@ CreateExtraParameterArrayGetter[extraParameters_List] :=
                get = get <> assignment;
                paramCount += nAssignments;
               ];
-           get = "Eigen::ArrayXd pars(" <> ToString[paramCount] <> ");\n\n" <>
+           get = "Eigen::ArrayXdp pars(" <> ToString[paramCount] <> ");\n\n" <>
                  get <> "\n" <>
                  "return pars;";
            Return[get];
@@ -1836,7 +1928,7 @@ CreateExtraParameterArraySetter[extraParameters_List] :=
           ];
 
 CreateInputParameterArrayGetter[{}] :=
-    "return Eigen::ArrayXd();\n";
+    "return Eigen::ArrayXdp();\n";
 
 CreateInputParameterArrayGetter[inputParameters_List] :=
     Module[{get = "", paramCount = 0, name = "", par,
@@ -1849,7 +1941,7 @@ CreateInputParameterArrayGetter[inputParameters_List] :=
                get = get <> assignment;
                paramCount += nAssignments;
               ];
-           get = "Eigen::ArrayXd pars(" <> ToString[paramCount] <> ");\n\n" <>
+           get = "Eigen::ArrayXdp pars(" <> ToString[paramCount] <> ");\n\n" <>
                  get <> "\n" <>
                  "return pars;";
            Return[get];

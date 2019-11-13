@@ -21,6 +21,8 @@
  * @brief contains class Beta_function
  */
 
+#include "precise.hpp"
+
 #ifndef BETAFUNCTION_H
 #define BETAFUNCTION_H
 
@@ -42,8 +44,8 @@ namespace flexiblesusy {
  */
 class Beta_function {
 public:
-   using Derivs = std::function<Eigen::ArrayXd(double, const Eigen::ArrayXd&)>;
-   using ODE_integrator = std::function<void(double, double, Eigen::ArrayXd&, Derivs, double)>;
+   using Derivs = std::function<Eigen::ArrayXdp(precise_real_type, const Eigen::ArrayXdp&)>;
+   using ODE_integrator = std::function<void(precise_real_type, precise_real_type, Eigen::ArrayXdp&, Derivs, precise_real_type)>;
 
    Beta_function() = default;
    Beta_function(const Beta_function&) = default;
@@ -52,44 +54,44 @@ public:
    Beta_function& operator=(const Beta_function&) = default;
    Beta_function& operator=(Beta_function&&) = default;
 
-   void set_scale(double s) { scale = s; }
+   void set_scale(precise_real_type s) { scale = s; }
    void set_number_of_parameters(int pars) { num_pars = pars; }
-   void set_loops(int l) { loops = l; }
-   void set_thresholds(int t) { thresholds = t; }
-   void set_zero_threshold(double t) { zero_threshold = t; }
+   void set_loops(precise_real_type l) { loops = (int)l; }
+   void set_thresholds(precise_real_type t) { thresholds = (int)t; }
+   void set_zero_threshold(precise_real_type t) { zero_threshold = t; }
    void set_integrator(const ODE_integrator& i) { integrator = i; }
 
-   double get_scale() const { return scale; }
+   precise_real_type get_scale() const { return scale; }
    int get_number_of_parameters() const { return num_pars; }
    int get_loops() const { return loops; }
    int get_thresholds() const { return thresholds; }
-   double get_zero_threshold() const { return zero_threshold; }
+   precise_real_type get_zero_threshold() const { return zero_threshold; }
 
    void reset();
 
-   virtual Eigen::ArrayXd get() const = 0;
-   virtual void set(const Eigen::ArrayXd&) = 0;
-   virtual Eigen::ArrayXd beta() const = 0;
+   virtual Eigen::ArrayXdp get() const = 0;
+   virtual void set(const Eigen::ArrayXdp&) = 0;
+   virtual Eigen::ArrayXdp beta() const = 0;
 
-   virtual void run(double, double, double eps = -1.0);
-   virtual void run_to(double, double eps = -1.0);
+   virtual void run(precise_real_type, precise_real_type, precise_real_type eps = -1.0);
+   virtual void run_to(precise_real_type, precise_real_type eps = -1.0);
 
 protected:
-   void call_rk(double, double, Eigen::ArrayXd&, Derivs, double eps = -1.0);
+   void call_rk(precise_real_type, precise_real_type, Eigen::ArrayXdp&, Derivs, precise_real_type eps = -1.0);
 
 private:
    int num_pars{0};              ///< number of parameters
    int loops{0};                 ///< to what loop order does the RG evolution run
    int thresholds{0};            ///< threshold correction loop order
-   double scale{0.};             ///< current renormalization scale
-   double tolerance{1.e-4};      ///< running tolerance
-   double min_tolerance{1.e-11}; ///< minimum tolerance allowed
-   double zero_threshold{1.e-11};///< threshold for treating values as zero
+   precise_real_type scale{0.};             ///< current renormalization scale
+   precise_real_type tolerance{1.e-4};      ///< running tolerance
+   precise_real_type min_tolerance{1.e-11}; ///< minimum tolerance allowed
+   precise_real_type zero_threshold{1.e-11};///< threshold for treating values as zero
    ODE_integrator integrator{
-      runge_kutta::Basic_rk_integrator<Eigen::ArrayXd>()};
+      runge_kutta::Basic_rk_integrator<Eigen::ArrayXdp>()};
 
-   Eigen::ArrayXd derivatives(double, const Eigen::ArrayXd&);
-   double get_tolerance(double eps);
+   Eigen::ArrayXdp derivatives(precise_real_type, const Eigen::ArrayXdp&);
+   precise_real_type get_tolerance(precise_real_type eps);
 };
 
 } // namespace flexiblesusy

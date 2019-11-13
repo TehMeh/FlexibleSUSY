@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef EIGEN_TENSOR_H
 #define EIGEN_TENSOR_H
 

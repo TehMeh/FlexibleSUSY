@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_SPECTRUM_GENERATOR_INTERFACE_H
 #define @ModelName@_SPECTRUM_GENERATOR_INTERFACE_H
 
@@ -66,13 +68,13 @@ public:
 
    Spectrum_generator_problems get_problems() const { return problems; }
    int get_exit_code() const { return problems.have_problem(); }
-   double get_reached_precision() const { return reached_precision; }
+   precise_real_type get_reached_precision() const { return reached_precision; }
    const Spectrum_generator_settings& get_settings() const { return settings; }
-   void set_parameter_output_scale(double s) { parameter_output_scale = s; }
+   void set_parameter_output_scale(precise_real_type s) { parameter_output_scale = s; }
    void set_settings(const Spectrum_generator_settings&);
 
    void run(const softsusy::QedQcd&, const @ModelName@_input_parameters&);
-   void write_running_couplings(const std::string& filename, double, double) const;
+   void write_running_couplings(const std::string& filename, precise_real_type, precise_real_type) const;
    void write_spectrum(const std::string& filename = "@ModelName@_spectrum.dat") const;
 
 protected:
@@ -80,8 +82,8 @@ protected:
    standard_model::StandardModel<T> eft{};
    Spectrum_generator_problems problems;
    Spectrum_generator_settings settings;
-   double parameter_output_scale{0.}; ///< output scale for running parameters
-   double reached_precision{std::numeric_limits<double>::infinity()}; ///< the precision that was reached
+   precise_real_type parameter_output_scale{0.}; ///< output scale for running parameters
+   precise_real_type reached_precision{std::numeric_limits<precise_real_type>::infinity()}; ///< the precision that was reached
 
    void translate_exception_to_problem(@ModelName@<T>& model);
    virtual void run_except(const softsusy::QedQcd&, const @ModelName@_input_parameters&) = 0;
@@ -143,7 +145,7 @@ void @ModelName@_spectrum_generator_interface<T>::run(
 template <class T>
 void @ModelName@_spectrum_generator_interface<T>::write_running_couplings(
    const std::string& filename,
-   double start, double stop) const
+   precise_real_type start, precise_real_type stop) const
 {
    @ModelName@_mass_eigenstates tmp_model(model);
    try {

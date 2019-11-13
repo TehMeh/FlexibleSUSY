@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef THRESHOLD_LOOP_FUNCTIONS_H
 #define THRESHOLD_LOOP_FUNCTIONS_H
 
@@ -51,96 +53,96 @@ namespace threshold_loop_functions {
 
 #define TCFATTR noexcept ATTR(const)
 
-double F1(double) TCFATTR;
-double F2(double) TCFATTR;
-double F3(double) TCFATTR;
-double F4(double) TCFATTR;
-double F5(double) TCFATTR;
-double F6(double) TCFATTR;
-double F7(double) TCFATTR;
-double F8(double, double) TCFATTR;
-double F9(double, double) TCFATTR;
+precise_real_type F1(precise_real_type) TCFATTR;
+precise_real_type F2(precise_real_type) TCFATTR;
+precise_real_type F3(precise_real_type) TCFATTR;
+precise_real_type F4(precise_real_type) TCFATTR;
+precise_real_type F5(precise_real_type) TCFATTR;
+precise_real_type F6(precise_real_type) TCFATTR;
+precise_real_type F7(precise_real_type) TCFATTR;
+precise_real_type F8(precise_real_type, precise_real_type) TCFATTR;
+precise_real_type F9(precise_real_type, precise_real_type) TCFATTR;
 
-double f(double) TCFATTR;
-double g(double) TCFATTR;
+precise_real_type f(precise_real_type) TCFATTR;
+precise_real_type g(precise_real_type) TCFATTR;
 
-double f1(double) TCFATTR;
-double f2(double) TCFATTR;
-double f3(double) TCFATTR;
-double f4(double) TCFATTR;
-double f5(double, double) TCFATTR;
-double f6(double, double) TCFATTR;
-double f7(double, double) TCFATTR;
-double f8(double, double) TCFATTR;
+precise_real_type f1(precise_real_type) TCFATTR;
+precise_real_type f2(precise_real_type) TCFATTR;
+precise_real_type f3(precise_real_type) TCFATTR;
+precise_real_type f4(precise_real_type) TCFATTR;
+precise_real_type f5(precise_real_type, precise_real_type) TCFATTR;
+precise_real_type f6(precise_real_type, precise_real_type) TCFATTR;
+precise_real_type f7(precise_real_type, precise_real_type) TCFATTR;
+precise_real_type f8(precise_real_type, precise_real_type) TCFATTR;
 
 // 2-loop threshold function fth[y] from MhEFT-1.1
-double fth1(double) TCFATTR;
-double fth2(double) TCFATTR;
-double fth3(double) TCFATTR;
+precise_real_type fth1(precise_real_type) TCFATTR;
+precise_real_type fth2(precise_real_type) TCFATTR;
+precise_real_type fth3(precise_real_type) TCFATTR;
 
 // first derivatives
 
-double D1F1(double) TCFATTR;
-double D1F2(double) TCFATTR;
-double D1F3(double) TCFATTR;
-double D1F4(double) TCFATTR;
-double D1F5(double) TCFATTR;
-double D1F6(double) TCFATTR;
-double D1F7(double) TCFATTR;
-double D1f(double) TCFATTR;
-double D1g(double) TCFATTR;
-double D1f1(double) TCFATTR;
-double D1f2(double) TCFATTR;
-double D1f3(double) TCFATTR;
-double D1f4(double) TCFATTR;
-double D10f5(double, double) TCFATTR;
-double D01f5(double, double) TCFATTR;
-double D10f6(double, double) TCFATTR;
-double D01f6(double, double) TCFATTR;
-double D10f7(double, double) TCFATTR;
-double D01f7(double, double) TCFATTR;
-double D10f8(double, double) TCFATTR;
-double D01f8(double, double) TCFATTR;
+precise_real_type D1F1(precise_real_type) TCFATTR;
+precise_real_type D1F2(precise_real_type) TCFATTR;
+precise_real_type D1F3(precise_real_type) TCFATTR;
+precise_real_type D1F4(precise_real_type) TCFATTR;
+precise_real_type D1F5(precise_real_type) TCFATTR;
+precise_real_type D1F6(precise_real_type) TCFATTR;
+precise_real_type D1F7(precise_real_type) TCFATTR;
+precise_real_type D1f(precise_real_type) TCFATTR;
+precise_real_type D1g(precise_real_type) TCFATTR;
+precise_real_type D1f1(precise_real_type) TCFATTR;
+precise_real_type D1f2(precise_real_type) TCFATTR;
+precise_real_type D1f3(precise_real_type) TCFATTR;
+precise_real_type D1f4(precise_real_type) TCFATTR;
+precise_real_type D10f5(precise_real_type, precise_real_type) TCFATTR;
+precise_real_type D01f5(precise_real_type, precise_real_type) TCFATTR;
+precise_real_type D10f6(precise_real_type, precise_real_type) TCFATTR;
+precise_real_type D01f6(precise_real_type, precise_real_type) TCFATTR;
+precise_real_type D10f7(precise_real_type, precise_real_type) TCFATTR;
+precise_real_type D01f7(precise_real_type, precise_real_type) TCFATTR;
+precise_real_type D10f8(precise_real_type, precise_real_type) TCFATTR;
+precise_real_type D01f8(precise_real_type, precise_real_type) TCFATTR;
 
 // second derivatives
 
-double D2F1(double) TCFATTR;
-double D2F2(double) TCFATTR;
-double D2F3(double) TCFATTR;
-double D2F4(double) TCFATTR;
-double D2F5(double) TCFATTR;
-double D2F6(double) TCFATTR;
-double D2F7(double) TCFATTR;
+precise_real_type D2F1(precise_real_type) TCFATTR;
+precise_real_type D2F2(precise_real_type) TCFATTR;
+precise_real_type D2F3(precise_real_type) TCFATTR;
+precise_real_type D2F4(precise_real_type) TCFATTR;
+precise_real_type D2F5(precise_real_type) TCFATTR;
+precise_real_type D2F6(precise_real_type) TCFATTR;
+precise_real_type D2F7(precise_real_type) TCFATTR;
 
 /// \f$I_{abc}(a,b,c)\f$ (arguments are interpreted as unsquared)
-double Iabc(double, double, double) TCFATTR;
+precise_real_type Iabc(precise_real_type, precise_real_type, precise_real_type) TCFATTR;
 
 /// \f$Delta_{xyz}(x,y,z)\f$ (arguments are interpreted as squared masses)
-double delta_xyz(double, double, double) TCFATTR;
+precise_real_type delta_xyz(precise_real_type, precise_real_type, precise_real_type) TCFATTR;
 
 /// \f$phi_{xyz}(x,y,z)\f$ (arguments are interpreted as squared masses)
-double phi_xyz(double, double, double) TCFATTR;
+precise_real_type phi_xyz(precise_real_type, precise_real_type, precise_real_type) TCFATTR;
 
 /// \f$B_0(p=0,m_1,m_2,Q)\f$ (arguments are interpreted as unsquared)
-double B0(double, double, double) TCFATTR;
+precise_real_type B0(precise_real_type, precise_real_type, precise_real_type) TCFATTR;
 
 /// \f$B_0'(p=0,m_1,m_2)\f$ (arguments are interpreted as unsquared)
-double DB0(double, double) TCFATTR;
+precise_real_type DB0(precise_real_type, precise_real_type) TCFATTR;
 
 /// \f$C_0(p=0,m_1,m_2,m_3)\f$ (arguments are interpreted as unsquared)
-double C0(double, double, double) TCFATTR;
+precise_real_type C0(precise_real_type, precise_real_type, precise_real_type) TCFATTR;
 
 /// \f$D_0(p=0,m_1,m_2,m_3,m_4)\f$ (arguments are interpreted as unsquared)
-double D0(double, double, double, double) TCFATTR;
+precise_real_type D0(precise_real_type, precise_real_type, precise_real_type, precise_real_type) TCFATTR;
 
 /// \f$\tilde{D}_2(m_1,m_2,m_3,m_4)\f$ (arguments are interpreted as unsquared)
-double D2t(double, double, double, double) TCFATTR;
+precise_real_type D2t(precise_real_type, precise_real_type, precise_real_type, precise_real_type) TCFATTR;
 
 /// \f$\tilde{D}_4(m_1,m_2,m_3,m_4,Q)\f$ (arguments are interpreted as unsquared)
-double D4t(double, double, double, double, double) TCFATTR;
+precise_real_type D4t(precise_real_type, precise_real_type, precise_real_type, precise_real_type, precise_real_type) TCFATTR;
 
 /// \f$Q(m_1,m_2,Q)\f$ (arguments are interpreted as unsquared)
-double W(double, double, double) TCFATTR;
+precise_real_type W(precise_real_type, precise_real_type, precise_real_type) TCFATTR;
 
 } // namespace threshold_loop_functions
 } // namespace flexiblesusy

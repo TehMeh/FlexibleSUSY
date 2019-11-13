@@ -110,20 +110,20 @@ CalculateQCDScalingFactor[] :=
            nnloQCD = nnloQCD SARAH`strongCoupling^4 / (16 Pi^4);
            nnnloQCD = 467.683620788 + 122.440972222 Symbol["l"] + 10.9409722222 Symbol["l"]^2;
            nnnloQCD = nnnloQCD SARAH`strongCoupling^6 / (64 Pi^6);
-           scalarFactor = scalarFactor <> "const double nlo_qcd = " <> CConversion`RValueToCFormString[nloQCD] <> ";\n";
-           scalarFactor = scalarFactor <> "const double nnlo_qcd = " <> CConversion`RValueToCFormString[nnloQCD] <> ";\n";
-           scalarFactor = scalarFactor <> "const double nnnlo_qcd = " <> CConversion`RValueToCFormString[nnnloQCD] <> ";\n";
+           scalarFactor = scalarFactor <> "const precise_real_type nlo_qcd = " <> CConversion`RValueToCFormString[nloQCD] <> ";\n";
+           scalarFactor = scalarFactor <> "const precise_real_type nnlo_qcd = " <> CConversion`RValueToCFormString[nnloQCD] <> ";\n";
+           scalarFactor = scalarFactor <> "const precise_real_type nnnlo_qcd = " <> CConversion`RValueToCFormString[nnnloQCD] <> ";\n";
            scalarFactor = Parameters`CreateLocalConstRefs[{nloQCD, nnloQCD, nnnloQCD}] <> "\n" <> scalarFactor;
            (* NLO, NNLO and NNNLO contributions to pseudoscalar coupling *)
            nloQCD = (97 / 4 - 7 / 6 Symbol["Nf"]) SARAH`strongCoupling^2 / (4 Pi^2);
            nnloQCD = (237311 / 864 - 529 Zeta[2] / 24 - 445 Zeta[3] / 8 + 5 Symbol["l"]);
            nnloQCD = nnloQCD SARAH`strongCoupling^4 / (16 Pi^4);
            nnnloQCD = 0;
-           pseudoscalarFactor = pseudoscalarFactor <> "const double nlo_qcd = "
+           pseudoscalarFactor = pseudoscalarFactor <> "const precise_real_type nlo_qcd = "
                                 <> CConversion`RValueToCFormString[nloQCD] <> ";\n";
-           pseudoscalarFactor = pseudoscalarFactor <> "const double nnlo_qcd = "
+           pseudoscalarFactor = pseudoscalarFactor <> "const precise_real_type nnlo_qcd = "
                                 <> CConversion`RValueToCFormString[nnloQCD] <> ";\n";
-           pseudoscalarFactor = pseudoscalarFactor <> "const double nnnlo_qcd = "
+           pseudoscalarFactor = pseudoscalarFactor <> "const precise_real_type nnnlo_qcd = "
                                 <> CConversion`RValueToCFormString[nnnloQCD] <> ";\n";
            pseudoscalarFactor = Parameters`CreateLocalConstRefs[{nloQCD, nnloQCD, nnnloQCD}] <> "\n" <> pseudoscalarFactor;
            {scalarFactor, pseudoscalarFactor}
@@ -184,7 +184,7 @@ CalculatePartialWidths[couplings_List] :=
                  ];
                couplingName = "eff_Cp" <> particlesStr;
                massStr = CConversion`ToValidCSymbolString[FlexibleSUSY`M[particle]];
-               body = "const double mass = PHYSICAL(" <> massStr <> ")";
+               body = "const precise_real_type mass = PHYSICAL(" <> massStr <> ")";
                If[dim != 1,
                   body = body <> "(gO1)";
                  ];
@@ -198,11 +198,11 @@ CalculatePartialWidths[couplings_List] :=
                          <> If[dim != 1, "(gO1)", ""] <> ");";
                  ];
                functions = Append[functions,
-                                  "double " <> FlexibleSUSY`FSModelName <> "_effective_couplings::"
+                                  "precise_real_type " <> FlexibleSUSY`FSModelName <> "_effective_couplings::"
                                   <> functionName <> "\n{\n" <> TextFormatting`IndentText[body]
                                   <> "\n}\n"];
                prototypes = Append[prototypes,
-                                   "double " <> functionName <> ";"];
+                                   "precise_real_type " <> functionName <> ";"];
               ];
            Utils`StringJoinWithSeparator[#, "\n"]& /@ {prototypes, functions}
           ];
@@ -472,8 +472,8 @@ CreateEffectiveCouplingsCalculation[couplings_List] :=
                  ];
               ];
 
-           result = "const double scale = model.get_scale();\nconst Eigen::ArrayXd saved_parameters(model.get());\n\n"
-                    <> "const double saved_mt = PHYSICAL("
+           result = "const precise_real_type scale = model.get_scale();\nconst Eigen::ArrayXdp saved_parameters(model.get());\n\n"
+                    <> "const precise_real_type saved_mt = PHYSICAL("
                     <> CConversion`RValueToCFormString[TreeMasses`GetThirdGenerationMass[TreeMasses`GetSMTopQuarkMultiplet[]]]
                     <> ");\nPHYSICAL("
                     <> CConversion`RValueToCFormString[TreeMasses`GetThirdGenerationMass[TreeMasses`GetSMTopQuarkMultiplet[]]]
@@ -506,8 +506,8 @@ GetEffectiveVEV[] :=
                            / SARAH`leftCoupling^2] /. SARAH`sum[a_,b_,c_,d_] :> Sum[d,{a,b,c}]];
               vev = Parameters`DecreaseIndexLiterals[vev];
               parameters = Parameters`FindAllParameters[vev];
-              result = "const auto vev = " <> CConversion`RValueToCFormString[vev] <> ";\n";,
-              result = "const auto vev = 1.0 / Sqrt(qedqcd.displayFermiConstant() * Sqrt(2.0));\n";
+              result = "const precise_real_type vev = " <> CConversion`RValueToCFormString[vev] <> ";\n";,
+              result = "const precise_real_type vev = 1.0 / Sqrt(qedqcd.displayFermiConstant() * Sqrt(2.0));\n";
            ];
            {result, parameters}
           ];
@@ -556,7 +556,7 @@ CreateLocalConstRefsIgnoringMixings[expr_, mixings_List] :=
 CreateNeededCouplingFunction[coupling_, expr_, mixings_List] :=
     Module[{symbol, prototype = "", definition = "",
             indices = {}, localExpr, body = "", functionName = "", i,
-            type, typeStr},
+            type, typeStr, mytype},
            indices = GetParticleIndicesInCoupling[coupling];
            symbol = CreateCouplingSymbol[coupling];
            functionName = CConversion`ToValidCSymbolString[CConversion`GetHead[symbol]];
@@ -570,8 +570,10 @@ CreateNeededCouplingFunction[coupling_, expr_, mixings_List] :=
               ];
            functionName = functionName <> ")";
            If[Parameters`IsRealExpression[expr],
-              type = CConversion`ScalarType[CConversion`realScalarCType];,
-              type = CConversion`ScalarType[CConversion`complexScalarCType];];
+              type = CConversion`ScalarType[CConversion`realScalarCType];
+              mytype = CConversion`realScalarCType;,
+              type = CConversion`ScalarType[CConversion`complexScalarCType];
+              mytype = CConversion`complexScalarCType;];
            typeStr = CConversion`CreateCType[type];
            prototype = typeStr <> " " <> functionName <> " const;\n";
            definition = typeStr <> " " <> FlexibleSUSY`FSModelName
@@ -579,8 +581,8 @@ CreateNeededCouplingFunction[coupling_, expr_, mixings_List] :=
            localExpr = expr /. (Rule[#[],#]& /@ Parameters`GetDependenceSPhenoSymbols[]);
            localExpr = localExpr /. Parameters`GetDependenceSPhenoRules[];
            body = CreateLocalConstRefsIgnoringMixings[localExpr, mixings] <> "\n" <>
-                  "const " <> typeStr <> " result = " <>
-                  Parameters`ExpressionToString[localExpr] <> ";\n\n" <>
+                  "const " <> typeStr <> " result = ("<> typeStr<>")(" <>
+                  Parameters`MarkerReplacerSUM[Parameters`ExpressionToString[localExpr],mytype] <> ");\n\n" <>
                   "return result;\n";
            body = TextFormatting`IndentText[TextFormatting`WrapLines[body]];
            definition = definition <> body <> "}\n";
@@ -706,7 +708,7 @@ CreateEffectiveCouplingFunction[coupling_] :=
                  savedMass = savedMass <> "(gO1);\n";
                 ];
               body = body <> savedMass;
-              body = body <> "const auto decay_scale = 0.25 * Sqr(decay_mass);\n";
+              body = body <> "const precise_real_type decay_scale = 0.25 * Sqr(decay_mass);\n";
               (* use physical mixing matrices for decaying particle *)
               mixingSymbol = TreeMasses`FindMixingMatrixSymbolFor[particle];
               If[mixingSymbol =!= Null,
@@ -738,7 +740,7 @@ CreateEffectiveCouplingFunction[coupling_] :=
 
               If[vectorBoson === SARAH`VectorG,
                  parameters = Append[parameters, SARAH`strongCoupling];
-                 body = "const double alpha_s = " <> CConversion`RValueToCFormString[SARAH`strongCoupling^2 / (4 Pi)]
+                 body = "const precise_real_type alpha_s = " <> CConversion`RValueToCFormString[SARAH`strongCoupling^2 / (4 Pi)]
                         <> ";\n" <> body;
                 ];
 

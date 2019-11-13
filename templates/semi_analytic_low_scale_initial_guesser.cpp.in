@@ -84,7 +84,7 @@ void @ModelName@_initial_guesser<Semi_analytic>::guess_susy_parameters()
 void @ModelName@_initial_guesser<Semi_analytic>::initial_guess_low_scale_parameters()
 {
    softsusy::QedQcd leAtMt(qedqcd);
-   const double mtpole = leAtMt.displayPoleMt();
+   const precise_real_type mtpole = leAtMt.displayPoleMt();
 
    mu_guess = leAtMt.displayMass(softsusy::mUp);
    mc_guess = leAtMt.displayMass(softsusy::mCharm);
@@ -173,7 +173,7 @@ void @ModelName@_initial_guesser<Semi_analytic>::calculate_@ElectronYukawa@_DRba
 
 void @ModelName@_initial_guesser<Semi_analytic>::initial_guess_susy_scale_parameters()
 {
-   const double susy_scale_guess = susy_constraint.get_initial_scale_guess();
+   const precise_real_type susy_scale_guess = susy_constraint.get_initial_scale_guess();
 
    model->run_to(susy_scale_guess, running_precision);
 
@@ -191,7 +191,7 @@ void @ModelName@_initial_guesser<Semi_analytic>::initial_guess_susy_scale_parame
  */
 void @ModelName@_initial_guesser<Semi_analytic>::solve_susy_parameters()
 {
-   const double low_scale_guess = low_constraint.get_initial_scale_guess();
+   const precise_real_type low_scale_guess = low_constraint.get_initial_scale_guess();
    model->run_to(low_scale_guess, running_precision);
 
    const auto old_thresholds = model->get_thresholds();
@@ -254,8 +254,8 @@ void @ModelName@_initial_guesser<Semi_analytic>::solve_susy_parameters()
 
 void @ModelName@_initial_guesser<Semi_analytic>::guess_soft_parameters()
 {
-   const double low_scale_guess = low_constraint.get_scale();
-   const double input_scale = @inputScaleGuess@;
+   const precise_real_type low_scale_guess = low_constraint.get_scale();
+   const precise_real_type input_scale = @inputScaleGuess@;
 
    model->run_to(low_scale_guess, running_precision);
 

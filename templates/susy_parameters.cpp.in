@@ -45,7 +45,7 @@ const int @ModelName@_susy_parameters::numberOfParameters;
 }
 
 @ModelName@_susy_parameters::@ModelName@_susy_parameters(
-   double scale_, int loops_, int thresholds_,
+   precise_real_type scale_, int loops_, int thresholds_,
    const @ModelName@_input_parameters& input_
    @cCtorParameterList@
 )
@@ -59,9 +59,9 @@ const int @ModelName@_susy_parameters::numberOfParameters;
    set_thresholds(thresholds_);
 }
 
-Eigen::ArrayXd @ModelName@_susy_parameters::beta() const
+Eigen::ArrayXdp @ModelName@_susy_parameters::beta() const
 {
-   return calc_beta().get().unaryExpr(Chop<double>(get_zero_threshold()));
+   return calc_beta().get().unaryExpr(Chop<precise_real_type>(get_zero_threshold()));
 }
 
 @ModelName@_susy_parameters @ModelName@_susy_parameters::calc_beta(int loops) const
@@ -85,9 +85,9 @@ void @ModelName@_susy_parameters::clear()
 
 @anomDimFunctions@
 
-Eigen::ArrayXd @ModelName@_susy_parameters::get() const
+Eigen::ArrayXdp @ModelName@_susy_parameters::get() const
 {
-   Eigen::ArrayXd pars(numberOfParameters);
+   Eigen::ArrayXdp pars(numberOfParameters);
 
 @display@
 
@@ -100,7 +100,7 @@ void @ModelName@_susy_parameters::print(std::ostream& ostr) const
 @printParameters@
 }
 
-void @ModelName@_susy_parameters::set(const Eigen::ArrayXd& pars)
+void @ModelName@_susy_parameters::set(const Eigen::ArrayXdp& pars)
 {
 @set@
 }

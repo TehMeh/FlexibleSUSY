@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef SCAN_HPP
 #define SCAN_HPP
 
@@ -25,11 +27,11 @@
 namespace flexiblesusy {
 
 /// returns range of floating point values between start and stop
-std::vector<double> float_range(double start, double stop,
+std::vector<precise_real_type> float_range(precise_real_type start, precise_real_type stop,
                                 std::size_t number_of_steps);
 
 /// returns range of floating point values between start and stop with logarithmic spacing
-std::vector<double> float_range_log(double start, double stop,
+std::vector<precise_real_type> float_range_log(precise_real_type start, precise_real_type stop,
                                     std::size_t number_of_steps);
 
 } // namespace flexiblesusy

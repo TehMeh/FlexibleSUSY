@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_SLHA_IO_H
 #define @ModelName@_SLHA_IO_H
 
@@ -62,8 +64,8 @@ template <class T>
 class @ModelName@;
 
 struct @ModelName@_scales {
-   double HighScale{0.}, SUSYScale{0.}, LowScale{0.};
-   double pole_mass_scale{0.};
+   precise_real_type HighScale{0.}, SUSYScale{0.}, LowScale{0.};
+   precise_real_type pole_mass_scale{0.};
 };
 
 class @ModelName@_slha_io {
@@ -78,7 +80,7 @@ public:
    template <class Model> void fill(@ModelName@_slha<Model>&) const;
    void fill(Physical_input&) const;
    void fill(Spectrum_generator_settings&) const;
-   double get_parameter_output_scale() const;
+   precise_real_type get_parameter_output_scale() const;
    const SLHA_io& get_slha_io() const { return slha_io; }
    void read_from_file(const std::string&);
    void read_from_source(const std::string&);
@@ -103,10 +105,10 @@ public:
    void write_to_file(const std::string& file_name) const { slha_io.write_to_file(file_name); }
    void write_to_stream(std::ostream& ostr = std::cout) const { slha_io.write_to_stream(ostr); }
 
-   static void fill_minpar_tuple(@ModelName@_input_parameters&, int, double);
-   static void fill_extpar_tuple(@ModelName@_input_parameters&, int, double);
-   static void fill_imminpar_tuple(@ModelName@_input_parameters&, int, double);
-   static void fill_imextpar_tuple(@ModelName@_input_parameters&, int, double);
+   static void fill_minpar_tuple(@ModelName@_input_parameters&, int, precise_real_type);
+   static void fill_extpar_tuple(@ModelName@_input_parameters&, int, precise_real_type);
+   static void fill_imminpar_tuple(@ModelName@_input_parameters&, int, precise_real_type);
+   static void fill_imextpar_tuple(@ModelName@_input_parameters&, int, precise_real_type);
 
    template <class Model>
    static void fill_slhaea(SLHAea::Coll&, const @ModelName@_slha<Model>&, const softsusy::QedQcd&, const @ModelName@_scales&, const @ModelName@_observables&);
@@ -128,9 +130,9 @@ private:
    void set_mixing_matrices(const standard_model::Standard_model_physical&);
    template <class Model> void set_model_parameters(const @ModelName@_slha<Model>&);
    void set_model_parameters(const standard_model::Standard_model&);
-   void set_ckm(const Eigen::Matrix<std::complex<double>,3,3>&, double);
-   void set_pmns(const Eigen::Matrix<std::complex<double>,3,3>&, double);
-   double read_scale() const;
+   void set_ckm(const Eigen::Matrix<precise_complex_type,3,3>&, precise_real_type);
+   void set_pmns(const Eigen::Matrix<precise_complex_type,3,3>&, precise_real_type);
+   precise_real_type read_scale() const;
    void fill_drbar_parameters(@ModelName@_mass_eigenstates&) const;
    void fill_physical(@ModelName@_physical&) const;
 };

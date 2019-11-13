@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef BVP_SOLVER_PROBLEMS_H
 #define BVP_SOLVER_PROBLEMS_H
 

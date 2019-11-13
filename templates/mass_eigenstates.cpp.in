@@ -36,7 +36,7 @@
 #include "eigen_utils.hpp"
 #include "ewsb_solver.hpp"
 #include "wrappers.hpp"
-#include "linalg2.hpp"
+#include "linalg2.hpp" 
 #include "numerics2.hpp"
 #include "logger.hpp"
 #include "error.hpp"
@@ -122,9 +122,9 @@ bool CLASSNAME::do_force_output() const
    return force_output;
 }
 
-void CLASSNAME::set_ewsb_loop_order(int loop_order)
+void CLASSNAME::set_ewsb_loop_order(precise_real_type loop_order)
 {
-   ewsb_loop_order = loop_order;
+   ewsb_loop_order = (int)loop_order;
    if (ewsb_solver) {
       ewsb_solver->set_loop_order(ewsb_loop_order);
    }
@@ -152,15 +152,15 @@ const Threshold_corrections& CLASSNAME::get_threshold_corrections() const
 
 int CLASSNAME::get_number_of_ewsb_iterations() const
 {
-   return static_cast<int>(std::abs(-log10(ewsb_iteration_precision) * 10));
+   return static_cast<int>(abs(-log10(ewsb_iteration_precision) * 10));
 }
 
 int CLASSNAME::get_number_of_mass_iterations() const
 {
-   return static_cast<int>(std::abs(-log10(precision) * 10));
+   return static_cast<int>(abs(-log10(precision) * 10));
 }
 
-void CLASSNAME::set_precision(double precision_)
+void CLASSNAME::set_precision(precise_real_type precision_)
 {
    precision = precision_;
    ewsb_iteration_precision = precision_;
@@ -169,17 +169,22 @@ void CLASSNAME::set_precision(double precision_)
    }
 }
 
-void CLASSNAME::set_pole_mass_loop_order(int loop_order)
+void CLASSNAME::set_pole_mass_loop_order(precise_real_type loop_order)
 {
-   pole_mass_loop_order = loop_order;
+   pole_mass_loop_order = (int)loop_order;
 }
+
+int CLASSNAME::get_number_of_digits()
+{
+	return number_of_digits;
+} // added S.D.
 
 int CLASSNAME::get_pole_mass_loop_order() const
 {
    return pole_mass_loop_order;
 }
 
-void CLASSNAME::set_ewsb_iteration_precision(double precision)
+void CLASSNAME::set_ewsb_iteration_precision(precise_real_type precision)
 {
    ewsb_iteration_precision = precision;
    if (ewsb_solver) {
@@ -187,17 +192,17 @@ void CLASSNAME::set_ewsb_iteration_precision(double precision)
    }
 }
 
-double CLASSNAME::get_ewsb_iteration_precision() const
+precise_real_type CLASSNAME::get_ewsb_iteration_precision() const
 {
    return ewsb_iteration_precision;
 }
 
-double CLASSNAME::get_precision() const
+precise_real_type CLASSNAME::get_precision() const
 {
    return precision;
 }
 
-double CLASSNAME::get_ewsb_loop_order() const
+precise_real_type CLASSNAME::get_ewsb_loop_order() const
 {
    return ewsb_loop_order;
 }
@@ -237,7 +242,7 @@ void CLASSNAME::set_ewsb_solver(const std::shared_ptr<@ModelName@_ewsb_solver_in
  *
  * @param tadpole array of tadpole
  */
-void CLASSNAME::tadpole_equations(double tadpole[number_of_ewsb_equations]) const
+void CLASSNAME::tadpole_equations(precise_real_type tadpole[number_of_ewsb_equations]) const
 {
    const auto tadpole_(tadpole_equations());
    std::copy(tadpole_.data(), tadpole_.data() + number_of_ewsb_equations, tadpole);
@@ -248,10 +253,10 @@ void CLASSNAME::tadpole_equations(double tadpole[number_of_ewsb_equations]) cons
  *
  * @return array of tadpoles
  */
-Eigen::Matrix<double,CLASSNAME::number_of_ewsb_equations,1> CLASSNAME::tadpole_equations() const
+Eigen::Matrix<precise_real_type,CLASSNAME::number_of_ewsb_equations,1> CLASSNAME::tadpole_equations() const
 {
-   Eigen::Matrix<double,number_of_ewsb_equations,1> tadpole(
-      Eigen::Matrix<double,number_of_ewsb_equations,1>::Zero());
+   Eigen::Matrix<precise_real_type,number_of_ewsb_equations,1> tadpole(
+      Eigen::Matrix<precise_real_type,number_of_ewsb_equations,1>::Zero());
 
 @calculateTreeLevelTadpoles@
    if (ewsb_loop_order > 0) {
@@ -271,7 +276,7 @@ Eigen::Matrix<double,CLASSNAME::number_of_ewsb_equations,1> CLASSNAME::tadpole_e
  *
  * @return vector of tadpoles
  */
-Eigen::Matrix<double,CLASSNAME::number_of_ewsb_equations,1> CLASSNAME::tadpole_equations_over_vevs() const
+Eigen::Matrix<precise_real_type,CLASSNAME::number_of_ewsb_equations,1> CLASSNAME::tadpole_equations_over_vevs() const
 {
    auto tadpole = tadpole_equations();
 
@@ -308,7 +313,7 @@ int CLASSNAME::solve_ewsb_tree_level()
          this->ewsb_solver->set_number_of_iterations(old_iterations);
       });
 
-   const double old_precision = ewsb_solver->get_precision();
+   const precise_real_type old_precision = ewsb_solver->get_precision();
    const auto save_precision = make_raii_guard(
       [this, old_precision] () {
          this->ewsb_solver->set_precision(old_precision);
@@ -340,7 +345,7 @@ int CLASSNAME::solve_ewsb_one_loop()
          this->ewsb_solver->set_number_of_iterations(old_iterations);
       });
 
-   const double old_precision = ewsb_solver->get_precision();
+   const precise_real_type old_precision = ewsb_solver->get_precision();
    const auto save_precision = make_raii_guard(
       [this, old_precision] () {
          this->ewsb_solver->set_precision(old_precision);
@@ -374,7 +379,7 @@ int CLASSNAME::solve_ewsb()
          this->ewsb_solver->set_number_of_iterations(old_iterations);
       });
 
-   const double old_precision = ewsb_solver->get_precision();
+   const precise_real_type old_precision = ewsb_solver->get_precision();
    const auto save_precision = make_raii_guard(
       [this, old_precision] () {
          this->ewsb_solver->set_precision(old_precision);
@@ -409,42 +414,42 @@ void CLASSNAME::print(std::ostream& ostr) const
  * @note: They take squared arguments!
  */
 
-double CLASSNAME::A0(double m) const noexcept
+precise_real_type CLASSNAME::A0(precise_real_type m) const noexcept
 {
    return passarino_veltman::ReA0(m, Sqr(get_scale()));
 }
 
-double CLASSNAME::B0(double p, double m1, double m2) const noexcept
+precise_real_type CLASSNAME::B0(precise_real_type p, precise_real_type m1, precise_real_type m2) const noexcept
 {
    return passarino_veltman::ReB0(p, m1, m2, Sqr(get_scale()));
 }
 
-double CLASSNAME::B1(double p, double m1, double m2) const noexcept
+precise_real_type CLASSNAME::B1(precise_real_type p, precise_real_type m1, precise_real_type m2) const noexcept
 {
    return passarino_veltman::ReB1(p, m1, m2, Sqr(get_scale()));
 }
 
-double CLASSNAME::B00(double p, double m1, double m2) const noexcept
+precise_real_type CLASSNAME::B00(precise_real_type p, precise_real_type m1, precise_real_type m2) const noexcept
 {
    return passarino_veltman::ReB00(p, m1, m2, Sqr(get_scale()));
 }
 
-double CLASSNAME::B22(double p, double m1, double m2) const noexcept
+precise_real_type CLASSNAME::B22(precise_real_type p, precise_real_type m1, precise_real_type m2) const noexcept
 {
    return passarino_veltman::ReB22(p, m1, m2, Sqr(get_scale()));
 }
 
-double CLASSNAME::H0(double p, double m1, double m2) const noexcept
+precise_real_type CLASSNAME::H0(precise_real_type p, precise_real_type m1, precise_real_type m2) const noexcept
 {
    return passarino_veltman::ReH0(p, m1, m2, Sqr(get_scale()));
 }
 
-double CLASSNAME::F0(double p, double m1, double m2) const noexcept
+precise_real_type CLASSNAME::F0(precise_real_type p, precise_real_type m1, precise_real_type m2) const noexcept
 {
    return passarino_veltman::ReF0(p, m1, m2, Sqr(get_scale()));
 }
 
-double CLASSNAME::G0(double p, double m1, double m2) const noexcept
+precise_real_type CLASSNAME::G0(precise_real_type p, precise_real_type m1, precise_real_type m2) const noexcept
 {
    return passarino_veltman::ReG0(p, m1, m2, Sqr(get_scale()));
 }
@@ -552,38 +557,38 @@ void CLASSNAME::clear()
    problems.clear();
 }
 
-void CLASSNAME::set_DRbar_masses(const Eigen::ArrayXd& pars)
+void CLASSNAME::set_DRbar_masses(const Eigen::ArrayXdp& pars)
 {
 @setMasses@
 }
 
-Eigen::ArrayXd CLASSNAME::get_DRbar_masses() const
+Eigen::ArrayXdp CLASSNAME::get_DRbar_masses() const
 {
 @getMasses@
 }
 
-void CLASSNAME::set_DRbar_masses_and_mixings(const Eigen::ArrayXd& pars)
+void CLASSNAME::set_DRbar_masses_and_mixings(const Eigen::ArrayXdp& pars)
 {
    set_DRbar_masses(pars);
 
 @setMixings@
 }
 
-Eigen::ArrayXd CLASSNAME::get_DRbar_masses_and_mixings() const
+Eigen::ArrayXdp CLASSNAME::get_DRbar_masses_and_mixings() const
 {
-   Eigen::ArrayXd pars(get_DRbar_masses());
+   Eigen::ArrayXdp pars(get_DRbar_masses());
 
 @getMixings@
 
    return pars;
 }
 
-void CLASSNAME::set_extra_parameters(const Eigen::ArrayXd& pars)
+void CLASSNAME::set_extra_parameters(const Eigen::ArrayXdp& pars)
 {
 @setExtraParameters@
 }
 
-Eigen::ArrayXd CLASSNAME::get_extra_parameters() const
+Eigen::ArrayXdp CLASSNAME::get_extra_parameters() const
 {
 @getExtraParameters@
 }
@@ -593,7 +598,7 @@ std::string CLASSNAME::name() const
    return "@ModelName@";
 }
 
-void CLASSNAME::run_to(double scale, double eps)
+void CLASSNAME::run_to(precise_real_type scale, precise_real_type eps)
 {
    if (eps < 0.0)
       eps = precision;

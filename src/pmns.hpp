@@ -16,10 +16,12 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef PMNS_H
 #define PMNS_H
 
-#include <Eigen/Core>
+//#include <Eigen/Core>
 
 namespace flexiblesusy {
 
@@ -27,25 +29,25 @@ struct PMNS_parameters {
    void reset_to_diagonal();
    void reset_to_observation();
 
-   Eigen::Matrix<double,3,3> get_real_pmns() const;
-   Eigen::Matrix<std::complex<double>,3,3> get_complex_pmns() const;
+   Eigen::Matrix<precise_real_type,3,3> get_real_pmns() const;
+   Eigen::Matrix<precise_complex_type,3,3> get_complex_pmns() const;
 
-   static void to_pdg_convention(Eigen::Matrix<double,3,3>&,
-                                 Eigen::Matrix<double,3,3>&,
-                                 Eigen::Matrix<double,3,3>&,
-                                 Eigen::Matrix<double,3,3>&);
-   static void to_pdg_convention(Eigen::Matrix<double,3,3>&,
-                                 Eigen::Matrix<double,3,3>&,
-                                 Eigen::Matrix<double,3,3>&);
-   static void to_pdg_convention(Eigen::Matrix<std::complex<double>,3,3>&,
-                                 Eigen::Matrix<std::complex<double>,3,3>&,
-                                 Eigen::Matrix<std::complex<double>,3,3>&,
-                                 Eigen::Matrix<std::complex<double>,3,3>&);
-   static void to_pdg_convention(Eigen::Matrix<std::complex<double>,3,3>&,
-                                 Eigen::Matrix<std::complex<double>,3,3>&,
-                                 Eigen::Matrix<std::complex<double>,3,3>&);
+   static void to_pdg_convention(Eigen::Matrix<precise_real_type,3,3>&,
+                                 Eigen::Matrix<precise_real_type,3,3>&,
+                                 Eigen::Matrix<precise_real_type,3,3>&,
+                                 Eigen::Matrix<precise_real_type,3,3>&);
+   static void to_pdg_convention(Eigen::Matrix<precise_real_type,3,3>&,
+                                 Eigen::Matrix<precise_real_type,3,3>&,
+                                 Eigen::Matrix<precise_real_type,3,3>&);
+   static void to_pdg_convention(Eigen::Matrix<precise_complex_type,3,3>&,
+                                 Eigen::Matrix<precise_complex_type,3,3>&,
+                                 Eigen::Matrix<precise_complex_type,3,3>&,
+                                 Eigen::Matrix<precise_complex_type,3,3>&);
+   static void to_pdg_convention(Eigen::Matrix<precise_complex_type,3,3>&,
+                                 Eigen::Matrix<precise_complex_type,3,3>&,
+                                 Eigen::Matrix<precise_complex_type,3,3>&);
 
-   double theta_12{0.}, theta_13{0.}, theta_23{0.},
+   precise_real_type theta_12{0.}, theta_13{0.}, theta_23{0.},
       delta{0.}, alpha_1{0.}, alpha_2{0.};
 };
 

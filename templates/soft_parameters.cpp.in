@@ -53,9 +53,9 @@ const int @ModelName@_soft_parameters::numberOfParameters;
    set_number_of_parameters(numberOfParameters);
 }
 
-Eigen::ArrayXd @ModelName@_soft_parameters::beta() const
+Eigen::ArrayXdp @ModelName@_soft_parameters::beta() const
 {
-   return calc_beta().get().unaryExpr(Chop<double>(get_zero_threshold()));
+   return calc_beta().get().unaryExpr(Chop<precise_real_type>(get_zero_threshold()));
 }
 
 @ModelName@_soft_parameters @ModelName@_soft_parameters::calc_beta(int loops) const
@@ -79,9 +79,9 @@ void @ModelName@_soft_parameters::clear()
 @clearParameters@
 }
 
-Eigen::ArrayXd @ModelName@_soft_parameters::get() const
+Eigen::ArrayXdp @ModelName@_soft_parameters::get() const
 {
-   Eigen::ArrayXd pars(@ModelName@_susy_parameters::get());
+   Eigen::ArrayXdp pars(@ModelName@_susy_parameters::get());
    pars.conservativeResize(numberOfParameters);
 
 @display@
@@ -96,7 +96,7 @@ void @ModelName@_soft_parameters::print(std::ostream& ostr) const
 @printParameters@
 }
 
-void @ModelName@_soft_parameters::set(const Eigen::ArrayXd& pars)
+void @ModelName@_soft_parameters::set(const Eigen::ArrayXdp& pars)
 {
    @ModelName@_susy_parameters::set(pars);
 

@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef COUPLING_MONITOR_H
 #define COUPLING_MONITOR_H
 
@@ -45,7 +47,7 @@ namespace flexiblesusy {
  * @code
  * class MSSM_parameter_getter {
  * public:
- *    Eigen::ArrayXd get_parameters(const MSSM& model) {
+ *    Eigen::ArrayXdp get_parameters(const MSSM& model) {
  *       return model.get();
  *    }
  *    std::vector<std::string> get_parameter_names() const {
@@ -57,8 +59,8 @@ namespace flexiblesusy {
  * MSSM_parameter_getter getter;
  * Coupling_monitor<MSSM, MSSM_parameter_getter> cm(model, getter);
  *
- * const double start_scale = 100.;
- * const double stop_scale = 1.0e12;
+ * const precise_real_type start_scale = 100.;
+ * const precise_real_type stop_scale = 1.0e12;
  * const int number_of_points = 50;
  * const bool include_endpoint = true;
  *
@@ -69,12 +71,12 @@ namespace flexiblesusy {
 template <class Model, class DataGetter>
 class Coupling_monitor {
 public:
-   using TTouple = std::pair<double, Eigen::ArrayXd>;///< touple of scale and couplings
+   using TTouple = std::pair<precise_real_type, Eigen::ArrayXdp>;///< touple of scale and couplings
 
    Coupling_monitor(const Model&, const DataGetter&);
 
    /// get couplings at all scales
-   void run(double, double, int number_of_steps = 20, bool include_endpoint = false);
+   void run(precise_real_type, precise_real_type, int number_of_steps = 20, bool include_endpoint = false);
    /// get maximum scale
    TTouple get_max_scale() const;
    /// delete all saved couplings
@@ -111,7 +113,7 @@ Coupling_monitor<Model,DataGetter>::Coupling_monitor(const Model& model_, const 
 /**
  * Get the couplings at the largest scale
  *
- * @return a pair with the scale and a Eigen::ArrayXd which contains the
+ * @return a pair with the scale and a Eigen::ArrayXdp which contains the
  * couplings at this scale
  */
 template <class Model, class DataGetter>
@@ -119,7 +121,7 @@ typename Coupling_monitor<Model,DataGetter>::TTouple Coupling_monitor<Model,Data
 {
    if (couplings.empty()) {
       ERROR("Data container is empty!");
-      return TTouple(0.0, Eigen::ArrayXd(1));
+      return TTouple(0.0, Eigen::ArrayXdp(1));
    }
 
    // find gauge couplings at the greatest scale
@@ -241,7 +243,7 @@ void Coupling_monitor<Model,DataGetter>::write_to_file(const std::string& file_n
  *        (false by default)
  */
 template <class Model, class DataGetter>
-void Coupling_monitor<Model,DataGetter>::run(double q1, double q2,
+void Coupling_monitor<Model,DataGetter>::run(precise_real_type q1, precise_real_type q2,
                                              int number_of_steps, bool include_endpoint)
 {
    if (q1 <= 0.0 || q2 <= 0.0) {
@@ -259,7 +261,7 @@ void Coupling_monitor<Model,DataGetter>::run(double q1, double q2,
 
    // run from q1 to q2
    for (int n = 0; n < number_of_steps + endpoint_offset; ++n) {
-      const double scale = std::exp(std::log(q1) + n * (std::log(q2) - std::log(q1)) / number_of_steps);
+      const precise_real_type scale = exp(log(q1) + n * (log(q2) - log(q1)) / number_of_steps);
       try {
          model.run_to(scale);
       } catch (const Error&) {

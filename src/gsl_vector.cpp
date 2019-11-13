@@ -26,17 +26,18 @@
 
 namespace flexiblesusy {
 
-GSL_vector::GSL_vector(std::size_t size)
+GSL_vector::GSL_vector(size_t size)
 {
    if (!size)
       return;
-
    vec = gsl_vector_calloc(size);
 
-   if (!vec)
+   if (!vec){
+
       throw OutOfMemoryError(
-         "Allocation of GSL_vector of size " + std::to_string(size)
+         "Allocation of GSL_vector of size " + boost::to_string(size)
          + " failed.");
+   }
 }
 
 /**
@@ -54,10 +55,12 @@ GSL_vector::GSL_vector(const GSL_vector& other)
 {
    vec = gsl_vector_alloc(other.size());
 
-   if (!vec)
+   if (!vec){
+
       throw OutOfMemoryError(
-         "Allocation of GSL_vector of size " + std::to_string(other.size())
+         "Allocation of GSL_vector of size " + boost::to_string(other.size())
          + " failed.");
+   }
 
    gsl_vector_memcpy(vec, other.vec);
 }
@@ -68,18 +71,23 @@ GSL_vector::GSL_vector(GSL_vector&& other) noexcept
 }
 
 GSL_vector::GSL_vector(std::initializer_list<double> list)
-{
+{   
+
    if (list.size() == 0)
       return;
 
    vec = gsl_vector_alloc(list.size());
 
-   if (!vec)
+
+   if (!vec){
+
       throw OutOfMemoryError(
-         "Allocation of GSL_vector of size " + std::to_string(list.size())
+         "Allocation of GSL_vector of size " + boost::to_string(list.size())
          + " failed.");
+   }
 
    std::copy(list.begin(), list.end(), gsl_vector_ptr(vec, 0));
+
 }
 
 GSL_vector::~GSL_vector() noexcept
@@ -105,10 +113,12 @@ void GSL_vector::assign(const gsl_vector* other)
       gsl_vector_free(vec);
       vec = gsl_vector_alloc(other->size);
 
-      if (!vec)
+      if (!vec){
+
          throw OutOfMemoryError(
-            "Allocation of GSL_vector of size " + std::to_string(other->size)
+            "Allocation of GSL_vector of size " + boost::to_string(other->size)
             + " failed.");
+      }
    }
 
    gsl_vector_memcpy(vec, other);
@@ -137,29 +147,29 @@ GSL_vector& GSL_vector::operator=(GSL_vector&& rhs) noexcept
    return *this;
 }
 
-double& GSL_vector::operator[](std::size_t n)
+double& GSL_vector::operator[](size_t n)
 {
    return *gsl_vector_ptr(vec, n);
 }
 
-double GSL_vector::operator[](std::size_t n) const
+double GSL_vector::operator[](size_t n) const
 {
    return gsl_vector_get(vec, n);
 }
 
-double& GSL_vector::operator()(std::size_t n)
+double& GSL_vector::operator()(size_t n)
 {
    range_check(n);
    return operator[](n);
 }
 
-double GSL_vector::operator()(std::size_t n) const
+double GSL_vector::operator()(size_t n) const
 {
    range_check(n);
    return operator[](n);
 }
 
-std::size_t GSL_vector::size() const noexcept
+size_t GSL_vector::size() const noexcept
 {
    if (!vec) return 0;
    return vec->size;
@@ -189,17 +199,17 @@ gsl_vector* GSL_vector::raw() noexcept
    return vec;
 }
 
-void GSL_vector::set_all(double value) noexcept
+void GSL_vector::set_all(precise_real_type value) noexcept
 {
    if (vec)
-      gsl_vector_set_all(vec, value);
+      gsl_vector_set_all(vec, (double)value); //S.D.
 }
 
 std::ostream& operator<<(std::ostream& ostr, const GSL_vector& vec)
 {
    ostr << "(";
 
-   for (std::size_t i = 0; i < vec.size(); i++) {
+   for (size_t i = 0; i < vec.size(); i++) {
       ostr << vec[i];
       if (i < vec.size() - 1)
          ostr << ", ";
@@ -216,17 +226,19 @@ void GSL_vector::move_assign(GSL_vector&& other) noexcept
    other.vec = nullptr;
 }
 
-void GSL_vector::range_check(std::size_t n) const
+void GSL_vector::range_check(size_t n) const
 {
-   if (!vec)
+   if (!vec){
       throw OutOfBoundsError(
-         "GSL_vector::operator[]: index " + std::to_string(n)
+         "GSL_vector::operator[]: index " + boost::to_string(n)
          + " out of range for vector of size 0.");
+   }
 
-   if (n >= size())
+   if (n >= size()){
       throw OutOfBoundsError(
-         "GSL_vector::operator[]: index " + std::to_string(n)
-         + " out of range for vector of size " + std::to_string(size()) + ".");
+         "GSL_vector::operator[]: index " + boost::to_string(n)
+         + " out of range for vector of size " + boost::to_string(size()) + ".");
+   }
 }
 
 double* begin(GSL_vector& v)

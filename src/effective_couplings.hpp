@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef EFFECTIVE_COUPLINGS_H
 #define EFFECTIVE_COUPLINGS_H
 
@@ -27,27 +29,27 @@ namespace flexiblesusy {
 namespace effective_couplings {
 
 // loop functions of hep-ph/9504378, Eq. (53)
-std::complex<double> scaling_function(double tau);
-std::complex<double> AS0(double tau);
-std::complex<double> AS12(double tau);
-std::complex<double> AS1(double tau);
-std::complex<double> AP12(double tau);
+precise_complex_type scaling_function(precise_real_type tau);
+precise_complex_type AS0(precise_real_type tau);
+precise_complex_type AS12(precise_real_type tau);
+precise_complex_type AS1(precise_real_type tau);
+precise_complex_type AP12(precise_real_type tau);
 
 // QCD corrections to the diphoton decay width
 // for scalars and pseudoscalars, at the scale
 // m_decay / 2
-std::complex<double> scalar_diphoton_fermion_loop(
-   double m_decay, double m_loop);
-std::complex<double> pseudoscalar_diphoton_fermion_loop(
-   double m_decay, double m_loop);
+precise_complex_type scalar_diphoton_fermion_loop(
+   precise_real_type m_decay, precise_real_type m_loop);
+precise_complex_type pseudoscalar_diphoton_fermion_loop(
+   precise_real_type m_decay, precise_real_type m_loop);
 
-std::complex<double> linear_interpolation(
-   double x, const std::map<double,std::complex<double> >& data);
-std::complex<double> quadratic_interpolation(
-   double x, const std::map<double,std::complex<double> >& data);
+precise_complex_type linear_interpolation(
+   precise_real_type x, const std::map<precise_real_type,precise_complex_type >& data);
+precise_complex_type quadratic_interpolation(
+   precise_real_type x, const std::map<precise_real_type,precise_complex_type >& data);
 
-std::map<double,std::complex<double> > get_scalar_fermion_loop_data();
-std::map<double,std::complex<double> > get_pseudoscalar_fermion_loop_data();
+std::map<precise_real_type,precise_complex_type > get_scalar_fermion_loop_data();
+std::map<precise_real_type,precise_complex_type > get_pseudoscalar_fermion_loop_data();
 
 } // namespace effective_couplings
 

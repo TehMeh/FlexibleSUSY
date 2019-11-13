@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_TWO_SCALE_SPECTRUM_GENERATOR_H
 #define @ModelName@_TWO_SCALE_SPECTRUM_GENERATOR_H
 
@@ -39,10 +41,10 @@ public:
    @ModelName@_spectrum_generator() = default;
    virtual ~@ModelName@_spectrum_generator() = default;
 
-   double get_high_scale() const { return 0.; }
-   double get_susy_scale() const { return susy_scale; }
-   double get_low_scale()  const { return low_scale;  }
-   double get_pole_mass_scale() const;
+   precise_real_type get_high_scale() const { return 0.; }
+   precise_real_type get_susy_scale() const { return susy_scale; }
+   precise_real_type get_low_scale()  const { return low_scale;  }
+   precise_real_type get_pole_mass_scale() const;
 
    void write_running_couplings(const std::string& filename = "@ModelName@_rgflow.dat") const;
 
@@ -50,8 +52,8 @@ protected:
    virtual void run_except(const softsusy::QedQcd&, const @ModelName@_input_parameters&) override;
 
 private:
-   double susy_scale{0.};
-   double low_scale{0.};
+   precise_real_type susy_scale{0.};
+   precise_real_type low_scale{0.};
 
    void calculate_spectrum();
 };

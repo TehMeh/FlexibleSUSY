@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef TWO_SCALE_RUNNING_PRECISION_H
 #define TWO_SCALE_RUNNING_PRECISION_H
 
@@ -24,26 +26,26 @@ namespace flexiblesusy {
 class Two_scale_running_precision {
 public:
    virtual ~Two_scale_running_precision() = default;
-   virtual double get_precision(int) = 0;
+   virtual precise_real_type get_precision(int) = 0;
 };
 
 class Two_scale_constant_precision : public Two_scale_running_precision {
 public:
-   explicit Two_scale_constant_precision(double);
+   explicit Two_scale_constant_precision(precise_real_type);
    virtual ~Two_scale_constant_precision();
-   virtual double get_precision(int);
+   virtual precise_real_type get_precision(int);
 private:
-   double precision;
+   precise_real_type precision;
 };
 
 class Two_scale_increasing_precision : public Two_scale_running_precision {
 public:
-   Two_scale_increasing_precision(double, double);
+   Two_scale_increasing_precision(precise_real_type, precise_real_type);
    virtual ~Two_scale_increasing_precision();
-   virtual double get_precision(int);
+   virtual precise_real_type get_precision(int);
 private:
-   double decreasing_factor;
-   double minimum_precision;
+   precise_real_type decreasing_factor;
+   precise_real_type minimum_precision;
 };
 
 } // namespace flexiblesusy

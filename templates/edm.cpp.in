@@ -42,7 +42,7 @@ using namespace flexiblesusy;
 using namespace @ModelName@_cxx_diagrams;
 
 namespace {
-static constexpr double oneOver16PiSquared = 0.0063325739776461107152;
+const precise_real_type oneOver16PiSquared = 0.0063325739776461107152;
 
 /**
  * @class EDMVertexCorrectionSF
@@ -59,9 +59,10 @@ static constexpr double oneOver16PiSquared = 0.0063325739776461107152;
  * dipole moment of a one loop diagram with fields given by
  * \a Args.
  */
-template<class EDMField, class PhotonEmitter, class ExchangeParticle>
-struct EDMVertexCorrectionSF {
-   static double value(const typename field_indices<EDMField>::type& indices,
+namespace EDMVertexCorrectionSF {
+
+  template<class EDMField, class PhotonEmitter, class ExchangeParticle>
+   precise_real_type value(const typename field_indices<EDMField>::type& indices,
                        context_base& context);
 };
 
@@ -80,9 +81,9 @@ struct EDMVertexCorrectionSF {
 * dipole moment of a one loop diagram with fields given by
 * \a Args.
 */
-template<class EDMField, class PhotonEmitter, class ExchangeParticle>
-struct EDMVertexCorrectionFS {
-   static double value(const typename field_indices<EDMField>::type& indices,
+namespace EDMVertexCorrectionFS {
+   template<class EDMField, class PhotonEmitter, class ExchangeParticle>
+   precise_real_type value(const typename field_indices<EDMField>::type& indices,
                        context_base& context);
 };
 } // anonymous namespace
@@ -102,14 +103,14 @@ namespace {
 * as specified in arXiv:0808.1819
 */
 
-double OneLoopFunctionA(double r)
+precise_real_type OneLoopFunctionA(precise_real_type r)
 {
    if (is_zero(r))
-      return std::numeric_limits<double>::infinity();
+      return std::numeric_limits<precise_real_type>::infinity();
 
-   const double d = r - 1.0;
+   const precise_real_type d = r - 1.0;
 
-   if (std::abs(d) < 0.15) {
+   if (abs(d) < 0.15) {
       return (-0.33333333333333333333 +
               0.25000000000000000000  * d -
               0.20000000000000000000  * d * d +
@@ -123,17 +124,17 @@ double OneLoopFunctionA(double r)
               0.076923076923076923077 * d * d * d * d * d * d * d * d * d * d);
    }
 
-   return 1.0 / (2.0 * d * d) * (3.0 - r - 2.0 * std::log(r) / d);
+   return 1.0 / (2.0 * d * d) * (3.0 - r - 2.0 * log(r) / d);
 }
 
-double OneLoopFunctionB(double r)
+precise_real_type OneLoopFunctionB(precise_real_type r)
 {
    if (is_zero(r))
       return 1.0/2.0;
 
-   const double d = r - 1.0;
+   const precise_real_type d = r - 1.0;
 
-   if (std::abs(d) < 0.15)
+   if (abs(d) < 0.15)
       return (0.16666666666666666667 -
               0.083333333333333333333  * d +
               0.050000000000000000000  * d * d -
@@ -146,93 +147,94 @@ double OneLoopFunctionB(double r)
               0.0075757575757575757576 * d * d * d * d * d * d * d * d * d +
               0.0064102564102564102564 * d * d * d * d * d * d * d * d * d * d);
 
-   return 1.0 / (2.0 * d * d) * (1.0 + r - 2.0 * r * std::log(r) / d);
+   return 1.0 / (2.0 * d * d) * (1.0 + r - 2.0 * r * log(r) / d);
 }
 
-template<class EDMField, class PhotonEmitter, class ExchangeField>
-double EDMVertexCorrectionFS<
-EDMField, PhotonEmitter, ExchangeField
->::value(const typename field_indices<EDMField>::type& indices, context_base& context)
-{
-   double res = 0.0;
+namespace EDMVertexCorrectionFS{
 
-   using FermionVertex = Vertex<
-                         EDMField,
-                         ExchangeField,
-                         PhotonEmitter
-                         >;
+  template<class EDMField, class PhotonEmitter, class ExchangeField>
+  precise_real_type value(const typename field_indices<EDMField>::type& indices, context_base& context)
+  {
+     precise_real_type res = 0.0;
 
-   for (const auto& index: index_range<FermionVertex>()) {
-      const auto edmFieldIndices = FermionVertex::template indices_of_field<0>(index);
+     using FermionVertex = Vertex<
+                           EDMField,
+                           ExchangeField,
+                           PhotonEmitter
+                           >;
 
-      if (edmFieldIndices != indices)
-         continue;
+     for (const auto& index: index_range<FermionVertex>()) {
+        const auto edmFieldIndices = FermionVertex::template indices_of_field<0>(index);
 
-      const auto photonEmitterIndices = FermionVertex::template indices_of_field<2>(index);
-      const auto exchangeFieldIndices = FermionVertex::template indices_of_field<1>(index);
-      const auto vertex = FermionVertex::evaluate(index, context);
+        if (edmFieldIndices != indices)
+           continue;
 
-      const auto photonEmitterMass = context.mass<PhotonEmitter>(photonEmitterIndices);
-      const auto exchangeFieldMass = context.mass<ExchangeField>(exchangeFieldIndices);
+        const auto photonEmitterIndices = FermionVertex::template indices_of_field<2>(index);
+        const auto exchangeFieldIndices = FermionVertex::template indices_of_field<1>(index);
+        const auto vertex = FermionVertex::evaluate(index, context);
 
-      const double photonEmitterCharge =
-         - PhotonEmitter::electric_charge * unit_charge(context);
+        const auto photonEmitterMass = context.mass<PhotonEmitter>(photonEmitterIndices);
+        const auto exchangeFieldMass = context.mass<ExchangeField>(exchangeFieldIndices);
 
-      constexpr double numericFactor = oneOver16PiSquared;
-      const double massFactor = photonEmitterMass/(exchangeFieldMass * exchangeFieldMass);
-      const double couplingFactor = (std::conj(vertex.right()) * vertex.left()).imag();
+        const precise_real_type photonEmitterCharge =
+           - PhotonEmitter::electric_charge * unit_charge(context);
 
-      const double massRatioSquared = Sqr(photonEmitterMass/exchangeFieldMass);
-      const double loopFactor = photonEmitterCharge * OneLoopFunctionA(massRatioSquared);
-      const double contribution = numericFactor * massFactor * couplingFactor * loopFactor;
+        const precise_real_type numericFactor = oneOver16PiSquared;
+        const precise_real_type massFactor = precise_real_type(photonEmitterMass/(exchangeFieldMass * exchangeFieldMass));
+        const precise_real_type couplingFactor = precise_real_type(precise_complex_type(boost::multiprecision::conj(vertex.right())).imag() * vertex.left().imag());
 
-      res += contribution;
-   }
+        const precise_real_type massRatioSquared = Sqr(precise_real_type(photonEmitterMass/exchangeFieldMass));
+        const precise_real_type loopFactor = photonEmitterCharge * OneLoopFunctionA(massRatioSquared);
+        const precise_real_type contribution = numericFactor * massFactor * couplingFactor * loopFactor;
 
-   return res;
+        res += contribution;
+     }
+
+     return res;
+  }
 }
 
-template<class EDMField, class PhotonEmitter, class ExchangeField>
-double EDMVertexCorrectionSF<
-EDMField, PhotonEmitter, ExchangeField
->::value(const typename field_indices<EDMField>::type& indices, context_base& context)
-{
-   double res = 0.0;
 
-   using FermionVertex = Vertex<
-                         EDMField,
-                         ExchangeField,
-                         PhotonEmitter
-                         >;
+namespace EDMVertexCorrectionSF{
+  template<class EDMField, class PhotonEmitter, class ExchangeField>
+  precise_real_type value(const typename field_indices<EDMField>::type& indices, context_base& context)
+  {
+     precise_real_type res = 0.0;
 
-   for (const auto& index: index_range<FermionVertex>()) {
-      const auto edmFieldIndices = FermionVertex::template indices_of_field<0>(index);
+     using FermionVertex = Vertex<
+                           EDMField,
+                           ExchangeField,
+                           PhotonEmitter
+                           >;
 
-      if (edmFieldIndices != indices)
-         continue;
+     for (const auto& index: index_range<FermionVertex>()) {
+        const auto edmFieldIndices = FermionVertex::template indices_of_field<0>(index);
 
-      const auto photonEmitterIndices = FermionVertex::template indices_of_field<2>(index);
-      const auto exchangeFieldIndices = FermionVertex::template indices_of_field<1>(index);
-      const auto vertex = FermionVertex::evaluate(index, context);
+        if (edmFieldIndices != indices)
+           continue;
 
-      const auto photonEmitterMass = context.mass<PhotonEmitter>(photonEmitterIndices);
-      const auto exchangeFieldMass = context.mass<ExchangeField>(exchangeFieldIndices);
+        const auto photonEmitterIndices = FermionVertex::template indices_of_field<2>(index);
+        const auto exchangeFieldIndices = FermionVertex::template indices_of_field<1>(index);
+        const auto vertex = FermionVertex::evaluate(index, context);
 
-      const double photonEmitterCharge =
-         - PhotonEmitter::electric_charge * unit_charge(context);
+        const auto photonEmitterMass = context.mass<PhotonEmitter>(photonEmitterIndices);
+        const auto exchangeFieldMass = context.mass<ExchangeField>(exchangeFieldIndices);
 
-      constexpr double numericFactor = oneOver16PiSquared;
-      const double massFactor = exchangeFieldMass/(photonEmitterMass * photonEmitterMass);
-      const double couplingFactor = (std::conj(vertex.right()) * vertex.left()).imag();
+        const precise_real_type photonEmitterCharge =
+           - PhotonEmitter::electric_charge * unit_charge(context);
 
-      const double massRatioSquared = Sqr(exchangeFieldMass / photonEmitterMass);
-      const double loopFactor = photonEmitterCharge * OneLoopFunctionB(massRatioSquared);
-      const double contribution = numericFactor * massFactor * couplingFactor * loopFactor;
+        const precise_real_type numericFactor = oneOver16PiSquared;
+        const precise_real_type massFactor = precise_real_type(exchangeFieldMass/(photonEmitterMass * photonEmitterMass));
+        const precise_real_type couplingFactor = precise_real_type(precise_complex_type(boost::multiprecision::conj(vertex.right())).imag() * vertex.left().imag());
 
-      res += contribution;
-   }
+        const precise_real_type massRatioSquared = Sqr(precise_real_type(exchangeFieldMass / photonEmitterMass));
+        const precise_real_type loopFactor = photonEmitterCharge * OneLoopFunctionB(massRatioSquared);
+        const precise_real_type contribution = numericFactor * massFactor * couplingFactor * loopFactor;
 
-   return res;
+        res += contribution;
+     }
+
+     return res;
+  }
 }
-
 } // anonymous namespace

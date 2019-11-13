@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef COMPOSITE_CONVERGENCE_TESTER_H
 #define COMPOSITE_CONVERGENCE_TESTER_H
 

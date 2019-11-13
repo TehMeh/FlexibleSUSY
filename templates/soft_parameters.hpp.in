@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_soft_parameters_H
 #define @ModelName@_soft_parameters_H
 
@@ -42,10 +44,10 @@ public:
    @ModelName@_soft_parameters& operator=(const @ModelName@_soft_parameters&) = default;
    @ModelName@_soft_parameters& operator=(@ModelName@_soft_parameters&&) = default;
 
-   virtual Eigen::ArrayXd beta() const override;
-   virtual Eigen::ArrayXd get() const override;
+   virtual Eigen::ArrayXdp beta() const override;
+   virtual Eigen::ArrayXdp get() const override;
    virtual void print(std::ostream&) const override;
-   virtual void set(const Eigen::ArrayXd&) override;
+   virtual void set(const Eigen::ArrayXdp&) override;
 
    @ModelName@_soft_parameters calc_beta() const;
    @ModelName@_soft_parameters calc_beta(int) const;

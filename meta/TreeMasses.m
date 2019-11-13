@@ -1544,7 +1544,7 @@ CallSVDFunction[particle_, matrix_String, eigenvalue_String, U_String, V_String]
     "\
 #ifdef CHECK_EIGENVALUE_ERROR
 " <> IndentText[
-"double eigenvalue_error;
+"precise_real_type eigenvalue_error;
 fs_svd(" <> matrix <> ", " <> eigenvalue <> ", " <> U <> ", " <> V <> ", eigenvalue_error);\n" <>
     If[ContainsMassless[particle],"",FlagBadMass[particle, eigenvalue]]
 ] <> "#else
@@ -1556,7 +1556,7 @@ fs_svd(" <> matrix <> ", " <> eigenvalue <> ", " <> U <> ", " <> V <> ");"] <> "
 CallDiagonalizationFunction[particle_, matrix_String, eigenvalue_String, U_String, function_String] :=
 "#ifdef CHECK_EIGENVALUE_ERROR
 " <> IndentText[
-"double eigenvalue_error;
+"precise_real_type eigenvalue_error;
 " <> function <> "(" <> matrix <> ", " <> eigenvalue <> ", " <> U <> ", eigenvalue_error);\n" <>
     If[ContainsMassless[particle],"",FlagBadMass[particle, eigenvalue]]
 ] <> "#else
@@ -1941,12 +1941,12 @@ CallGenerationHelperFunctionName[gen_, fermion_, msf1_String, msf2_String, theta
 CreateGenerationHelperPrototype[gen_, fermion_] :=
     "void calculate_" <>
     CConversion`ToValidCSymbolString[FlexibleSUSY`M[fermion]] <>
-    "_" <> NiceGenNum[gen] <> "_generation(double&, double&, double&) const;\n";
+    "_" <> NiceGenNum[gen] <> "_generation(precise_real_type&, precise_real_type&, precise_real_type&) const;\n";
 
 CreateGenerationHelperFunction[gen_, fermion_ /; fermion === SARAH`TopSquark] :=
     "void CLASSNAME::calculate_" <>
     CConversion`ToValidCSymbolString[FlexibleSUSY`M[fermion]] <>
-    "_" <> NiceGenNum[gen] <> "_generation(double& msf1, double& msf2, double& theta) const {
+    "_" <> NiceGenNum[gen] <> "_generation(precise_real_type& msf1, precise_real_type& msf2, precise_real_type& theta) const {
    sfermions::Mass_data sf_data;
    sf_data.ml2 = Re(" <> CConversion`RValueToCFormString[SARAH`SoftSquark[gen-1,gen-1]] <> ");
    sf_data.mr2 = Re(" <> CConversion`RValueToCFormString[SARAH`SoftUp[gen-1,gen-1]] <> ");
@@ -1962,7 +1962,7 @@ CreateGenerationHelperFunction[gen_, fermion_ /; fermion === SARAH`TopSquark] :=
    sf_data.Yl  = sfermions::Hypercharge_left[sfermions::up];
    sf_data.Yr  = sfermions::Hypercharge_right[sfermions::up];
 
-   Eigen::Array<double,2,1> msf;
+   Eigen::Array<precise_real_type,2,1> msf;
 
    theta = sfermions::diagonalize_sfermions_2x2(sf_data, msf);
    msf1  = msf(0);
@@ -1973,7 +1973,7 @@ CreateGenerationHelperFunction[gen_, fermion_ /; fermion === SARAH`TopSquark] :=
 CreateGenerationHelperFunction[gen_, fermion_ /; fermion === SARAH`BottomSquark] :=
     "void CLASSNAME::calculate_" <>
     CConversion`ToValidCSymbolString[FlexibleSUSY`M[fermion]] <>
-    "_" <> NiceGenNum[gen] <> "_generation(double& msf1, double& msf2, double& theta) const {
+    "_" <> NiceGenNum[gen] <> "_generation(precise_real_type& msf1, precise_real_type& msf2, precise_real_type& theta) const {
    sfermions::Mass_data sf_data;
    sf_data.ml2 = Re(" <> CConversion`RValueToCFormString[SARAH`SoftSquark[gen-1,gen-1]] <> ");
    sf_data.mr2 = Re(" <> CConversion`RValueToCFormString[SARAH`SoftDown[gen-1,gen-1]] <> ");
@@ -1989,7 +1989,7 @@ CreateGenerationHelperFunction[gen_, fermion_ /; fermion === SARAH`BottomSquark]
    sf_data.Yl  = sfermions::Hypercharge_left[sfermions::down];
    sf_data.Yr  = sfermions::Hypercharge_right[sfermions::down];
 
-   Eigen::Array<double,2,1> msf;
+   Eigen::Array<precise_real_type,2,1> msf;
 
    theta = sfermions::diagonalize_sfermions_2x2(sf_data, msf);
    msf1  = msf(0);
@@ -2000,7 +2000,7 @@ CreateGenerationHelperFunction[gen_, fermion_ /; fermion === SARAH`BottomSquark]
 CreateGenerationHelperFunction[gen_, fermion_ /; fermion === SARAH`Selectron] :=
     "void CLASSNAME::calculate_" <>
     CConversion`ToValidCSymbolString[FlexibleSUSY`M[fermion]] <>
-    "_" <> NiceGenNum[gen] <> "_generation(double& msf1, double& msf2, double& theta) const {
+    "_" <> NiceGenNum[gen] <> "_generation(precise_real_type& msf1, precise_real_type& msf2, precise_real_type& theta) const {
    sfermions::Mass_data sf_data;
    sf_data.ml2 = Re(" <> CConversion`RValueToCFormString[SARAH`SoftLeftLepton[gen-1,gen-1]] <> ");
    sf_data.mr2 = Re(" <> CConversion`RValueToCFormString[SARAH`SoftRightLepton[gen-1,gen-1]] <> ");
@@ -2016,7 +2016,7 @@ CreateGenerationHelperFunction[gen_, fermion_ /; fermion === SARAH`Selectron] :=
    sf_data.Yl  = sfermions::Hypercharge_left[sfermions::electron];
    sf_data.Yr  = sfermions::Hypercharge_right[sfermions::electron];
 
-   Eigen::Array<double,2,1> msf;
+   Eigen::Array<precise_real_type,2,1> msf;
 
    theta = sfermions::diagonalize_sfermions_2x2(sf_data, msf);
    msf1  = msf(0);
@@ -2027,7 +2027,7 @@ CreateGenerationHelperFunction[gen_, fermion_ /; fermion === SARAH`Selectron] :=
 CreateGenerationHelperFunction[gen_, fermion_ /; fermion === SARAH`Sneutrino] :=
     "void CLASSNAME::calculate_" <>
     CConversion`ToValidCSymbolString[FlexibleSUSY`M[fermion]] <>
-    "_" <> NiceGenNum[gen] <> "_generation(double& msf1, double& msf2, double& theta) const {
+    "_" <> NiceGenNum[gen] <> "_generation(precise_real_type& msf1, precise_real_type& msf2, precise_real_type& theta) const {
    sfermions::Mass_data sf_data;
    sf_data.ml2 = Re(" <> CConversion`RValueToCFormString[SARAH`SoftLeftLepton[gen-1,gen-1]] <> ");
    sf_data.mr2 = 0.;
@@ -2043,7 +2043,7 @@ CreateGenerationHelperFunction[gen_, fermion_ /; fermion === SARAH`Sneutrino] :=
    sf_data.Yl  = sfermions::Hypercharge_left[sfermions::neutrino];
    sf_data.Yr  = sfermions::Hypercharge_right[sfermions::neutrino];
 
-   Eigen::Array<double,2,1> msf;
+   Eigen::Array<precise_real_type,2,1> msf;
 
    theta = sfermions::diagonalize_sfermions_2x2(sf_data, msf);
    msf1  = msf(0);
@@ -2065,7 +2065,7 @@ CreateGenerationHelperFunction[gen_, fermion_] :=
                  " generation SM fermion."];
            "void CLASSNAME::calculate_" <>
            CConversion`ToValidCSymbolString[FlexibleSUSY`M[fermion]] <>
-           "_" <> NiceGenNum[gen] <> "_generation(double& msf1, double& msf2, double& theta) const {}"
+           "_" <> NiceGenNum[gen] <> "_generation(precise_real_type& msf1, precise_real_type& msf2, precise_real_type& theta) const {}"
           ];
 
 CreateGenerationHelpers[gen_] :=
@@ -2158,7 +2158,7 @@ CreateMassArrayGetter[masses_List] :=
                   paramCount += nAssignments;
                  ];
               ];
-           display = "Eigen::ArrayXd pars(" <> ToString[paramCount] <> ");\n\n" <>
+           display = "Eigen::ArrayXdp pars(" <> ToString[paramCount] <> ");\n\n" <>
                      display <> "\n" <>
                      "return pars;";
            Return[display];

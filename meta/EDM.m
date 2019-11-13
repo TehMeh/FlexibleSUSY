@@ -73,13 +73,13 @@ IsDiagramSupported[field_,vertexCorrectionGraph,diagram_] :=
 
 EDMCreateInterfaceFunctionForField[field_,gTaggedDiagrams_List] :=
 	Module[{prototype,definition,numberOfIndices = CXXDiagrams`NumberOfFieldIndices[field]},
-		prototype = "double calculate_edm_" <> CXXNameOfField[field] <>
+		prototype = "precise_real_type calculate_edm_" <> CXXNameOfField[field] <>
 			"(" <> If[TreeMasses`GetDimension[field] =!= 1,
 				" int generationIndex, ",
 				" "] <>
 			"const " <> FlexibleSUSY`FSModelName <> "_mass_eigenstates& model );";
                  
-    definition = "double calculate_edm_" <> CXXNameOfField[field] <>
+    definition = "precise_real_type calculate_edm_" <> CXXNameOfField[field] <>
 			"(" <> If[TreeMasses`GetDimension[field] =!= 1,
 				" int generationIndex, ",
 				" "] <>
@@ -97,7 +97,7 @@ EDMCreateInterfaceFunctionForField[field_,gTaggedDiagrams_List] :=
 							""]
 					] <> "};\n\n" <>
 
-				"double val = 0.0;\n\n" <>
+				"precise_real_type val = 0.0;\n\n" <>
 
 				"using namespace " <> FlexibleSUSY`FSModelName <> "_cxx_diagrams::fields;\n\n" <>
 
@@ -148,12 +148,12 @@ CXXEvaluatorForFieldAndDiagramFromGraph[field_,diagram_,vertexCorrectionGraph] :
   ]
 
 CXXEvaluatorFS[field_,photonEmitter_,exchangeParticle_] :=
-  "EDMVertexCorrectionFS<" <> CXXDiagrams`CXXNameOfField[field] <> ", " <>
+  "EDMVertexCorrectionFS::value<" <> CXXDiagrams`CXXNameOfField[field] <> ", " <>
   CXXDiagrams`CXXNameOfField[photonEmitter] <> ", " <>
   CXXDiagrams`CXXNameOfField[exchangeParticle] <> ">"
 
 CXXEvaluatorSF[field_,photonEmitter_,exchangeParticle_] :=
-  "EDMVertexCorrectionSF<" <> CXXDiagrams`CXXNameOfField[field] <> ", " <>
+  "EDMVertexCorrectionSF::value<" <> CXXDiagrams`CXXNameOfField[field] <> ", " <>
   CXXDiagrams`CXXNameOfField[photonEmitter] <> ", " <>
   CXXDiagrams`CXXNameOfField[exchangeParticle] <> ">"
 

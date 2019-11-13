@@ -24,25 +24,26 @@
 
    \brief loop functions
 */
+#include "precise.hpp"
 
 #ifndef NUMERICS_H
 #define NUMERICS_H
 
 namespace softsusy {
 
-double a0(double m, double q) noexcept;
-double b0(double p, double m1, double m2, double q) noexcept;
-double b1(double p, double m1, double m2, double q) noexcept;
-double b22(double p,  double m1, double m2, double q) noexcept;
-double c0(double m1, double m2, double m3) noexcept;
-double d27(double m1, double m2, double m3, double m4) noexcept;
-double d0(double m1, double m2, double m3, double m4) noexcept;
-double ffn(double p, double m1, double m2, double q) noexcept;
-double gfn(double p, double m1, double m2, double q) noexcept;
-double hfn(double p, double m1, double m2, double q) noexcept;
-double b22bar(double p, double m1, double m2, double q) noexcept;
+precise_real_type a0(precise_real_type m, precise_real_type q) noexcept;
+precise_real_type b0(precise_real_type p, precise_real_type m1, precise_real_type m2, precise_real_type q) noexcept;
+precise_real_type b1(precise_real_type p, precise_real_type m1, precise_real_type m2, precise_real_type q) noexcept;
+precise_real_type b22(precise_real_type p,  precise_real_type m1, precise_real_type m2, precise_real_type q) noexcept;
+precise_real_type c0(precise_real_type m1, precise_real_type m2, precise_real_type m3) noexcept;
+precise_real_type d27(precise_real_type m1, precise_real_type m2, precise_real_type m3, precise_real_type m4) noexcept;
+precise_real_type d0(precise_real_type m1, precise_real_type m2, precise_real_type m3, precise_real_type m4) noexcept;
+precise_real_type ffn(precise_real_type p, precise_real_type m1, precise_real_type m2, precise_real_type q) noexcept;
+precise_real_type gfn(precise_real_type p, precise_real_type m1, precise_real_type m2, precise_real_type q) noexcept;
+precise_real_type hfn(precise_real_type p, precise_real_type m1, precise_real_type m2, precise_real_type q) noexcept;
+precise_real_type b22bar(precise_real_type p, precise_real_type m1, precise_real_type m2, precise_real_type q) noexcept;
 
-double d1_b0(double p, double m1, double m2) noexcept;
+precise_real_type d1_b0(precise_real_type p, precise_real_type m1, precise_real_type m2) noexcept;
 
 } // namespace softsusy
 

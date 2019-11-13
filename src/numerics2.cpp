@@ -22,14 +22,34 @@
 
 namespace flexiblesusy {
 
-bool is_finite(const double* v, long length)
+bool is_finite(const precise_real_type* v, long length)
 {
    bool is_finite = true;
 
    for (long i = 0; i < length; i++)
-      is_finite = is_finite && std::isfinite(v[i]);
+      is_finite = is_finite && isfinite(v[i]);
 
    return is_finite;
+}
+
+bool is_equal(precise_real_type a, precise_real_type b, 
+	precise_real_type prec) noexcept
+{
+   return is_zero(precise_real_type(a - b), prec);
+}
+
+//template <typename T>
+bool is_equal(precise_complex_type a, precise_complex_type b,
+              precise_real_type prec) noexcept
+{
+   return (is_equal(a.real(), b.real(), prec)
+           && is_equal(a.imag(), b.imag(), prec));
+}
+
+
+precise_complex_type fast_log(const precise_complex_type& z) noexcept
+{
+   return precise_complex_type(log(abs(z)), arg(z));
 }
 
 } // namespace flexiblesusy

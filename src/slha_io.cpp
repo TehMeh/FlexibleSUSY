@@ -35,8 +35,8 @@ void SLHA_io::clear()
    modsel.clear();
 }
 
-void SLHA_io::convert_symmetric_fermion_mixings_to_slha(double&,
-                                                        Eigen::Matrix<double, 1, 1>&)
+void SLHA_io::convert_symmetric_fermion_mixings_to_slha(precise_real_type&,
+                                                        Eigen::Matrix<precise_real_type, 1, 1>&)
 {
 }
 
@@ -44,12 +44,12 @@ void SLHA_io::convert_symmetric_fermion_mixings_to_slha(double&,
  * @param m mass
  * @param z 1x1 mixing matrix
  */
-void SLHA_io::convert_symmetric_fermion_mixings_to_slha(double& m,
-                                                        Eigen::Matrix<std::complex<double>, 1, 1>& z)
+void SLHA_io::convert_symmetric_fermion_mixings_to_slha(precise_real_type& m,
+                                                        Eigen::Matrix<precise_complex_type, 1, 1>& z)
 {
    // check if 1st row contains non-zero imaginary parts
    if (!is_zero(Abs(Im(z(0,0))))) {
-      z(0,0) *= std::complex<double>(0.0,1.0);
+      z(0,0) *= precise_complex_type(0.0,1.0);
       m *= -1;
 #ifdef ENABLE_DEBUG
       if (!is_zero(Abs(Im(z(0,0))))) {
@@ -61,8 +61,8 @@ void SLHA_io::convert_symmetric_fermion_mixings_to_slha(double& m,
    }
 }
 
-void SLHA_io::convert_symmetric_fermion_mixings_to_hk(double&,
-                                                      Eigen::Matrix<double, 1, 1>&)
+void SLHA_io::convert_symmetric_fermion_mixings_to_hk(precise_real_type&,
+                                                      Eigen::Matrix<precise_real_type, 1, 1>&)
 {
 }
 
@@ -70,11 +70,11 @@ void SLHA_io::convert_symmetric_fermion_mixings_to_hk(double&,
  * @param m mass
  * @param z 1x1 mixing matrix
  */
-void SLHA_io::convert_symmetric_fermion_mixings_to_hk(double& m,
-                                                      Eigen::Matrix<std::complex<double>, 1, 1>& z)
+void SLHA_io::convert_symmetric_fermion_mixings_to_hk(precise_real_type& m,
+                                                      Eigen::Matrix<precise_complex_type, 1, 1>& z)
 {
    if (m < 0.) {
-      z(0,0) *= std::complex<double>(0.0,1.0);
+      z(0,0) *= precise_complex_type(0.0,1.0);
       m *= -1;
    }
 }
@@ -134,7 +134,7 @@ void SLHA_io::read_from_stream(std::istream& istr)
 
 void SLHA_io::read_modsel()
 {
-   Tuple_processor modsel_processor = [this] (int key, double value) {
+   Tuple_processor modsel_processor = [this] (int key, precise_real_type value) {
       return process_modsel_tuple(modsel, key, value);
    };
 
@@ -146,14 +146,14 @@ void SLHA_io::fill(softsusy::QedQcd& qedqcd) const
    CKM_wolfenstein ckm_wolfenstein;
    PMNS_parameters pmns_parameters;
 
-   Tuple_processor sminputs_processor = [&qedqcd] (int key, double value) {
+   Tuple_processor sminputs_processor = [&qedqcd] (int key, precise_real_type value) {
       return process_sminputs_tuple(qedqcd, key, value);
    };
 
    read_block("SMINPUTS", sminputs_processor);
 
    if (modsel.quark_flavour_violated) {
-      Tuple_processor vckmin_processor = [&ckm_wolfenstein] (int key, double value) {
+      Tuple_processor vckmin_processor = [&ckm_wolfenstein] (int key, precise_real_type value) {
          return process_vckmin_tuple(ckm_wolfenstein, key, value);
       };
 
@@ -161,7 +161,7 @@ void SLHA_io::fill(softsusy::QedQcd& qedqcd) const
    }
 
    if (modsel.lepton_flavour_violated) {
-      Tuple_processor upmnsin_processor = [&pmns_parameters] (int key, double value) {
+      Tuple_processor upmnsin_processor = [&pmns_parameters] (int key, precise_real_type value) {
          return process_upmnsin_tuple(pmns_parameters, key, value);
       };
 
@@ -189,7 +189,7 @@ void SLHA_io::fill(softsusy::QedQcd& qedqcd) const
  */
 void SLHA_io::fill(Physical_input& input) const
 {
-   Tuple_processor processor = [&input] (int key, double value) {
+   Tuple_processor processor = [&input] (int key, precise_real_type value) {
       return process_flexiblesusyinput_tuple(input, key, value);
    };
 
@@ -204,7 +204,7 @@ void SLHA_io::fill(Physical_input& input) const
  */
 void SLHA_io::fill(Spectrum_generator_settings& settings) const
 {
-   Tuple_processor flexiblesusy_processor = [&settings] (int key, double value) {
+   Tuple_processor flexiblesusy_processor = [&settings] (int key, precise_real_type value) {
       return process_flexiblesusy_tuple(settings, key, value);
    };
 
@@ -220,10 +220,10 @@ void SLHA_io::fill(Spectrum_generator_settings& settings) const
  *
  * @return scale (or 0 if no scale is defined)
  */
-double SLHA_io::read_block(const std::string& block_name, const Tuple_processor& processor) const
+precise_real_type SLHA_io::read_block(const std::string& block_name, const Tuple_processor& processor) const
 {
    auto block = data.find(data.cbegin(), data.cend(), block_name);
-   double scale = 0.;
+   precise_real_type scale = 0.;
 
    while (block != data.cend()) {
       for (const auto& line: *block) {
@@ -231,13 +231,13 @@ double SLHA_io::read_block(const std::string& block_name, const Tuple_processor&
             // read scale from block definition
             if (line.size() > 3 &&
                 to_lower(line[0]) == "block" && line[2] == "Q=")
-               scale = convert_to<double>(line[3]);
+               scale = convert_to<precise_real_type>(line[3]);
             continue;
          }
 
          if (line.size() >= 2) {
             const auto key = convert_to<int>(line[0]);
-            const auto value = convert_to<double>(line[1]);
+            const auto value = convert_to<precise_real_type>(line[1]);
             processor(key, value);
          }
       }
@@ -257,10 +257,10 @@ double SLHA_io::read_block(const std::string& block_name, const Tuple_processor&
  *
  * @return scale (or 0 if no scale is defined)
  */
-double SLHA_io::read_block(const std::string& block_name, double& entry) const
+precise_real_type SLHA_io::read_block(const std::string& block_name, precise_real_type& entry) const
 {
    auto block = data.find(data.cbegin(), data.cend(), block_name);
-   double scale = 0.;
+   precise_real_type scale = 0.;
 
    while (block != data.cend()) {
       for (const auto& line: *block) {
@@ -268,12 +268,12 @@ double SLHA_io::read_block(const std::string& block_name, double& entry) const
             // read scale from block definition
             if (line.size() > 3 &&
                 to_lower(line[0]) == "block" && line[2] == "Q=")
-               scale = convert_to<double>(line[3]);
+               scale = convert_to<precise_real_type>(line[3]);
             continue;
          }
 
          if (line.size() >= 1)
-            entry = convert_to<double>(line[0]);
+            entry = convert_to<precise_real_type>(line[0]);
       }
 
       ++block;
@@ -283,10 +283,10 @@ double SLHA_io::read_block(const std::string& block_name, double& entry) const
    return scale;
 }
 
-double SLHA_io::read_entry(const std::string& block_name, int key) const
+precise_real_type SLHA_io::read_entry(const std::string& block_name, int key) const
 {
    auto block = data.find(data.cbegin(), data.cend(), block_name);
-   double entry = 0.;
+   precise_real_type entry = 0.;
    const SLHAea::Block::key_type keys(1, ToString(key));
 
    while (block != data.cend()) {
@@ -294,7 +294,7 @@ double SLHA_io::read_entry(const std::string& block_name, int key) const
 
       while (line != block->end()) {
          if (line->is_data_line() && line->size() > 1) {
-            entry = convert_to<double>(line->at(1));
+            entry = convert_to<precise_real_type>(line->at(1));
          }
 
          ++line;
@@ -315,18 +315,18 @@ double SLHA_io::read_entry(const std::string& block_name, int key) const
  *
  * @return scale (or 0 if no scale is defined)
  */
-double SLHA_io::read_scale(const std::string& block_name) const
+precise_real_type SLHA_io::read_scale(const std::string& block_name) const
 {
    if (!block_exists(block_name))
       return 0.;
 
-   double scale = 0.;
+   precise_real_type scale = 0.;
 
    for (const auto& line: data.at(block_name)) {
       if (!line.is_data_line()) {
          if (line.size() > 3 &&
              to_lower(line[0]) == "block" && line[2] == "Q=")
-            scale = convert_to<double>(line[3]);
+            scale = convert_to<precise_real_type>(line[3]);
          break;
       }
    }
@@ -361,8 +361,8 @@ void SLHA_io::set_blocks(const std::vector<std::string>& blocks, Position positi
  * not defined in the SLHA standard, but we still handle it to avoid
  * problems.
  */
-void SLHA_io::set_block(const std::string& name, double value,
-                        const std::string& symbol, double scale)
+void SLHA_io::set_block(const std::string& name, precise_real_type value,
+                        const std::string& symbol, precise_real_type scale)
 {
    std::ostringstream ss;
    ss << "Block " << name;
@@ -463,7 +463,7 @@ void SLHA_io::write_to_stream(std::ostream& ostr) const
  * @param key SLHA key in MODSEL
  * @param value value corresponding to key
  */
-void SLHA_io::process_modsel_tuple(Modsel& modsel, int key, double value)
+void SLHA_io::process_modsel_tuple(Modsel& modsel, int key, precise_real_type value)
 {
    switch (key) {
    case 1: // SUSY breaking model (defined in FlexibleSUSY model file)
@@ -501,7 +501,7 @@ void SLHA_io::process_modsel_tuple(Modsel& modsel, int key, double value)
  * @param key SLHA key in SMINPUTS
  * @param value value corresponding to key
  */
-void SLHA_io::process_sminputs_tuple(softsusy::QedQcd& qedqcd, int key, double value)
+void SLHA_io::process_sminputs_tuple(softsusy::QedQcd& qedqcd, int key, precise_real_type value)
 {
    switch (key) {
    case 1:
@@ -573,7 +573,7 @@ void SLHA_io::process_sminputs_tuple(softsusy::QedQcd& qedqcd, int key, double v
 }
 
 void SLHA_io::process_flexiblesusy_tuple(Spectrum_generator_settings& settings,
-                                         int key, double value)
+                                         int key, precise_real_type value)
 {
    if (0 <= key && key < static_cast<int>(Spectrum_generator_settings::NUMBER_OF_OPTIONS)) {
       settings.set((Spectrum_generator_settings::Settings)key, value);
@@ -584,7 +584,7 @@ void SLHA_io::process_flexiblesusy_tuple(Spectrum_generator_settings& settings,
 
 void SLHA_io::process_flexiblesusyinput_tuple(
    Physical_input& input,
-   int key, double value)
+   int key, precise_real_type value)
 {
    if (0 <= key && key < static_cast<int>(Physical_input::NUMBER_OF_INPUT_PARAMETERS)) {
       input.set((Physical_input::Input)key, value);
@@ -600,7 +600,7 @@ void SLHA_io::process_flexiblesusyinput_tuple(
  * @param key SLHA key in SMINPUTS
  * @param value value corresponding to key
  */
-void SLHA_io::process_vckmin_tuple(CKM_wolfenstein& ckm_wolfenstein, int key, double value)
+void SLHA_io::process_vckmin_tuple(CKM_wolfenstein& ckm_wolfenstein, int key, precise_real_type value)
 {
    switch (key) {
    case 1:
@@ -628,7 +628,7 @@ void SLHA_io::process_vckmin_tuple(CKM_wolfenstein& ckm_wolfenstein, int key, do
  * @param key SLHA key in SMINPUTS
  * @param value value corresponding to key
  */
-void SLHA_io::process_upmnsin_tuple(PMNS_parameters& pmns_parameters, int key, double value)
+void SLHA_io::process_upmnsin_tuple(PMNS_parameters& pmns_parameters, int key, precise_real_type value)
 {
    switch (key) {
    case 1:

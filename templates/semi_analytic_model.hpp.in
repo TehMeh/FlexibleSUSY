@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 /**
  * @file @ModelName@_semi_analytic_model.hpp
  * @brief contains class for model with routines needed to solve boundary

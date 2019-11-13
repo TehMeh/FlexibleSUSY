@@ -219,7 +219,7 @@ void RGFlow<Semi_analytic>::run_outer_sliders()
  *
  * @return RG running precision
  */
-double RGFlow<Semi_analytic>::get_precision()
+precise_real_type RGFlow<Semi_analytic>::get_precision()
 {
    return running_precision;
 }
@@ -302,7 +302,7 @@ int RGFlow<Semi_analytic>::get_max_iterations() const
  * @param scale scale for which corresponding model to return
  * @return model at scale
  */
-Model* RGFlow<Semi_analytic>::get_model(double scale) const
+Model* RGFlow<Semi_analytic>::get_model(precise_real_type scale) const
 {
    const std::vector<std::shared_ptr<Slider> > sorted_inner_sliders(sort_sliders(inner_sliders));
    const std::vector<std::shared_ptr<Slider> > sorted_outer_sliders(sort_sliders(outer_sliders));
@@ -316,7 +316,7 @@ Model* RGFlow<Semi_analytic>::get_model(double scale) const
 
    auto it = std::lower_bound(sorted_sliders.begin(), sorted_sliders.end(),
                               scale,
-                              [](const std::shared_ptr<Slider>& s, double scale)
+                              [](const std::shared_ptr<Slider>& s, precise_real_type scale)
                               { return s->get_scale() < scale; });
 
    if (it == sorted_sliders.end())
@@ -376,7 +376,7 @@ std::vector<std::shared_ptr<RGFlow<Semi_analytic>::Slider> > RGFlow<Semi_analyti
  *
  * @param scale_ scale to run to
  */
-void RGFlow<Semi_analytic>::run_to(double scale_)
+void RGFlow<Semi_analytic>::run_to(precise_real_type scale_)
 {
    scale = scale_;
 
@@ -401,7 +401,7 @@ void RGFlow<Semi_analytic>::Constraint_slider::add_constraint_to_solver(
    solver.add(constraint, model);
 }
 
-double RGFlow<Semi_analytic>::Constraint_slider::get_scale() {
+precise_real_type RGFlow<Semi_analytic>::Constraint_slider::get_scale() {
    return constraint->get_scale();
 }
 
@@ -412,7 +412,7 @@ void RGFlow<Semi_analytic>::Constraint_slider::slide() {
    constraint->apply();
 }
 
-void RGFlow<Semi_analytic>::Constraint_slider::set_precision(double p) {
+void RGFlow<Semi_analytic>::Constraint_slider::set_precision(precise_real_type p) {
    model->set_precision(p);
 }
 
@@ -430,7 +430,7 @@ void RGFlow<Semi_analytic>::Matching_slider::add_constraint_to_solver(
    solver.add(matching, m1, m2);
 }
 
-double RGFlow<Semi_analytic>::Matching_slider::get_scale() {
+precise_real_type RGFlow<Semi_analytic>::Matching_slider::get_scale() {
    return matching->get_scale();
 }
 
@@ -443,7 +443,7 @@ void RGFlow<Semi_analytic>::Matching_slider::slide() {
    matching->match();
 }
 
-void RGFlow<Semi_analytic>::Matching_slider::set_precision(double p) {
+void RGFlow<Semi_analytic>::Matching_slider::set_precision(precise_real_type p) {
    m1->set_precision(p);
    m2->set_precision(p);
 }

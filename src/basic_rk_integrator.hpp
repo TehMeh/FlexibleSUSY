@@ -21,6 +21,8 @@
  * @brief Integration of ODEs by Runge-Kutta
  */
 
+#include "precise.hpp"
+
 #ifndef BASIC_RK_INTEGRATOR_H
 #define BASIC_RK_INTEGRATOR_H
 
@@ -45,12 +47,12 @@ template <typename StateType, typename Derivs>
 class Basic_rk_stepper {
 public:
    /// @brief Carries out a variable step-size Runge-Kutta step
-   double step(StateType&, const StateType&, double&, double,
-               double, const StateType&, Derivs, int&) const;
+   precise_real_type step(StateType&, const StateType&, precise_real_type&, precise_real_type,
+               precise_real_type, const StateType&, Derivs, int&) const;
 private:
    /// @brief Carries out a single 5th order Runge-Kutta step
-   void runge_kutta_step(const StateType&, const StateType&, double,
-                         double, StateType&, StateType&, Derivs) const;
+   void runge_kutta_step(const StateType&, const StateType&, precise_real_type,
+                         precise_real_type, StateType&, StateType&, Derivs) const;
 };
 
 /**
@@ -68,8 +70,8 @@ private:
  */
 template <typename StateType, typename Derivs>
 void Basic_rk_stepper<StateType, Derivs>::runge_kutta_step(
-   const StateType& y, const StateType& dydx, double x,
-   double h, StateType& yout, StateType& yerr, Derivs derivs) const
+   const StateType& y, const StateType& dydx, precise_real_type x,
+   precise_real_type h, StateType& yout, StateType& yerr, Derivs derivs) const
 {
    rungeKuttaStep(y, dydx, x, h, yout, yerr, derivs);
 }
@@ -92,9 +94,9 @@ void Basic_rk_stepper<StateType, Derivs>::runge_kutta_step(
  * @return estimated next step-size to use
  */
 template <typename StateType, typename Derivs>
-double Basic_rk_stepper<StateType,Derivs>::step(
-   StateType& y, const StateType& dydx, double& x, double htry,
-   double eps, const StateType& yscal, Derivs derivs,
+precise_real_type Basic_rk_stepper<StateType,Derivs>::step(
+   StateType& y, const StateType& dydx, precise_real_type& x, precise_real_type htry,
+   precise_real_type eps, const StateType& yscal, Derivs derivs,
    int& max_step_dir) const
 {
    return odeStepper(y, dydx, x, htry, eps, yscal, derivs, max_step_dir);
@@ -110,13 +112,13 @@ double Basic_rk_stepper<StateType,Derivs>::step(
  */
 template <typename StateType,
           typename Derivs
-          = std::function<StateType(double, const StateType&)>,
+          = std::function<StateType(precise_real_type, const StateType&)>,
           typename Stepper = Basic_rk_stepper<StateType,Derivs> >
 class Basic_rk_integrator {
 public:
    /// @brief Integrates the system over an interval
-   void operator()(double start, double end, StateType& ystart,
-                   Derivs derivs, double tolerance) const;
+   void operator()(precise_real_type start, precise_real_type end, StateType& ystart,
+                   Derivs derivs, precise_real_type tolerance) const;
 
    /// @brief Sets the maximum number of allowed steps in the integration
    /// @param s maximum number of steps to allow
@@ -145,15 +147,15 @@ private:
  */
 template <typename StateType, typename Derivs, typename Stepper>
 void Basic_rk_integrator<StateType, Derivs, Stepper>::operator()(
-   double start, double end, StateType& ystart, Derivs derivs,
-   double tolerance) const
+   precise_real_type start, precise_real_type end, StateType& ystart, Derivs derivs,
+   precise_real_type tolerance) const
 {
-   const double guess = (start - end) * 0.1; // first step size
-   const double hmin = (start - end) * tolerance * 1.0e-5;
+   const precise_real_type guess = (start - end) * 0.1; // first step size
+   const precise_real_type hmin = (start - end) * tolerance * 1.0e-5;
    const auto rkqs = [this] (
-      StateType& y, const StateType& dydx, double& x, double htry,
-      double eps, const StateType& yscal, Derivs derivs,
-      int& max_step_dir) -> double {
+      StateType& y, const StateType& dydx, precise_real_type& x, precise_real_type htry,
+      precise_real_type eps, const StateType& yscal, Derivs derivs,
+      int& max_step_dir) -> precise_real_type {
       return this->stepper.step(y, dydx, x, htry, eps,
                                 yscal, derivs, max_step_dir);
    };

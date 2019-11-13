@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_EWSB_SOLVER_H
 #define @ModelName@_EWSB_SOLVER_H
 

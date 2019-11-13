@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #include "error.hpp"
 #include <cstddef>
 #include <string>
@@ -35,10 +37,10 @@ public:
    ~Database();
 
    /// insert a row of doubles into a table
-   void insert(const std::string&, const std::vector<std::string>&, const Eigen::ArrayXd&);
+   void insert(const std::string&, const std::vector<std::string>&, const Eigen::ArrayXdp&);
 
    /// extract a row of doubles from a table
-   Eigen::ArrayXd extract(const std::string&, long long);
+   Eigen::ArrayXdp extract(const std::string&, long long);
 
 private:
    using TCallback = int (*)(void*, int, char**, char**);

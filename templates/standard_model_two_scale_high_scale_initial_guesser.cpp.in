@@ -87,7 +87,7 @@ void @ModelName@_standard_model_initial_guesser<Two_scale>::guess()
 void @ModelName@_standard_model_initial_guesser<Two_scale>::guess_eft_parameters()
 {
    softsusy::QedQcd leAtMt(qedqcd);
-   const double mtpole = leAtMt.displayPoleMt();
+   const precise_real_type mtpole = leAtMt.displayPoleMt();
 
    mu_guess = leAtMt.displayMass(softsusy::mUp);
    mc_guess = leAtMt.displayMass(softsusy::mCharm);
@@ -212,8 +212,8 @@ void @ModelName@_standard_model_initial_guesser<Two_scale>::calculate_@ElectronY
  */
 void @ModelName@_standard_model_initial_guesser<Two_scale>::guess_model_parameters()
 {
-   const double susy_scale_guess = susy_constraint.get_initial_scale_guess();
-   const double high_scale_guess = high_constraint.get_initial_scale_guess();
+   const precise_real_type susy_scale_guess = susy_constraint.get_initial_scale_guess();
+   const precise_real_type high_scale_guess = high_constraint.get_initial_scale_guess();
    const auto scale_getter = [this] () { return susy_constraint.get_scale(); };
 
    model->set_scale(susy_scale_guess);

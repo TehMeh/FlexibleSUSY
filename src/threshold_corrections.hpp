@@ -23,6 +23,8 @@
  * correction loop orders
  */
 
+#include "precise.hpp"
+
 #ifndef THRESHOLD_CORRECTIONS_H
 #define THRESHOLD_CORRECTIONS_H
 

@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef SPECTRUM_GENERATOR_PROBLEMS_H
 #define SPECTRUM_GENERATOR_PROBLEMS_H
 

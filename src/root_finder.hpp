@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef ROOT_FINDER_H
 #define ROOT_FINDER_H
 
@@ -46,51 +48,51 @@ namespace flexiblesusy {
  *
  * Example:
  * @code
- * auto parabola = [](const Eigen::Matrix<double,2,1>& x) {
- *    const double y = x(0);
- *    const double z = x(1);
- *    Eigen::Matrix<double,2,1> f;
+ * auto parabola = [](const Eigen::Matrix<precise_real_type,2,1>& x) {
+ *    const precise_real_type y = x(0);
+ *    const precise_real_type z = x(1);
+ *    Eigen::Matrix<precise_real_type,2,1> f;
  *    f << y*(y - 5.0), z*(z - 1.0);
  *    return f;
  * };
  *
  * Root_finder<2> root_finder(parabola, 100, 1.0e-5);
- * const double start[2] = { 10, 10 };
+ * const precise_real_type start[2] = { 10, 10 };
  * const int status = root_finder.find_root(start);
  * @endcode
  */
-template <std::size_t dimension>
+template <size_t dimension>
 class Root_finder : public EWSB_solver {
 public:
-   using Vector_t = Eigen::Matrix<double,dimension,1>;
-   using Function_t = std::function<Vector_t(const Vector_t&)>;
+   using Vector_t = Eigen::Matrix<precise_real_type,dimension,1>;
+   using Function_t = boost::function<Vector_t(const Vector_t&)>;
    enum Solver_type { GSLHybrid, GSLHybridS, GSLBroyden, GSLNewton };
 
    Root_finder() = default;
    template <typename F>
-   Root_finder(F&&, std::size_t, double, Solver_type solver_type_ = GSLHybrid);
+   Root_finder(F&&, size_t, precise_real_type, Solver_type solver_type_ = GSLHybrid);
    virtual ~Root_finder() = default;
 
    template <typename F>
    void set_function(F&& f) { function = std::forward<F>(f); }
-   void set_precision(double p) { precision = p; }
-   void set_max_iterations(std::size_t n) { max_iterations = n; }
+   void set_precision(precise_real_type p) { precision = p; }
+   void set_max_iterations(size_t n) { max_iterations = n; }
    void set_solver_type(Solver_type t) { solver_type = t; }
    int find_root(const Vector_t&);
 
    // EWSB_solver interface methods
    virtual std::string name() const override { return "Root_finder<" + solver_type_name() + ">"; }
-   virtual int solve(const Eigen::VectorXd&) override;
-   virtual Eigen::VectorXd get_solution() const override { return root; }
+   virtual int solve(const Eigen::VectorXdp &) override;
+   virtual Eigen::VectorXdp get_solution() const override { return root; }
 
 private:
-   std::size_t max_iterations{100};    ///< maximum number of iterations
-   double precision{1.e-2};            ///< precision goal
+   size_t max_iterations{100};    ///< maximum number of iterations
+   precise_real_type precision{1.e-2};            ///< precision goal
    Vector_t root{Vector_t::Zero()};    ///< the root
    Function_t function{nullptr};       ///< function to minimize
    Solver_type solver_type{GSLHybrid}; ///< solver type
 
-   void print_state(const gsl_multiroot_fsolver*, std::size_t) const;
+   void print_state(const gsl_multiroot_fsolver*, size_t) const;
    std::string solver_type_name() const;
    const gsl_multiroot_fsolver_type* solver_type_to_gsl_pointer() const;
    static int gsl_function(const gsl_vector*, void*, gsl_vector*);
@@ -104,12 +106,12 @@ private:
  * @param precision_ precision goal
  * @param solver_type_ GSL multiroot solver type
  */
-template <std::size_t dimension>
+template <size_t dimension>
 template <typename F>
 Root_finder<dimension>::Root_finder(
    F&& function_,
-   std::size_t max_iterations_,
-   double precision_,
+   size_t max_iterations_,
+   precise_real_type precision_,
    Solver_type solver_type_
 )
    : max_iterations(max_iterations_)
@@ -126,14 +128,19 @@ Root_finder<dimension>::Root_finder(
  *
  * @return GSL error code (GSL_SUCCESS if minimum found)
  */
-template <std::size_t dimension>
+template <size_t dimension>
 int Root_finder<dimension>::find_root(const Vector_t& start)
-{
+{ 
+
+   Eigen::VectorXd start2(start.size()); // for GSL compatibility! S.D.
+   for(int i=0; i<start.size();i++){
+      start2(i)=(double)(start(i));
+   }
    if (!function)
       throw SetupError("Root_finder: function not callable");
 
    int status;
-   std::size_t iter = 0;
+   size_t iter = 0;
    void* parameters = &function;
    gsl_multiroot_function f = {gsl_function, dimension, parameters};
 
@@ -149,7 +156,7 @@ int Root_finder<dimension>::find_root(const Vector_t& start)
    gsl_set_error_handler_off();
 #endif
 
-   GSL_vector tmp_root = to_GSL_vector(start);
+   GSL_vector tmp_root = to_GSL_vector(start2);
 
    gsl_multiroot_fsolver_set(solver, &f, tmp_root.raw());
 
@@ -168,7 +175,7 @@ int Root_finder<dimension>::find_root(const Vector_t& start)
       if (status)   // check if solver is stuck
          break;
 
-      status = gsl_multiroot_test_residual(solver->f, precision);
+      status = gsl_multiroot_test_residual(solver->f, (double)(precision)); //S.D.
    } while (status == GSL_CONTINUE && iter < max_iterations);
 
    VERBOSE_MSG("\t\t\tRoot_finder status = " << gsl_strerror(status));
@@ -186,20 +193,20 @@ int Root_finder<dimension>::find_root(const Vector_t& start)
  * @param solver solver
  * @param iteration iteration number
  */
-template <std::size_t dimension>
+template <size_t dimension>
 void Root_finder<dimension>::print_state(const gsl_multiroot_fsolver* solver,
-                                         std::size_t iteration) const
-{
+                                         size_t iteration) const
+{ 
    VERBOSE_MSG("\t\t\tIteration " << iteration
                << ": x = " << GSL_vector(solver->x)
                << ", f(x) = " << GSL_vector(solver->f));
 }
 
-template <std::size_t dimension>
+template <size_t dimension>
 int Root_finder<dimension>::gsl_function(const gsl_vector* x, void* params, gsl_vector* f)
 {
    if (!is_finite(x)) {
-      gsl_vector_set_all(f, std::numeric_limits<double>::max());
+      gsl_vector_set_all(f, std::numeric_limits<double>::max()); //S.D.
       return GSL_EDOM;
    }
 
@@ -221,9 +228,9 @@ int Root_finder<dimension>::gsl_function(const gsl_vector* x, void* params, gsl_
    return status;
 }
 
-template <std::size_t dimension>
+template <size_t dimension>
 std::string Root_finder<dimension>::solver_type_name() const
-{
+{  
    switch (solver_type) {
    case GSLHybrid : return "GSLHybrid";
    case GSLHybridS: return "GSLHybridS";
@@ -231,15 +238,15 @@ std::string Root_finder<dimension>::solver_type_name() const
    case GSLNewton : return "GSLNewton";
    default:
       throw SetupError("Unknown root solver type: "
-                       + std::to_string(solver_type));
+                       + boost::to_string(solver_type));
    }
 
    return "unknown";
 }
 
-template <std::size_t dimension>
+template <size_t dimension>
 const gsl_multiroot_fsolver_type* Root_finder<dimension>::solver_type_to_gsl_pointer() const
-{
+{ 
    switch (solver_type) {
    case GSLHybrid : return gsl_multiroot_fsolver_hybrid;
    case GSLHybridS: return gsl_multiroot_fsolver_hybrids;
@@ -247,16 +254,21 @@ const gsl_multiroot_fsolver_type* Root_finder<dimension>::solver_type_to_gsl_poi
    case GSLNewton : return gsl_multiroot_fsolver_dnewton;
    default:
       throw SetupError("Unknown root solver type: "
-                       + std::to_string(solver_type));
+                       + boost::to_string(solver_type));
    }
 
    return nullptr;
 }
 
-template <std::size_t dimension>
-int Root_finder<dimension>::solve(const Eigen::VectorXd& start)
-{
-   return (find_root(start) == GSL_SUCCESS ?
+template <size_t dimension>
+int Root_finder<dimension>::solve(const Eigen::VectorXdp& start)
+{ 
+  Eigen::VectorXd start2(start.size()); // for GSL compatibility! S.D.
+   for(int i=0; i<start.size();i++){
+      start2(i)=(double)(start(i));
+   }
+
+   return (find_root(start2) == GSL_SUCCESS ?
            EWSB_solver::SUCCESS : EWSB_solver::FAIL);
 }
 

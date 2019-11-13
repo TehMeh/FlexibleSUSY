@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #include "config.h"
 
 #include "@ModelName@_input_parameters.hpp"

@@ -25,6 +25,8 @@
  * @FlexibleSUSYVersion@ and SARAH @SARAHVersion@ .
  */
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_MuToEGamma_H
 #define @ModelName@_MuToEGamma_H
 

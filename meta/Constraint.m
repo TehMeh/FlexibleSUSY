@@ -477,7 +477,7 @@ CreateBetasForParsIn[expr_] :=
 
 CalculateScale[expr_Equal, scaleName_String] :=
     Module[{scaleReset, result},
-           result = "const double currentScale = model->get_scale();\n"
+           result = "const precise_real_type currentScale = model->get_scale();\n"
                     <> "const auto beta_functions(model->calc_beta());\n\n";
            result = result <> Parameters`CreateLocalConstRefs[expr];
            result = result <> Parameters`CreateLocalConstRefsForBetas[CreateBetasForParsIn[expr]];

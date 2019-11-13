@@ -63,23 +63,23 @@ extern const std::array<std::string, NUMBER_OF_LOW_ENERGY_INPUT_PARAMETERS> QedQ
 class QedQcd: public flexiblesusy::Beta_function
 {
 public:
-  using Input_t = Eigen::Array<double,NUMBER_OF_LOW_ENERGY_INPUT_PARAMETERS,1>;
+  using Input_t = Eigen::Array<precise_real_type,NUMBER_OF_LOW_ENERGY_INPUT_PARAMETERS,1>;
 
 private:
-  Eigen::Array<double,2,1> a{Eigen::Array<double,2,1>::Zero()};  ///< gauge couplings
-  Eigen::Array<double,9,1> mf{Eigen::Array<double,9,1>::Zero()}; ///< fermion running masses
+  Eigen::Array<precise_real_type,2,1> a{Eigen::Array<precise_real_type,2,1>::Zero()};  ///< gauge couplings
+  Eigen::Array<precise_real_type,9,1> mf{Eigen::Array<precise_real_type,9,1>::Zero()}; ///< fermion running masses
   Input_t input{Input_t::Zero()}; ///< SLHA input parmeters
-  double mbPole;    ///< pole masses of third family quarks
+  precise_real_type mbPole;    ///< pole masses of third family quarks
 
-  double qedBeta() const;   ///< QED beta function
-  double qcdBeta() const;   ///< QCD beta function
-  Eigen::Array<double,9,1> massBeta() const; ///< beta functions of masses
-  void runto_safe(double, double eps = -1.0); ///< throws if non-perturbative error occurs
+  precise_real_type qedBeta() const;   ///< QED beta function
+  precise_real_type qcdBeta() const;   ///< QCD beta function
+  Eigen::Array<precise_real_type,9,1> massBeta() const; ///< beta functions of masses
+  void runto_safe(precise_real_type, precise_real_type eps = -1.0); ///< throws if non-perturbative error occurs
 
-  int flavours(double) const;  /// returns number of active flavours
+  int flavours(precise_real_type) const;  /// returns number of active flavours
 
   /// calculates pole bottom mass given alpha_s(Mb)^{MSbar} from running b mass
-  double extractPoleMb(double asMb);
+  precise_real_type extractPoleMb(precise_real_type asMb);
 
 public:
   QedQcd();
@@ -90,110 +90,110 @@ public:
   virtual ~QedQcd() = default;
 
   // Beta_function interface
-  virtual Eigen::ArrayXd get() const override;
-  virtual void set(const Eigen::ArrayXd&) override;
-  virtual Eigen::ArrayXd beta() const override;
+  virtual Eigen::ArrayXdp get() const override;
+  virtual void set(const Eigen::ArrayXdp&) override;
+  virtual Eigen::ArrayXdp beta() const override;
 
-  void setPoleMt(double mt) { input(Mt_pole) = mt; } ///< set pole top mass
-  void setPoleMb(double mb) { mbPole = mb; } ///< set pole bottom mass
-  void setPoleMtau(double mtau) { input(Mtau_pole) = mtau; } ///< set pole tau mass
-  void setPoleMmuon(double m) { input(Mm_pole) = m; } ///< set pole muon mass
-  void setPoleMel(double m) { input(Me_pole) = m;  } ///< set pole electron mass
-  void setMbMb(double mb)   { input(mb_mb) = mb;   } ///< set mb(mb)
-  void setMcMc(double mc)   { input(mc_mc) = mc;   } ///< set mc(mc)
-  void setMu2GeV(double mu) { input(mu_2GeV) = mu; } ///< set mu(2 GeV)
-  void setMd2GeV(double md) { input(md_2GeV) = md; } ///< set md(2 GeV)
-  void setMs2GeV(double ms) { input(ms_2GeV) = ms; } ///< set ms(2 GeV)
-  void setPoleMW(double mw) { input(MW_pole) = mw; } ///< set W boson pole mass
-  void setPoleMZ(double mz) { input(MZ_pole) = mz; } ///< set Z boson pole mass
+  void setPoleMt(precise_real_type mt) { input(Mt_pole) = mt; } ///< set pole top mass
+  void setPoleMb(precise_real_type mb) { mbPole = mb; } ///< set pole bottom mass
+  void setPoleMtau(precise_real_type mtau) { input(Mtau_pole) = mtau; } ///< set pole tau mass
+  void setPoleMmuon(precise_real_type m) { input(Mm_pole) = m; } ///< set pole muon mass
+  void setPoleMel(precise_real_type m) { input(Me_pole) = m;  } ///< set pole electron mass
+  void setMbMb(precise_real_type mb)   { input(mb_mb) = mb;   } ///< set mb(mb)
+  void setMcMc(precise_real_type mc)   { input(mc_mc) = mc;   } ///< set mc(mc)
+  void setMu2GeV(precise_real_type mu) { input(mu_2GeV) = mu; } ///< set mu(2 GeV)
+  void setMd2GeV(precise_real_type md) { input(md_2GeV) = md; } ///< set md(2 GeV)
+  void setMs2GeV(precise_real_type ms) { input(ms_2GeV) = ms; } ///< set ms(2 GeV)
+  void setPoleMW(precise_real_type mw) { input(MW_pole) = mw; } ///< set W boson pole mass
+  void setPoleMZ(precise_real_type mz) { input(MZ_pole) = mz; } ///< set Z boson pole mass
   /// sets running quark masses
-  void setMasses(const Eigen::Array<double,9,1>& m) { mf = m; }
+  void setMasses(const Eigen::Array<precise_real_type,9,1>& m) { mf = m; }
   /// sets a running quark mass
-  void setMass(EMass mno, double m) { mf(mno - 1) = m; }
+  void setMass(EMass mno, precise_real_type m) { mf(mno - 1) = m; }
   /// sets a neutrino pole mass
-  void setNeutrinoPoleMass(int i, double m) { input(Mv1_pole + i - 1) = m; }
+  void setNeutrinoPoleMass(int i, precise_real_type m) { input(Mv1_pole + i - 1) = m; }
   /// sets QED and QCD structure constants
-  void setAlphas(const Eigen::Array<double,2,1>& o) { a = o; }
+  void setAlphas(const Eigen::Array<precise_real_type,2,1>& o) { a = o; }
   /// sets QED or QCD structure constant
-  void setAlpha(EGauge ai, double ap) { a(ai - 1) = ap; }
+  void setAlpha(EGauge ai, precise_real_type ap) { a(ai - 1) = ap; }
   /// set input value of alpha_em(MZ)
-  void setAlphaEmInput(double a) { input(alpha_em_MSbar_at_MZ) = a; }
+  void setAlphaEmInput(precise_real_type a) { input(alpha_em_MSbar_at_MZ) = a; }
   /// set input value of alpha_s(MZ)
-  void setAlphaSInput(double a) { input(alpha_s_MSbar_at_MZ) = a; }
+  void setAlphaSInput(precise_real_type a) { input(alpha_s_MSbar_at_MZ) = a; }
   /// sets CKM parameters (in the MS-bar scheme at MZ)
   void setCKM(const flexiblesusy::CKM_parameters&);
   /// sets PMNS parameters (in the MS-bar scheme at MZ)
   void setPMNS(const flexiblesusy::PMNS_parameters&);
   /// sets Fermi constant
-  void setFermiConstant(double gf) { input(GFermi) = gf; }
+  void setFermiConstant(precise_real_type gf) { input(GFermi) = gf; }
   /// sets all input parameters
   void set_input(const Input_t& i) { input = i; }
 
   /// Displays input parameters
   Input_t displayInput() const { return input; }
   /// Display pole top mass
-  double displayPoleMt() const { return input(Mt_pole); }
+  precise_real_type displayPoleMt() const { return input(Mt_pole); }
   /// Display pole tau mass
-  double displayPoleMtau() const { return input(Mtau_pole); }
+  precise_real_type displayPoleMtau() const { return input(Mtau_pole); }
   /// Display pole muon mass
-  double displayPoleMmuon() const { return input(Mm_pole); }
+  precise_real_type displayPoleMmuon() const { return input(Mm_pole); }
   /// Display pole electron mass
-  double displayPoleMel() const { return input(Me_pole); }
+  precise_real_type displayPoleMel() const { return input(Me_pole); }
   /// Returns bottom "pole" mass
-  double displayPoleMb() const { return mbPole; }
+  precise_real_type displayPoleMb() const { return mbPole; }
   /// Returns W boson pole mass
-  double displayPoleMW() const { return input(MW_pole); }
+  precise_real_type displayPoleMW() const { return input(MW_pole); }
   /// Returns Z boson pole mass
-  double displayPoleMZ() const { return input(MZ_pole); }
+  precise_real_type displayPoleMZ() const { return input(MZ_pole); }
   /// Returns a vector of running fermion masses
   auto displayMass() const -> decltype(mf) { return mf; }
   /// Returns a single running mass
-  double displayMass(EMass mno) const { return mf(mno - 1); }
+  precise_real_type displayMass(EMass mno) const { return mf(mno - 1); }
   /// Returns a single neutrino pole mass
-  double displayNeutrinoPoleMass(int i) const { return input(Mv1_pole + i - 1); }
+  precise_real_type displayNeutrinoPoleMass(int i) const { return input(Mv1_pole + i - 1); }
   /// Returns a single gauge structure constant
-  double displayAlpha(EGauge ai) const { return a(ai - 1); }
+  precise_real_type displayAlpha(EGauge ai) const { return a(ai - 1); }
   /// Returns gauge structure constants
   auto displayAlphas() const -> decltype(a) { return a; }
   /// Returns input value alpha_em(MZ)
-  double displayAlphaEmInput() const { return input(alpha_em_MSbar_at_MZ); }
+  precise_real_type displayAlphaEmInput() const { return input(alpha_em_MSbar_at_MZ); }
   /// Returns input value alpha_s(MZ)
-  double displayAlphaSInput() const { return input(alpha_s_MSbar_at_MZ); }
+  precise_real_type displayAlphaSInput() const { return input(alpha_s_MSbar_at_MZ); }
   /// Returns Fermi constant
-  double displayFermiConstant() const { return input(GFermi); }
+  precise_real_type displayFermiConstant() const { return input(GFermi); }
   /// returns vector of all input parameters
   Input_t display_input() const { return input; }
   /// returns vector of all parameter names
   static std::array<std::string, NUMBER_OF_LOW_ENERGY_INPUT_PARAMETERS> display_input_parameter_names();
   /// Returns mb(mb) MSbar
-  double displayMbMb() const { return input(mb_mb); }
+  precise_real_type displayMbMb() const { return input(mb_mb); }
   /// Returns mc(mc) MSbar
-  double displayMcMc() const { return input(mc_mc); }
+  precise_real_type displayMcMc() const { return input(mc_mc); }
   /// Returns mu(2 GeV)
-  double displayMu2GeV() const { return input(mu_2GeV); }
+  precise_real_type displayMu2GeV() const { return input(mu_2GeV); }
   /// Returns md(2 GeV)
-  double displayMd2GeV() const { return input(md_2GeV); }
+  precise_real_type displayMd2GeV() const { return input(md_2GeV); }
   /// Returns ms(2 GeV)
-  double displayMs2GeV() const { return input(ms_2GeV); }
+  precise_real_type displayMs2GeV() const { return input(ms_2GeV); }
   /// returns CKM parameters
   flexiblesusy::CKM_parameters displayCKM() const;
   /// Returns real CKM matrix
-  Eigen::Matrix<double,3,3> get_real_ckm() const { return displayCKM().get_real_ckm(); }
+  Eigen::Matrix<precise_real_type,3,3> get_real_ckm() const { return displayCKM().get_real_ckm(); }
   /// Returns complex CKM matrix
-  Eigen::Matrix<std::complex<double>,3,3> get_complex_ckm() const { return displayCKM().get_complex_ckm(); }
+  Eigen::Matrix<precise_complex_type,3,3> get_complex_ckm() const { return displayCKM().get_complex_ckm(); }
   /// returns PMNS parameters
   flexiblesusy::PMNS_parameters displayPMNS() const;
   /// Returns real PMNS matrix
-  Eigen::Matrix<double,3,3> get_real_pmns() const { return displayPMNS().get_real_pmns(); }
+  Eigen::Matrix<precise_real_type,3,3> get_real_pmns() const { return displayPMNS().get_real_pmns(); }
   /// Returns complex PMNS matrix
-  Eigen::Matrix<std::complex<double>,3,3> get_complex_pmns() const { return displayPMNS().get_complex_pmns(); }
+  Eigen::Matrix<precise_complex_type,3,3> get_complex_pmns() const { return displayPMNS().get_complex_pmns(); }
 
   /// Evolves object to MZ
   void toMz();
   /// Evolves object to given scale.
-  void to(double scale, double tol = 1e-5, int max_iterations = 20);
+  void to(precise_real_type scale, precise_real_type tol = 1e-5, int max_iterations = 20);
   /// guess coupling constants {alpha_1, alpha_2, alpha_3} in SM(5)
-  Eigen::Array<double,3,1> guess_alpha_SM5(double scale) const;
+  Eigen::Array<precise_real_type,3,1> guess_alpha_SM5(precise_real_type scale) const;
 };
 
 /// Formatted output from QedQcd object

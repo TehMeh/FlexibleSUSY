@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_EFFECTIVE_COUPLINGS_H
 #define @ModelName@_EFFECTIVE_COUPLINGS_H
 
@@ -64,19 +66,19 @@ private:
    void copy_mixing_matrices_from_model();
 
    standard_model::Standard_model initialise_SM() const;
-   void run_SM_strong_coupling_to(standard_model::Standard_model, double m);
+   void run_SM_strong_coupling_to(standard_model::Standard_model, precise_real_type m);
 
    // higher order corrections to the amplitudes for
    // effective coupling to photons
-   std::complex<double> scalar_scalar_qcd_factor(double, double) const;
-   std::complex<double> scalar_fermion_qcd_factor(double, double) const;
-   std::complex<double> pseudoscalar_fermion_qcd_factor(double, double) const;
+   precise_complex_type scalar_scalar_qcd_factor(precise_real_type, precise_real_type) const;
+   precise_complex_type scalar_fermion_qcd_factor(precise_real_type, precise_real_type) const;
+   precise_complex_type pseudoscalar_fermion_qcd_factor(precise_real_type, precise_real_type) const;
 
    // higher order corrections to the leading order
    // effective couplings to gluons
-   double number_of_active_flavours(double) const;
-   double scalar_scaling_factor(double) const;
-   double pseudoscalar_scaling_factor(double) const;
+   precise_real_type number_of_active_flavours(precise_real_type) const;
+   precise_real_type scalar_scaling_factor(precise_real_type) const;
+   precise_real_type pseudoscalar_scaling_factor(precise_real_type) const;
 
 @mixingMatricesDefs@
 @loopCouplingsDefs@

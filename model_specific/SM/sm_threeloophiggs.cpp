@@ -36,18 +36,18 @@ namespace sm_threeloophiggs {
  *
  * @return real part of 3-loop correction \f$O(\alpha_t \alpha_s^2)\f$
  */
-double delta_mh_3loop_at_as_as_sm(
-   double scale, double mt, double yt, double g3)
+precise_real_type delta_mh_3loop_at_as_as_sm(
+   precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type g3)
 {
-   const double yt2 = Sqr(yt);
-   const double mt2 = Sqr(mt);
-   const double g34 = Power4(g3);
-   const double Q2 = Sqr(scale);
-   const double LogT = FiniteLog(mt2 / Q2);
-   const double LogT2 = Sqr(LogT);
-   const double LogT3 = Power3(LogT);
+   const precise_real_type yt2 = Sqr(yt);
+   const precise_real_type mt2 = Sqr(mt);
+   const precise_real_type g34 = Power4(g3);
+   const precise_real_type Q2 = Sqr(scale);
+   const precise_real_type LogT = FiniteLog(mt2 / Q2);
+   const precise_real_type LogT2 = Sqr(LogT);
+   const precise_real_type LogT3 = Power3(LogT);
 
-   const double result =
+   const precise_real_type result =
       g34*yt2*mt2*(248.1215180432007 + 839.1966169377614*LogT
                    + 160*LogT2 - 736*LogT3);
 
@@ -68,18 +68,18 @@ double delta_mh_3loop_at_as_as_sm(
  *
  * @return real part of 3-loop correction \f$O(\alpha_t^2\alpha_s) \f$
  */
-double delta_mh_3loop_at_at_as_sm(
-   double scale, double mt, double yt, double g3)
+precise_real_type delta_mh_3loop_at_at_as_sm(
+   precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type g3)
 {
-   const double yt4 = Power4(yt);
-   const double mt2 = Sqr(mt);
-   const double g32 = Sqr(g3);
-   const double Q2 = Sqr(scale);
-   const double LogT = FiniteLog(mt2 / Q2);
-   const double LogT2 = Sqr(LogT);
-   const double LogT3 = Power3(LogT);
+   const precise_real_type yt4 = Power4(yt);
+   const precise_real_type mt2 = Sqr(mt);
+   const precise_real_type g32 = Sqr(g3);
+   const precise_real_type Q2 = Sqr(scale);
+   const precise_real_type LogT = FiniteLog(mt2 / Q2);
+   const precise_real_type LogT2 = Sqr(LogT);
+   const precise_real_type LogT3 = Power3(LogT);
 
-   const double result =
+   const precise_real_type result =
       g32*yt4*mt2*(2764.365124334015 + 1283.715638285500*LogT
                    - 360*LogT2 + 240*LogT3);
 
@@ -100,19 +100,19 @@ double delta_mh_3loop_at_at_as_sm(
  *
  * @return real part of 3-loop correction \f$O(\alpha_t^3) \f$
  */
-double delta_mh_3loop_at_at_at_sm(
-   double scale, double mt, double yt, double mh)
+precise_real_type delta_mh_3loop_at_at_at_sm(
+   precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type mh)
 {
-   const double yt6 = Power6(yt);
-   const double mt2 = Sqr(mt);
-   const double mh2 = Sqr(mh);
-   const double Q2 = Sqr(scale);
-   const double LogH = FiniteLog(mh2 / Q2);
-   const double LogT = FiniteLog(mt2 / Q2);
-   const double LogT2 = Sqr(LogT);
-   const double LogT3 = Power3(LogT);
+   const precise_real_type yt6 = Power6(yt);
+   const precise_real_type mt2 = Sqr(mt);
+   const precise_real_type mh2 = Sqr(mh);
+   const precise_real_type Q2 = Sqr(scale);
+   const precise_real_type LogH = FiniteLog(mh2 / Q2);
+   const precise_real_type LogT = FiniteLog(mt2 / Q2);
+   const precise_real_type LogT2 = Sqr(LogT);
+   const precise_real_type LogT3 = Power3(LogT);
 
-   const double result =
+   const precise_real_type result =
       yt6*mt2*(-3199.016554815089 + 36*LogH - 2653.510765697467*LogT
                + 756*LogH*LogT + 27.*0.5*LogT2 + 324*LogH*LogT2 - 225*LogT3);
 

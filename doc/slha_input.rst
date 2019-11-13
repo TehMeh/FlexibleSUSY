@@ -44,6 +44,7 @@ FlexibleSUSY configuration block (FlexibleSUSY)
        28   1         # Higgs 3-loop corrections O(alpha_t^2 alpha_s)
        29   1         # Higgs 3-loop corrections O(alpha_t^3)
        30   1         # Higgs 4-loop corrections O(alpha_t alpha_s^3)
+       31   16        # Number of digits (0=any) precision, added by S.D.
 
 **Description**:
 
@@ -85,7 +86,8 @@ or the loop order of the pole mass calculation can be selected.
  27      higgs 3-loop correction O(ab as^2)       0, 1                                          1 (= enabled)                          
  28      higgs 3-loop correction O(at^2 as)       0, 1                                          1 (= enabled)                          
  29      higgs 3-loop correction O(at^3)          0, 1                                          1 (= enabled)                          
- 30      higgs 4-loop correction O(at as^3)       0, 1                                          1 (= enabled)                          
+ 30      higgs 4-loop correction O(at as^3)       0, 1                                          1 (= enabled)
+ 31      Number of digits (0=any)                 0-xxx                                         0 (=any), xxx (=xxx)
 ======= ======================================== ============================================= ======================================
 
 Precision goal (``FlexibleSUSY[0]``)

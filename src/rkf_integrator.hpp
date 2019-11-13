@@ -21,6 +21,8 @@
  * @brief Integration of ODEs using the Runge-Kutta-Fehlberg method
  */
 
+#include "precise.hpp"
+
 #ifndef RKF_INTEGRATOR_H
 #define RKF_INTEGRATOR_H
 
@@ -42,11 +44,11 @@ namespace runge_kutta {
  */
 class RKF_integrator {
 public:
-   using Derivs = std::function<Eigen::ArrayXd(double, const Eigen::ArrayXd&)>;
+   using Derivs = std::function<Eigen::ArrayXdp(precise_real_type, const Eigen::ArrayXdp&)>;
 
    /// Integrates the system over an interval
-   void operator()(double start, double end, Eigen::ArrayXd& pars,
-                   const Derivs& derivs, double tol) const;
+   void operator()(precise_real_type start, precise_real_type end, Eigen::ArrayXdp& pars,
+                   const Derivs& derivs, precise_real_type tol) const;
 private:
    class DisabledOdeintError : Error {
    public:
@@ -55,7 +57,7 @@ private:
    };
 
    struct RKF_observer {
-      void operator()(const Eigen::ArrayXd&, double) const;
+      void operator()(const Eigen::ArrayXdp&, precise_real_type) const;
    };
 };
 

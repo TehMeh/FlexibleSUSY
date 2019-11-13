@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef SLHA_IO_H
 #define SLHA_IO_H
 
@@ -88,17 +90,17 @@ namespace flexiblesusy {
  *
  * Example how to use a tuple processor (fast!):
  * \code{.cpp}
-void process_tuple(double* array, int key, double value) {
+void process_tuple(precise_real_type* array, int key, precise_real_type value) {
    array[key] = value;
 }
 
 void read_file() {
-   double array[1000];
+   precise_real_type array[1000];
 
    SLHA_io reader;
    reader.read_from_file("file.slha");
 
-   SLHA_io::Tuple_processor processor = [&array] (int key, double value) {
+   SLHA_io::Tuple_processor processor = [&array] (int key, precise_real_type value) {
       return process_tuple(array, key, value);
    };
 
@@ -109,7 +111,7 @@ void read_file() {
  * Example how to use a for loop (slow!):
  * \code{.cpp}
 void read_file() {
-   double array[1000];
+   precise_real_type array[1000];
 
    SLHA_io reader;
    reader.read_from_file("file.slha");
@@ -122,17 +124,17 @@ void read_file() {
  */
 class SLHA_io {
 public:
-   using Tuple_processor = std::function<void(int, double)>;
+   using Tuple_processor = std::function<void(int, precise_real_type)>;
    enum Position { front, back };
    struct Modsel {
       bool quark_flavour_violated{false};   ///< MODSEL[6]
       bool lepton_flavour_violated{false};  ///< MODSEL[6]
-      double parameter_output_scale{0.};    ///< MODSEL[12]
+      precise_real_type parameter_output_scale{0.};    ///< MODSEL[12]
       void clear() { *this = Modsel(); }
    };
 
    struct CKM_wolfenstein {
-      double lambdaW{0.}, aCkm{0.}, rhobar{0.}, etabar{0.};
+      precise_real_type lambdaW{0.}, aCkm{0.}, rhobar{0.}, etabar{0.};
       void clear() { *this = CKM_wolfenstein(); }
    };
 
@@ -148,31 +150,31 @@ public:
    void read_from_file(const std::string&);
    void read_from_source(const std::string&);
    void read_from_stream(std::istream&);
-   double read_block(const std::string&, const Tuple_processor&) const;
+   precise_real_type read_block(const std::string&, const Tuple_processor&) const;
    template <class Derived>
-   double read_block(const std::string&, Eigen::MatrixBase<Derived>&) const;
-   double read_block(const std::string&, double&) const;
-   double read_entry(const std::string&, int) const;
-   double read_scale(const std::string&) const;
+   precise_real_type read_block(const std::string&, Eigen::MatrixBase<Derived>&) const;
+   precise_real_type read_block(const std::string&, precise_real_type&) const;
+   precise_real_type read_entry(const std::string&, int) const;
+   precise_real_type read_scale(const std::string&) const;
 
    // writing functions
    void set_data(const SLHAea::Coll& data_) { data = data_; }
    void set_block(const std::ostringstream&, Position position = back);
    void set_block(const std::string&, Position position = back);
    void set_blocks(const std::vector<std::string>&, Position position = back);
-   void set_block(const std::string&, double, const std::string&, double scale = 0.);
+   void set_block(const std::string&, precise_real_type, const std::string&, precise_real_type scale = 0.);
    template<class Scalar, int M, int N>
-   void set_block(const std::string&, const Eigen::Matrix<std::complex<Scalar>, M, N>&, const std::string&, double scale = 0.);
+   void set_block(const std::string&, const Eigen::Matrix<precise_complex_type, M, N>&, const std::string&, precise_real_type scale = 0.);
    template<class Scalar, int M>
-   void set_block(const std::string&, const Eigen::Matrix<std::complex<Scalar>, M, 1>&, const std::string&, double scale = 0.);
+   void set_block(const std::string&, const Eigen::Matrix<precise_complex_type, M, 1>&, const std::string&, precise_real_type scale = 0.);
    template<class Scalar, int M, int N>
-   void set_block_imag(const std::string&, const Eigen::Matrix<std::complex<Scalar>, M, N>&, const std::string&, double scale = 0.);
+   void set_block_imag(const std::string&, const Eigen::Matrix<precise_complex_type, M, N>&, const std::string&, precise_real_type scale = 0.);
    template<class Scalar, int M>
-   void set_block_imag(const std::string&, const Eigen::Matrix<std::complex<Scalar>, M, 1>&, const std::string&, double scale = 0.);
+   void set_block_imag(const std::string&, const Eigen::Matrix<precise_complex_type, M, 1>&, const std::string&, precise_real_type scale = 0.);
    template <class Derived>
-   void set_block(const std::string&, const Eigen::MatrixBase<Derived>&, const std::string&, double scale = 0.);
+   void set_block(const std::string&, const Eigen::MatrixBase<Derived>&, const std::string&, precise_real_type scale = 0.);
    template <class Derived>
-   void set_block_imag(const std::string&, const Eigen::MatrixBase<Derived>&, const std::string&, double scale = 0.);
+   void set_block_imag(const std::string&, const Eigen::MatrixBase<Derived>&, const std::string&, precise_real_type scale = 0.);
    void set_modsel(const Modsel&);
    void set_physical_input(const Physical_input&);
    void set_settings(const Spectrum_generator_settings&);
@@ -181,32 +183,32 @@ public:
    void write_to_stream(std::ostream& = std::cerr) const;
 
    template<int N>
-   static void convert_symmetric_fermion_mixings_to_slha(Eigen::Array<double, N, 1>&,
-                                                         Eigen::Matrix<double, N, N>&);
+   static void convert_symmetric_fermion_mixings_to_slha(Eigen::Array<precise_real_type, N, 1>&,
+                                                         Eigen::Matrix<precise_real_type, N, N>&);
 
-   static void convert_symmetric_fermion_mixings_to_slha(double&,
-                                                         Eigen::Matrix<double, 1, 1>&);
-
-   template<int N>
-   static void convert_symmetric_fermion_mixings_to_slha(Eigen::Array<double, N, 1>&,
-                                                         Eigen::Matrix<std::complex<double>, N, N>&);
-
-   static void convert_symmetric_fermion_mixings_to_slha(double&,
-                                                         Eigen::Matrix<std::complex<double>, 1, 1>&);
+   static void convert_symmetric_fermion_mixings_to_slha(precise_real_type&,
+                                                         Eigen::Matrix<precise_real_type, 1, 1>&);
 
    template<int N>
-   static void convert_symmetric_fermion_mixings_to_hk(Eigen::Array<double, N, 1>&,
-                                                       Eigen::Matrix<double, N, N>&);
+   static void convert_symmetric_fermion_mixings_to_slha(Eigen::Array<precise_real_type, N, 1>&,
+                                                         Eigen::Matrix<precise_complex_type, N, N>&);
 
-   static void convert_symmetric_fermion_mixings_to_hk(double&,
-                                                       Eigen::Matrix<double, 1, 1>&);
+   static void convert_symmetric_fermion_mixings_to_slha(precise_real_type&,
+                                                         Eigen::Matrix<precise_complex_type, 1, 1>&);
 
    template<int N>
-   static void convert_symmetric_fermion_mixings_to_hk(Eigen::Array<double, N, 1>&,
-                                                       Eigen::Matrix<std::complex<double>, N, N>&);
+   static void convert_symmetric_fermion_mixings_to_hk(Eigen::Array<precise_real_type, N, 1>&,
+                                                       Eigen::Matrix<precise_real_type, N, N>&);
 
-   static void convert_symmetric_fermion_mixings_to_hk(double&,
-                                                       Eigen::Matrix<std::complex<double>, 1, 1>&);
+   static void convert_symmetric_fermion_mixings_to_hk(precise_real_type&,
+                                                       Eigen::Matrix<precise_real_type, 1, 1>&);
+
+   template<int N>
+   static void convert_symmetric_fermion_mixings_to_hk(Eigen::Array<precise_real_type, N, 1>&,
+                                                       Eigen::Matrix<precise_complex_type, N, N>&);
+
+   static void convert_symmetric_fermion_mixings_to_hk(precise_real_type&,
+                                                       Eigen::Matrix<precise_complex_type, 1, 1>&);
 
 private:
    SLHAea::Coll data{};        ///< SHLA data
@@ -214,17 +216,17 @@ private:
    template <class Scalar>
    static Scalar convert_to(const std::string&); ///< convert string
    static std::string to_lower(const std::string&); ///< string to lower case
-   static void process_sminputs_tuple(softsusy::QedQcd&, int, double);
-   static void process_modsel_tuple(Modsel&, int, double);
-   static void process_vckmin_tuple(CKM_wolfenstein&, int, double);
-   static void process_upmnsin_tuple(PMNS_parameters&, int, double);
-   static void process_flexiblesusy_tuple(Spectrum_generator_settings&, int, double);
-   static void process_flexiblesusyinput_tuple(Physical_input&, int, double);
+   static void process_sminputs_tuple(softsusy::QedQcd&, int, precise_real_type);
+   static void process_modsel_tuple(Modsel&, int, precise_real_type);
+   static void process_vckmin_tuple(CKM_wolfenstein&, int, precise_real_type);
+   static void process_upmnsin_tuple(PMNS_parameters&, int, precise_real_type);
+   static void process_flexiblesusy_tuple(Spectrum_generator_settings&, int, precise_real_type);
+   static void process_flexiblesusyinput_tuple(Physical_input&, int, precise_real_type);
    void read_modsel();
    template <class Derived>
-   double read_matrix(const std::string&, Eigen::MatrixBase<Derived>&) const;
+   precise_real_type read_matrix(const std::string&, Eigen::MatrixBase<Derived>&) const;
    template <class Derived>
-   double read_vector(const std::string&, Eigen::MatrixBase<Derived>&) const;
+   precise_real_type read_vector(const std::string&, Eigen::MatrixBase<Derived>&) const;
 };
 
 template <class Scalar>
@@ -250,14 +252,14 @@ Scalar SLHA_io::convert_to(const std::string& str)
  * @return scale (or 0 if no scale is defined)
  */
 template <class Derived>
-double SLHA_io::read_matrix(const std::string& block_name, Eigen::MatrixBase<Derived>& matrix) const
+precise_real_type SLHA_io::read_matrix(const std::string& block_name, Eigen::MatrixBase<Derived>& matrix) const
 {
    if (matrix.cols() <= 1) throw SetupError("Matrix has less than 2 columns");
 
    auto block = data.find(data.cbegin(), data.cend(), block_name);
 
    const int cols = matrix.cols(), rows = matrix.rows();
-   double scale = 0.;
+   precise_real_type scale = 0.;
 
    while (block != data.cend()) {
       for (const auto& line: *block) {
@@ -265,7 +267,7 @@ double SLHA_io::read_matrix(const std::string& block_name, Eigen::MatrixBase<Der
             // read scale from block definition
             if (line.size() > 3 &&
                 to_lower(line[0]) == "block" && line[2] == "Q=")
-               scale = convert_to<double>(line[3]);
+               scale = convert_to<precise_real_type>(line[3]);
             continue;
          }
 
@@ -273,7 +275,7 @@ double SLHA_io::read_matrix(const std::string& block_name, Eigen::MatrixBase<Der
             const int i = convert_to<int>(line[0]) - 1;
             const int k = convert_to<int>(line[1]) - 1;
             if (0 <= i && i < rows && 0 <= k && k < cols) {
-               const double value = convert_to<double>(line[2]);
+               const precise_real_type value = convert_to<precise_real_type>(line[2]);
                matrix(i,k) = value;
             }
          }
@@ -295,14 +297,14 @@ double SLHA_io::read_matrix(const std::string& block_name, Eigen::MatrixBase<Der
  * @return scale (or 0 if no scale is defined)
  */
 template <class Derived>
-double SLHA_io::read_vector(const std::string& block_name, Eigen::MatrixBase<Derived>& vector) const
+precise_real_type SLHA_io::read_vector(const std::string& block_name, Eigen::MatrixBase<Derived>& vector) const
 {
    if (vector.cols() != 1) throw SetupError("Vector has more than 1 column");
 
    auto block = data.find(data.cbegin(), data.cend(), block_name);
 
    const int rows = vector.rows();
-   double scale = 0.;
+   precise_real_type scale = 0.;
 
    while (block != data.cend()) {
       for (const auto& line: *block) {
@@ -310,14 +312,14 @@ double SLHA_io::read_vector(const std::string& block_name, Eigen::MatrixBase<Der
             // read scale from block definition
             if (line.size() > 3 &&
                 to_lower(line[0]) == "block" && line[2] == "Q=")
-               scale = convert_to<double>(line[3]);
+               scale = convert_to<precise_real_type>(line[3]);
             continue;
          }
 
          if (line.size() >= 2) {
             const int i = convert_to<int>(line[0]) - 1;
             if (0 <= i && i < rows) {
-               const double value = convert_to<double>(line[1]);
+               const precise_real_type value = convert_to<precise_real_type>(line[1]);
                vector(i,0) = value;
             }
          }
@@ -339,7 +341,7 @@ double SLHA_io::read_vector(const std::string& block_name, Eigen::MatrixBase<Der
  * @return scale (or 0 if no scale is defined)
  */
 template <class Derived>
-double SLHA_io::read_block(const std::string& block_name, Eigen::MatrixBase<Derived>& dense) const
+precise_real_type SLHA_io::read_block(const std::string& block_name, Eigen::MatrixBase<Derived>& dense) const
 {
    return dense.cols() == 1
       ? read_vector(block_name, dense)
@@ -348,8 +350,8 @@ double SLHA_io::read_block(const std::string& block_name, Eigen::MatrixBase<Deri
 
 template<class Scalar, int NRows>
 void SLHA_io::set_block(const std::string& name,
-                        const Eigen::Matrix<std::complex<Scalar>, NRows, 1>& matrix,
-                        const std::string& symbol, double scale)
+                        const Eigen::Matrix<precise_complex_type, NRows, 1>& matrix,
+                        const std::string& symbol, precise_real_type scale)
 {
    std::ostringstream ss;
    ss << "Block " << name;
@@ -367,8 +369,8 @@ void SLHA_io::set_block(const std::string& name,
 
 template<class Scalar, int NRows, int NCols>
 void SLHA_io::set_block(const std::string& name,
-                        const Eigen::Matrix<std::complex<Scalar>, NRows, NCols>& matrix,
-                        const std::string& symbol, double scale)
+                        const Eigen::Matrix<precise_complex_type, NRows, NCols>& matrix,
+                        const std::string& symbol, precise_real_type scale)
 {
    std::ostringstream ss;
    ss << "Block " << name;
@@ -390,8 +392,8 @@ void SLHA_io::set_block(const std::string& name,
 
 template<class Scalar, int NRows>
 void SLHA_io::set_block_imag(const std::string& name,
-                             const Eigen::Matrix<std::complex<Scalar>, NRows, 1>& matrix,
-                             const std::string& symbol, double scale)
+                             const Eigen::Matrix<precise_complex_type, NRows, 1>& matrix,
+                             const std::string& symbol, precise_real_type scale)
 {
    std::ostringstream ss;
    ss << "Block " << name;
@@ -409,8 +411,8 @@ void SLHA_io::set_block_imag(const std::string& name,
 
 template<class Scalar, int NRows, int NCols>
 void SLHA_io::set_block_imag(const std::string& name,
-                             const Eigen::Matrix<std::complex<Scalar>, NRows, NCols>& matrix,
-                             const std::string& symbol, double scale)
+                             const Eigen::Matrix<precise_complex_type, NRows, NCols>& matrix,
+                             const std::string& symbol, precise_real_type scale)
 {
    std::ostringstream ss;
    ss << "Block " << name;
@@ -433,7 +435,7 @@ void SLHA_io::set_block_imag(const std::string& name,
 template <class Derived>
 void SLHA_io::set_block(const std::string& name,
                         const Eigen::MatrixBase<Derived>& matrix,
-                        const std::string& symbol, double scale)
+                        const std::string& symbol, precise_real_type scale)
 {
    std::ostringstream ss;
    ss << "Block " << name;
@@ -445,11 +447,11 @@ void SLHA_io::set_block(const std::string& name,
    const int cols = matrix.cols();
    for (int i = 1; i <= rows; ++i) {
       if (cols == 1) {
-         ss << boost::format(vector_formatter) % i % matrix(i-1,0)
+         ss << boost::format(vector_formatter) % i % Re(matrix(i-1,0))
             % (symbol + "(" + ToString(i) + ")");
       } else {
          for (int k = 1; k <= cols; ++k) {
-            ss << boost::format(mixing_matrix_formatter) % i % k % matrix(i-1,k-1)
+            ss << boost::format(mixing_matrix_formatter) % i % k % Re(matrix(i-1,k-1))
                % (symbol + "(" + ToString(i) + "," + ToString(k) + ")");
          }
       }
@@ -461,7 +463,7 @@ void SLHA_io::set_block(const std::string& name,
 template <class Derived>
 void SLHA_io::set_block_imag(const std::string& name,
                              const Eigen::MatrixBase<Derived>& matrix,
-                             const std::string& symbol, double scale)
+                             const std::string& symbol, precise_real_type scale)
 {
    std::ostringstream ss;
    ss << "Block " << name;
@@ -487,8 +489,8 @@ void SLHA_io::set_block_imag(const std::string& name,
 }
 
 template<int N>
-void SLHA_io::convert_symmetric_fermion_mixings_to_slha(Eigen::Array<double, N, 1>&,
-                                                        Eigen::Matrix<double, N, N>&)
+void SLHA_io::convert_symmetric_fermion_mixings_to_slha(Eigen::Array<precise_real_type, N, 1>&,
+                                                        Eigen::Matrix<precise_real_type, N, N>&)
 {
 }
 
@@ -507,21 +509,21 @@ void SLHA_io::convert_symmetric_fermion_mixings_to_slha(Eigen::Array<double, N, 
  * @param z mixing matrix
  */
 template<int N>
-void SLHA_io::convert_symmetric_fermion_mixings_to_slha(Eigen::Array<double, N, 1>& m,
-                                                        Eigen::Matrix<std::complex<double>, N, N>& z)
+void SLHA_io::convert_symmetric_fermion_mixings_to_slha(Eigen::Array<precise_real_type, N, 1>& m,
+                                                        Eigen::Matrix<precise_complex_type, N, N>& z)
 {
    for (int i = 0; i < N; i++) {
       // check if i'th row contains non-zero imaginary parts
       if (!is_zero(z.row(i).imag().cwiseAbs().maxCoeff())) {
-         z.row(i) *= std::complex<double>(0.0,1.0);
+         z.row(i) *= precise_complex_type(0.0,1.0);
          m(i) *= -1;
       }
    }
 }
 
 template<int N>
-void SLHA_io::convert_symmetric_fermion_mixings_to_hk(Eigen::Array<double, N, 1>&,
-                                                      Eigen::Matrix<double, N, N>&)
+void SLHA_io::convert_symmetric_fermion_mixings_to_hk(Eigen::Array<precise_real_type, N, 1>&,
+                                                      Eigen::Matrix<precise_real_type, N, N>&)
 {
 }
 
@@ -534,12 +536,12 @@ void SLHA_io::convert_symmetric_fermion_mixings_to_hk(Eigen::Array<double, N, 1>
  * @param z mixing matrix
  */
 template<int N>
-void SLHA_io::convert_symmetric_fermion_mixings_to_hk(Eigen::Array<double, N, 1>& m,
-                                                      Eigen::Matrix<std::complex<double>, N, N>& z)
+void SLHA_io::convert_symmetric_fermion_mixings_to_hk(Eigen::Array<precise_real_type, N, 1>& m,
+                                                      Eigen::Matrix<precise_complex_type, N, N>& z)
 {
    for (int i = 0; i < N; i++) {
       if (m(i) < 0.) {
-         z.row(i) *= std::complex<double>(0.0,1.0);
+         z.row(i) *= precise_complex_type(0.0,1.0);
          m(i) *= -1;
       }
    }

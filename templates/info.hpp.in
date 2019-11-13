@@ -18,11 +18,12 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_INFO_H
 #define @ModelName@_INFO_H
 
 #include "problems.hpp"
-
 #include <array>
 #include <iosfwd>
 #include <string>

@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 /**
  * @file cxx_qft/@ModelName@_npointfunctions.hpp
  *

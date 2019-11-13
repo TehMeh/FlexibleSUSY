@@ -26,6 +26,9 @@
  *
  */
 
+
+#include "precise.hpp"
+
 #ifndef STANDARD_MODEL_TWO_SCALE_MODEL_H
 #define STANDARD_MODEL_TWO_SCALE_MODEL_H
 
@@ -52,9 +55,9 @@ public:
    virtual void calculate_spectrum() override;
    virtual void clear_problems() override;
    virtual std::string name() const override;
-   virtual void run_to(double scale, double eps = -1.0) override;
+   virtual void run_to(precise_real_type scale, precise_real_type eps = -1.0) override;
    virtual void print(std::ostream&) const override;
-   virtual void set_precision(double) override;
+   virtual void set_precision(precise_real_type) override;
 };
 
 } // namespace standard_model

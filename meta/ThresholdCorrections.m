@@ -112,9 +112,9 @@ CalculateDeltaAlphaEm[renormalizationScheme_] :=
            deltaSM = -16/9 Global`FiniteLog[Abs[topQuark/Global`currentScale]];
            deltaSusy = CalculateElectromagneticCoupling[renormalizationScheme];
            result = Parameters`CreateLocalConstRefs[{deltaSusy, deltaSM}] <> "\n" <>
-                    "const double delta_alpha_em_SM = " <>
+                    "const precise_real_type delta_alpha_em_SM = " <>
                     CConversion`RValueToCFormString[prefactor * deltaSM] <> ";\n\n" <>
-                    "const double delta_alpha_em = " <>
+                    "const precise_real_type delta_alpha_em = " <>
                     CConversion`RValueToCFormString[prefactor * deltaSusy] <> ";\n\n" <>
                     "return delta_alpha_em + delta_alpha_em_SM;\n";
            Return[result];
@@ -179,9 +179,9 @@ CalculateDeltaAlpha2LMSSM[] :=
 IndentText["\
 " <> Parameters`CreateLocalConstRefs[Parameters`GetEffectiveMu[]] <> "
 
-double mst_1, mst_2, theta_t;
-double msb_1, msb_2, theta_b;
-double msd_1, msd_2, theta_d;
+precise_real_type mst_1, mst_2, theta_t;
+precise_real_type msb_1, msb_2, theta_b;
+precise_real_type msd_1, msd_2, theta_d;
 
 model->" <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`TopSquark, "mst_1", "mst_2", "theta_t"] <> ";
 model->" <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`BottomSquark, "msb_1", "msb_2", "theta_b"] <> ";
@@ -233,14 +233,13 @@ CalculateDeltaAlphaS[renormalizationScheme_] :=
            deltaSM = - 2/3 Global`FiniteLog[Abs[topQuark/Global`currentScale]];
            deltaSusy = CalculateColorCoupling[renormalizationScheme];
            Parameters`CreateLocalConstRefs[{deltaSusy, deltaSM}] <> "\n" <>
-           "const double delta_alpha_s_SM = " <>
+           "const precise_real_type delta_alpha_s_SM = " <>
            CConversion`RValueToCFormString[prefactor * deltaSM] <> ";\n\n" <>
-           "const double delta_alpha_s = " <>
+           "const precise_real_type delta_alpha_s = " <>
            CConversion`RValueToCFormString[prefactor * deltaSusy] <> ";\n\n" <>
-           "const double delta_alpha_s_1loop = delta_alpha_s + delta_alpha_s_SM;\n" <>
-           "double delta_alpha_s_2loop = 0.;\n" <>
-           "double delta_alpha_s_3loop = 0.;\n" <>
-           "double delta_alpha_s_4loop = 0.;\n\n" <>
+           "const precise_real_type delta_alpha_s_1loop = delta_alpha_s + delta_alpha_s_SM;\n" <>
+           "precise_real_type delta_alpha_s_2loop = 0.;\n" <>
+           "precise_real_type delta_alpha_s_3loop = 0.;\n\n" <>
            If[FlexibleSUSY`UseMSSMAlphaS2Loop === True, CalculateDeltaAlpha2LMSSM[], ""] <>
            If[FlexibleSUSY`UseSMAlphaS3Loop === True, CalculateDeltaAlpha2LSM[], ""] <>
            If[FlexibleSUSY`UseSMAlphaS3Loop === True, CalculateDeltaAlpha3LSM[], ""] <>

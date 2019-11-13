@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef PROBLEMS_H
 #define PROBLEMS_H
 
@@ -49,7 +51,7 @@ public:
    void flag_no_ewsb_tree_level();
    void flag_no_perturbative();
    void flag_no_pole_mass_convergence(int particle);
-   void flag_non_perturbative_parameter(int parameter, double value, double scale, double threshold = 0.);
+   void flag_non_perturbative_parameter(int parameter, precise_real_type value, precise_real_type scale, precise_real_type threshold = 0.);
    void flag_no_sinThetaW_convergence();
 
    void unflag_bad_mass(int particle);
@@ -101,9 +103,9 @@ public:
 private:
    struct NonPerturbativeValue {
       NonPerturbativeValue() = default;
-      NonPerturbativeValue(double value_, double scale_, double threshold_)
+      NonPerturbativeValue(precise_real_type value_, precise_real_type scale_, precise_real_type threshold_)
          : value(value_), scale(scale_), threshold(threshold_) {}
-      double value{0.}, scale{0.}, threshold{0.};
+      precise_real_type value{0.}, scale{0.}, threshold{0.};
    };
 
    std::string model_name;             ///< model name

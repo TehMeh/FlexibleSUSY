@@ -16,12 +16,15 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef NUMERICS_HPP
 #define NUMERICS_HPP
 
-#include <array>
+//#include <array>
+#include <boost/array.hpp>
 #include <cmath>
-#include <complex>
+//#include <complex>
 #include <limits>
 #include <cstddef>
 #include <cstdlib>
@@ -30,49 +33,43 @@
 namespace flexiblesusy {
 
 template <typename T>
-typename std::enable_if<std::is_unsigned<T>::value, bool>::type
+typename boost::enable_if_c<boost::is_unsigned<T>::value, bool>::type
 is_zero(T a, T prec = std::numeric_limits<T>::epsilon()) noexcept
 {
    return a <= prec;
 }
 
 template <typename T>
-typename std::enable_if<!std::is_unsigned<T>::value, bool>::type
+typename boost::enable_if_c<!std::is_unsigned<T>::value, bool>::type
 is_zero(T a, T prec = std::numeric_limits<T>::epsilon()) noexcept
 {
-   return std::abs(a) <= prec;
+   return abs(a) <= prec;
 }
 
-template <typename T>
-bool is_equal(T a, T b, T prec = std::numeric_limits<T>::epsilon()) noexcept
-{
-   return is_zero(a - b, prec);
-}
+
+bool is_equal(precise_real_type a, precise_real_type b,
+  precise_real_type prec = std::numeric_limits<precise_real_type>::epsilon()) noexcept;
+
+//template <typename T>
+bool is_equal(precise_complex_type a, precise_complex_type b,
+              precise_real_type prec = std::numeric_limits<precise_real_type>::epsilon()) noexcept;
 
 template <typename T>
-bool is_equal(std::complex<T> a, std::complex<T> b,
-              T prec = std::numeric_limits<T>::epsilon()) noexcept
-{
-   return (is_equal(a.real(), b.real(), prec)
-           && is_equal(a.imag(), b.imag(), prec));
-}
-
-template <typename T>
-typename std::enable_if<!std::is_unsigned<T>::value, bool>::type
+typename boost::enable_if_c<!std::is_unsigned<T>::value, bool>::type
 is_equal_rel(T a, T b, T prec = std::numeric_limits<T>::epsilon()) noexcept
 {
    if (is_equal(a, b, std::numeric_limits<T>::epsilon()))
       return true;
 
-   if (std::abs(a) < std::numeric_limits<T>::epsilon() ||
-       std::abs(b) < std::numeric_limits<T>::epsilon())
+   if (abs(a) < std::numeric_limits<T>::epsilon() ||
+       abs(b) < std::numeric_limits<T>::epsilon())
       return false;
 
-   return std::abs((a - b)/a) < prec;
+   return abs((a - b)/a) < prec;
 }
 
 template <typename T>
-typename std::enable_if<std::is_unsigned<T>::value, bool>::type
+typename boost::enable_if_c<std::is_unsigned<T>::value, bool>::type
 is_equal_rel(T a, T b, T prec = std::numeric_limits<T>::epsilon()) noexcept
 {
    using ST = typename std::make_signed<T>::type;
@@ -83,30 +80,30 @@ is_equal_rel(T a, T b, T prec = std::numeric_limits<T>::epsilon()) noexcept
    return is_equal_rel(sa, sb, sprec);
 }
 
-bool is_finite(const double*, long length);
+bool is_finite(const precise_real_type*, long length);
 
 template <std::size_t N>
-bool is_finite(const double v[N]) noexcept
+bool is_finite(const precise_real_type v[N]) noexcept
 {
    bool is_finite = true;
 
    for (std::size_t i = 0; i < N; i++)
-      is_finite = is_finite && std::isfinite(v[i]);
+      is_finite = is_finite && isfinite(v[i]);
 
    return is_finite;
 }
 
 template <typename T, std::size_t N>
-bool is_finite(const std::array<T, N>& v) noexcept
+bool is_finite(const boost::array<T, N>& v) noexcept
 {
    return is_finite<N>(&v[0]);
 }
 
-template <class T>
-std::complex<T> fast_log(const std::complex<T>& z) noexcept
-{
-   return std::complex<T>(std::log(std::abs(z)), std::arg(z));
-}
+//template <class T>
+precise_complex_type fast_log(const precise_complex_type& z) noexcept;
+/*{
+   return precise_complex_type(log(abs(z)), arg(z));
+}	*/
 
 } // namespace flexiblesusy
 

@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef CONVERGENCE_TESTER_DRBAR_H
 #define CONVERGENCE_TESTER_DRBAR_H
 
@@ -33,17 +35,17 @@ namespace flexiblesusy {
 template <class Model>
 class Convergence_tester_DRbar : public Convergence_tester {
 public:
-   using Scale_getter = std::function<double()>;
+   using Scale_getter = std::function<precise_real_type()>;
 
-   Convergence_tester_DRbar(const Model*, double, const Scale_getter& sg = Scale_getter());
+   Convergence_tester_DRbar(const Model*, precise_real_type, const Scale_getter& sg = Scale_getter());
    virtual ~Convergence_tester_DRbar() = default;
 
    virtual bool accuracy_goal_reached() override;
-   virtual double get_accuracy_goal() const { return accuracy_goal; }
+   virtual precise_real_type get_accuracy_goal() const { return accuracy_goal; }
    virtual int max_iterations() const override { return max_it; }
    virtual void restart() override;
 
-   double get_current_accuracy() const { return current_accuracy; }
+   precise_real_type get_current_accuracy() const { return current_accuracy; }
    /// set maximum number of iterations
    void set_max_iterations(int it) { max_it = it; }
    /// set scale getter
@@ -58,7 +60,7 @@ protected:
    /// get model state during last iteration
    const Model& get_last_iteration_model() const { return last_iteration_model; }
    /// maximum relative difference to last iteration
-   virtual double max_rel_diff() const = 0;
+   virtual precise_real_type max_rel_diff() const = 0;
 
 private:
    const Model* model{nullptr};             ///< pointer to model
@@ -67,17 +69,17 @@ private:
    Scale_getter scale_getter{};             ///< function to retrieve scale
    int it_count{0};                ///< iteration
    int max_it{40};                 ///< maximum number of iterations
-   double accuracy_goal{1e-4};              ///< accuracy goal
-   double current_accuracy{std::numeric_limits<double>::infinity()}; ///< current accuracy
+   precise_real_type accuracy_goal{1e-4};              ///< accuracy goal
+   precise_real_type current_accuracy{std::numeric_limits<precise_real_type>::infinity()}; ///< current accuracy
 
-   double scale_difference() const;         ///< absolute scale difference
-   double rel_scale_difference() const;     ///< relative scale difference
+   precise_real_type scale_difference() const;         ///< absolute scale difference
+   precise_real_type rel_scale_difference() const;     ///< relative scale difference
    void run_to_scale();                     ///< runs models to comparison scale
 };
 
 template <class Model>
 Convergence_tester_DRbar<Model>::Convergence_tester_DRbar
-(const Model* model_, double accuracy_goal_, const Scale_getter& sg)
+(const Model* model_, precise_real_type accuracy_goal_, const Scale_getter& sg)
    : Convergence_tester()
    , model(model_)
    , scale_getter(sg)
@@ -97,7 +99,7 @@ bool Convergence_tester_DRbar<Model>::accuracy_goal_reached()
 
    if (it_count > 0) {
       run_to_scale();
-      const double scale_accuracy_goal = accuracy_goal * 16*M_PI*M_PI;
+      const precise_real_type scale_accuracy_goal = accuracy_goal * 16*M_PI*M_PI;
       if (rel_scale_difference() < scale_accuracy_goal) {
          current_accuracy = max_rel_diff();
          precision_reached = current_accuracy < accuracy_goal;
@@ -119,27 +121,27 @@ bool Convergence_tester_DRbar<Model>::accuracy_goal_reached()
 }
 
 template <class Model>
-double Convergence_tester_DRbar<Model>::scale_difference() const
+precise_real_type Convergence_tester_DRbar<Model>::scale_difference() const
 {
    return current_model.get_scale() - last_iteration_model.get_scale();
 }
 
 template <class Model>
-double Convergence_tester_DRbar<Model>::rel_scale_difference()
+precise_real_type Convergence_tester_DRbar<Model>::rel_scale_difference()
    const
 {
-   const double diff = scale_difference();
-   const double last_scale = last_iteration_model.get_scale();
+   const precise_real_type diff = scale_difference();
+   const precise_real_type last_scale = last_iteration_model.get_scale();
    if (!is_zero(last_scale))
       return diff / last_scale;
-   return std::numeric_limits<double>::infinity();
+   return std::numeric_limits<precise_real_type>::infinity();
 }
 
 template <class Model>
 void Convergence_tester_DRbar<Model>::run_to_scale()
 {
    if (scale_getter) {
-      const double scale = scale_getter();
+      const precise_real_type scale = scale_getter();
       current_model.run_to(scale);
       current_model.calculate_DRbar_masses();
       last_iteration_model.run_to(scale);

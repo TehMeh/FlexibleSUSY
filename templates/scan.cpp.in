@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #include "config.h"
 
 #include "@ModelName@_input_parameters.hpp"
@@ -73,7 +75,7 @@ void set_command_line_parameters(const Dynamic_array_view<char*>& args,
 
 struct @ModelName@_scan_result {
    Spectrum_generator_problems problems;
-   double higgs{0.};
+   precise_real_type higgs{0.};
 };
 
 template <class solver_type>
@@ -98,7 +100,7 @@ template <class solver_type>
 }
 
 void scan(int solver_type, @ModelName@_input_parameters& input,
-          const std::vector<double>& range)
+          const std::vector<precise_real_type>& range)
 {
    softsusy::QedQcd qedqcd;
 
@@ -145,7 +147,7 @@ int main(int argc, char* argv[])
              << std::setw(12) << std::left << "error"
              << '\n';
 
-   const std::vector<double> range(float_range(0., 100., 10));
+   const std::vector<precise_real_type> range(float_range(0., 100., 10));
 
    scan(solver_type, input, range);
 

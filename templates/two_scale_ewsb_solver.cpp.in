@@ -34,6 +34,8 @@
 #include "fixed_point_iterator.hpp"
 #include "raii.hpp"
 
+//#include <boost/array.hpp>
+
 #include <memory>
 
 namespace flexiblesusy {
@@ -230,7 +232,7 @@ CLASSNAME::EWSB_vector_t CLASSNAME::tadpole_equations(const @ModelName@_mass_eig
  */
 CLASSNAME::EWSB_vector_t CLASSNAME::ewsb_step(const @ModelName@_mass_eigenstates& model) const
 {
-   std::array<double, number_of_ewsb_equations> tadpole{};
+   std::array<precise_real_type, number_of_ewsb_equations> tadpole{};
    EWSB_vector_t ewsb_parameters(EWSB_vector_t::Zero());
 
    if (loop_order > 0) {

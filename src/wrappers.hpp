@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp" //Added S.D.
+
 #ifndef WRAPPERS_H
 #define WRAPPERS_H
 
@@ -28,7 +30,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
-#include <Eigen/Core>
+//#include <Eigen/Core>
 #include <boost/lexical_cast.hpp>
 
 #include "eigen_tensor.hpp"
@@ -47,19 +49,45 @@ static constexpr double twoLoop = oneOver16PiSqr * oneOver16PiSqr;
 static constexpr double threeLoop = oneOver16PiSqr * oneOver16PiSqr * oneOver16PiSqr;
 static constexpr double fourLoop = twoLoop * twoLoop;
 static constexpr bool True = true;
-
-template <typename T>
+ //ATTENTION S.D.
+/*template <typename T>
 T Abs(T a) noexcept
 {
-   return std::abs(a);
+   return abs(a);
 }
 
 template <typename T>
 T Abs(const std::complex<T>& z) noexcept
 {
    return std::abs(z);
+}*/
+
+template<typename T>
+precise_real_type Abs(const T z)
+{
+   return abs(z);
 }
 
+/*double Abs(const std::complex<double>& z) noexcept
+{
+   return std::abs(z);
+}
+
+double Abs(double z) noexcept
+{
+   return std::abs(z);
+}
+
+precise_real_type Abs(const precise_complex_type& z) noexcept
+{
+   return static_cast<precise_real_type>(abs(z));
+}
+
+precise_real_type Abs(precise_real_type z) noexcept
+{
+   return abs(z);
+}
+*/
 template <typename Scalar, int M, int N>
 Eigen::Array<Scalar, M, N> Abs(const Eigen::Array<Scalar, M, N>& a)
 {
@@ -80,9 +108,23 @@ std::vector<T> Abs(std::vector<T> v) noexcept
    return v;
 }
 
-double AbsSqr(double) noexcept;
+template<typename T>
+precise_real_type AbsSqr(const T a) /*noexcept*/
+{
+      return norm(a);
+}
+
+/*double AbsSqr(double) noexcept;
+precise_real_type AbsSqr(precise_real_type) noexcept;
+
 double AbsSqr(const std::complex<double>&) noexcept;
-double AbsSqrt(double) noexcept;
+precise_real_type AbsSqr(const precise_complex_type&) noexcept;
+*/
+
+
+//double AbsSqrt(double) noexcept;
+precise_real_type AbsSqrt(precise_real_type) noexcept;
+
 
 template <typename Derived>
 Derived AbsSqrt(const Eigen::MatrixBase<Derived>& m)
@@ -149,10 +191,17 @@ double calculate_dirac_singlet_mass(T value, std::complex<double>& phase)
    return std::abs(value);
 }
 
-double ArcTan(double) noexcept;
-double ArcSin(double) noexcept;
-double ArcCos(double) noexcept;
-double Arg(const std::complex<double>&) noexcept;
+//double ArcTan(double) noexcept;
+precise_real_type ArcTan(precise_real_type) noexcept;
+
+//double ArcSin(double) noexcept;
+precise_real_type ArcSin(precise_real_type) noexcept;
+
+//double ArcCos(double) noexcept;
+precise_real_type ArcCos(precise_real_type) noexcept;
+
+//double Arg(const std::complex<double>&) noexcept;
+precise_real_type Arg(const precise_complex_type&) noexcept;
 
 template <typename T>
 constexpr T Cbrt(T a) noexcept
@@ -160,8 +209,17 @@ constexpr T Cbrt(T a) noexcept
    return std::cbrt(a);
 }
 
-double Conj(double a) noexcept;
-std::complex<double> Conj(const std::complex<double>& a) noexcept;
+template<typename T>
+T Conj(T a)
+{
+   return conj(a);
+} 
+
+//double Conj(double a) noexcept;
+//precise_real_type Conj(const precise_real_type a) noexcept;
+//std::complex<double> Conj(const std::complex<double>& a) noexcept;
+//precise_complex_type Conj(const precise_complex_type) noexcept;
+
 
 template<typename Scalar, int M, int N>
 Eigen::Matrix<Scalar,M,N> Conj(const Eigen::Matrix<Scalar,M,N>& a) noexcept
@@ -184,15 +242,23 @@ constexpr T Cube(T a) noexcept
 template <typename T>
 T Exp(T z) noexcept
 {
-   return std::exp(z);
+   return exp(z);
 }
 
-double Tan(double a) noexcept;
+/*double Tan(double a) noexcept;
 double Cot(double a) noexcept;
 double Cos(double x) noexcept;
 double Sin(double x) noexcept;
 double Sec(double x) noexcept;
-double Csc(double x) noexcept;
+double Csc(double x) noexcept;*/
+
+precise_real_type Tan(precise_real_type a) noexcept;
+precise_real_type Cot(precise_real_type a) noexcept;
+precise_real_type Cos(precise_real_type x) noexcept;
+precise_real_type Sin(precise_real_type x) noexcept;
+precise_real_type Sec(precise_real_type x) noexcept;
+precise_real_type Csc(precise_real_type x) noexcept;
+
 int Delta(int i, int j) noexcept;
 
 #define FSFlagProblem(p) [&](){ (p); return 0.; }()
@@ -202,6 +268,11 @@ bool IsClose(double, double, double eps = std::numeric_limits<double>::epsilon()
 bool IsCloseRel(double, double, double eps = std::numeric_limits<double>::epsilon()) noexcept;
 bool IsFinite(double) noexcept;
 bool IsFinite(const std::complex<double>&) noexcept;
+
+bool IsClose(precise_real_type, precise_real_type, precise_real_type eps = std::numeric_limits<precise_real_type>::epsilon()) noexcept;
+bool IsCloseRel(precise_real_type, precise_real_type, precise_real_type eps = std::numeric_limits<precise_real_type>::epsilon()) noexcept;
+bool IsFinite(precise_real_type) noexcept;
+bool IsFinite(const precise_complex_type&) noexcept;
 
 template <class Derived>
 bool IsFinite(const Eigen::DenseBase<Derived>& m)
@@ -213,7 +284,7 @@ bool IsFinite(const Eigen::DenseBase<Derived>& m)
 
    for (int r = 0; r < nr; r++) {
       for (int c = 0; c < nc; c++) {
-         if (!std::isfinite(m(r,c)))
+         if (!isfinite(m(r,c)))
             return false;
       }
    }
@@ -244,8 +315,13 @@ typename Eigen::MatrixBase<Derived>::PlainObject Diag(const Eigen::MatrixBase<De
 }
 
 std::complex<double> ComplexLog(double a) noexcept;
+std::complex<double> fast_log(const std::complex<double>& z) noexcept;
+//precise_complex_type fast_log(const precise_complex_type& z) noexcept;
+precise_complex_type ComplexLog(precise_real_type a) noexcept;
 std::complex<double> ComplexLog(const std::complex<double>& z) noexcept;
+precise_complex_type ComplexLog(const precise_complex_type& z) noexcept;
 double FiniteLog(double a) noexcept;
+precise_real_type FiniteLog(precise_real_type a) noexcept;
 
 /**
  * Fills lower triangle of hermitian matrix from values
@@ -341,12 +417,18 @@ double PrintWARNING(Ts&&... vs)
 ///////////////////////// end of logger commands /////////////////////////
 
 double Log(double a) noexcept;
+precise_real_type Log(precise_real_type a) noexcept;
+
 
 double MaxRelDiff(double, double);
 double MaxRelDiff(const std::complex<double>&, const std::complex<double>&);
 
+precise_real_type MaxRelDiff(precise_real_type, precise_real_type);
+precise_real_type MaxRelDiff(const precise_complex_type&, const precise_complex_type&);
+
+// ATTENTION S.D.
 template <class Derived>
-double MaxRelDiff(const Eigen::MatrixBase<Derived>& a,
+precise_real_type MaxRelDiff(const Eigen::MatrixBase<Derived>& a,
                   const Eigen::MatrixBase<Derived>& b)
 {
    typename Eigen::MatrixBase<Derived>::PlainObject sumTol(a.rows());
@@ -359,17 +441,22 @@ double MaxRelDiff(const Eigen::MatrixBase<Derived>& a,
 
    return sumTol.maxCoeff();
 }
-
+// ATTENTION S.D.
 template <class Derived>
-double MaxRelDiff(const Eigen::ArrayBase<Derived>& a,
+precise_real_type MaxRelDiff(const Eigen::ArrayBase<Derived>& a,
                   const Eigen::ArrayBase<Derived>& b)
 {
    return MaxRelDiff(a.matrix(), b.matrix());
 }
 
+
 double MaxAbsValue(double x) noexcept;
 double MaxAbsValue(const std::complex<double>& x) noexcept;
 
+precise_real_type MaxAbsValue(precise_real_type x) noexcept;
+precise_real_type MaxAbsValue(const precise_complex_type& x) noexcept;
+
+//ATTENTION
 template <class Derived>
 double MaxAbsValue(const Eigen::MatrixBase<Derived>& x)
 {
@@ -407,6 +494,7 @@ typename std::common_type<T0, T1, Ts...>::type Min(T0&& val1, T1&& val2, Ts&&...
 }
 
 int Sign(double x) noexcept;
+int Sign(precise_real_type x) noexcept;
 int Sign(int x) noexcept;
 
 template <typename T>
@@ -415,13 +503,16 @@ constexpr T Quad(T a) noexcept
    return a * a * a * a;
 }
 
-double PolyLog(int, double);
-std::complex<double> PolyLog(int, const std::complex<double>&);
+/*double PolyLog(int, double);
+std::complex<double> PolyLog(int, const std::complex<double>&);*/
+
+precise_real_type PolyLog(int, precise_real_type);
+precise_complex_type PolyLog(int, const precise_complex_type&);
 
 template <typename Base, typename Exponent>
 Base Power(Base base, Exponent exp) noexcept
 {
-   return std::pow(base, exp);
+   return pow(base, exp);
 }
 
 template <typename Base>
@@ -498,32 +589,56 @@ constexpr Base Power12(Base b) noexcept
           b * b;
 }
 
-double Re(double) noexcept;
-double Re(const std::complex<double>&) noexcept;
+//double Re(double) noexcept;
+//double Re(const std::complex<double>&) noexcept;
+
+// precise_real_type Re(precise_real_type) noexcept;
+// precise_real_type Re(const precise_complex_type&) noexcept;
+
+template<typename T>
+precise_real_type Re(T a)
+{
+   return real(a);
+}
 
 template<int M, int N>
-Eigen::Matrix<double,M,N> Re(const Eigen::Matrix<double,M,N>& x)
+Eigen::Matrix<precise_real_type,M,N> Re(const Eigen::Matrix<precise_real_type,M,N>& x)
 {
    return x;
 }
 
-template<class Derived>
+template<int M, int N>
+Eigen::Matrix<precise_real_type,M,N> Re(const Eigen::Matrix<precise_complex_type,M,N>& x)
+{
+   return x.real();
+}
+
+/*template<class Derived>
 typename Eigen::Matrix<
-   double,
+   precise_real_type,
    Eigen::MatrixBase<Derived>::RowsAtCompileTime,
    Eigen::MatrixBase<Derived>::ColsAtCompileTime>
 Re(const Eigen::MatrixBase<Derived>& x)
 {
    return x.real();
-}
+}*/
 
-double Im(double) noexcept;
+/*double Im(double) noexcept;
 double Im(const std::complex<double>&) noexcept;
 
-template<int M, int N>
-Eigen::Matrix<double,M,N> Im(const Eigen::Matrix<double,M,N>&)
+precise_real_type Im(precise_real_type) noexcept;
+precise_real_type Im(const precise_complex_type&) noexcept;*/
+
+template<typename T>
+precise_real_type Im(const T a)
 {
-   return Eigen::Matrix<double,M,N>::Zero();
+      return imag(a);
+}
+
+template<int M, int N>
+Eigen::Matrix<precise_real_type,M,N> Im(const Eigen::Matrix<precise_real_type,M,N>&)
+{
+   return Eigen::Matrix<precise_real_type,M,N>::Zero();
 }
 
 template<class Derived>
@@ -548,8 +663,10 @@ T RelDiff(T a, T b, T eps = std::numeric_limits<T>::epsilon()) noexcept
 }
 
 int Round(double a) noexcept;
+int Round(precise_real_type a) noexcept;
 
-double SignedAbsSqrt(double a) noexcept;
+//double SignedAbsSqrt(double a) noexcept;
+precise_real_type SignedAbsSqrt(precise_real_type a) noexcept;
 
 template <typename Derived>
 Derived SignedAbsSqrt(const Eigen::ArrayBase<Derived>& m)
@@ -557,18 +674,20 @@ Derived SignedAbsSqrt(const Eigen::ArrayBase<Derived>& m)
    return m.unaryExpr([](double a) { return SignedAbsSqrt(a); });
 }
 
+/*
 template <class T, typename = typename std::enable_if<std::is_floating_point<T>::value,T>::type>
 T Sqrt(T a) noexcept
 {
    return std::sqrt(a);
 }
+*/
 
-template <class T, typename = typename std::enable_if<std::is_integral<T>::value,T>::type>
-double Sqrt(T a) noexcept
-{
-   return std::sqrt(static_cast<double>(a));
+// ATTENTION S.D.
+precise_real_type Sqrt(precise_real_type a) noexcept;
+/*{
+   return sqrt(a);
 }
-
+*/
 template <typename Scalar, int M, int N>
 Eigen::Array<Scalar, M, N> Sqrt(const Eigen::Array<Scalar, M, N>& m)
 {
@@ -586,7 +705,7 @@ std::vector<T> Sqrt(std::vector<T> v)
 template <typename T>
 constexpr T Sqr(T a) noexcept
 {
-   return a * a;
+   return a*a;
 }
 
 template <typename Scalar, int M, int N>
@@ -639,24 +758,26 @@ void Symmetrize(Eigen::MatrixBase<Derived>& m)
          m(i,k) = m(k,i);
 }
 
-#define UNITMATRIX(rows)             Eigen::Matrix<double,rows,rows>::Identity()
-#define ZEROMATRIX(rows,cols)        Eigen::Matrix<double,rows,cols>::Zero()
-#define ZEROTENSOR3(d1,d2,d3)        ZeroTensor3<double,d1,d2,d3>()
-#define ZEROTENSOR4(d1,d2,d3,d4)     ZeroTensor4<double,d1,d2,d3,d4>()
-#define ZEROVECTOR(rows)             Eigen::Matrix<double,rows,1>::Zero()
-#define ZEROARRAY(rows)              Eigen::Array<double,rows,1>::Zero()
-#define UNITMATRIXCOMPLEX(rows)      Eigen::Matrix<std::complex<double>,rows,rows>::Identity()
-#define ZEROMATRIXCOMPLEX(rows,cols) Eigen::Matrix<std::complex<double>,rows,cols>::Zero()
-#define ZEROVECTORCOMPLEX(rows)      Eigen::Matrix<std::complex<double>,rows,1>::Zero()
-#define ZEROTENSOR3COMPLEX(d1,d2,d3) ZeroTensor3<std::complex<double>,d1,d2,d3>()
-#define ZEROTENSOR4COMPLEX(d1,d2,d3,d4) ZeroTensor4<std::complex<double>,d1,d2,d3,d4>()
-#define ZEROARRAYCOMPLEX(rows)       Eigen::Array<std::complex<double>,rows,1>::Zero()
+// ATTENTION S.D.
+#define UNITMATRIX(rows)             Eigen::Matrix<precise_real_type,rows,rows>::Identity()
+#define ZEROMATRIX(rows,cols)        Eigen::Matrix<precise_real_type,rows,cols>::Zero()
+#define ZEROTENSOR3(d1,d2,d3)        ZeroTensor3<precise_real_type,d1,d2,d3>()
+#define ZEROTENSOR4(d1,d2,d3,d4)     ZeroTensor4<precise_real_type,d1,d2,d3,d4>()
+#define ZEROVECTOR(rows)             Eigen::Matrix<precise_real_type,rows,1>::Zero()
+#define ZEROARRAY(rows)              Eigen::Array<precise_real_type,rows,1>::Zero()
+#define UNITMATRIXCOMPLEX(rows)      Eigen::Matrix<precise_complex_type,rows,rows>::Identity()
+#define ZEROMATRIXCOMPLEX(rows,cols) Eigen::Matrix<precise_complex_type,rows,cols>::Zero()
+#define ZEROVECTORCOMPLEX(rows)      Eigen::Matrix<precise_complex_type,rows,1>::Zero()
+#define ZEROTENSOR3COMPLEX(d1,d2,d3) ZeroTensor3<precise_complex_type>,d1,d2,d3>()
+#define ZEROTENSOR4COMPLEX(d1,d2,d3,d4) ZeroTensor4<precise_complex_type>,d1,d2,d3,d4>()
+#define ZEROARRAYCOMPLEX(rows)       Eigen::Array<precise_complex_type>,rows,1>::Zero()
 
 // MxN matrix projection operator, which projects on the (X,Y)
 // component
+//ATTENTION S.D.
 #define PROJECTOR Proj
 #define DEFINE_PROJECTOR(M,N,X,Y)                                       \
-   Eigen::Matrix<double,M,N> Proj(Eigen::Matrix<double,M,N>::Zero());   \
+   Eigen::Matrix<precise_real_type,M,N> Proj(Eigen::Matrix<precise_real_type,M,N>::Zero());   \
    Proj((X)-1,(Y)-1) = 1;
 
 inline double FSThrow(const std::string& s)
@@ -685,6 +806,9 @@ std::string ToString(T a)
 
 double Total(double) noexcept;
 std::complex<double> Total(const std::complex<double>&) noexcept;
+
+precise_real_type Total(precise_real_type) noexcept;
+precise_complex_type Total(const precise_complex_type&) noexcept;
 
 template <class T>
 T Total(const std::vector<T>& v)
@@ -723,24 +847,25 @@ Eigen::Array<Scalar,M,N> Total(const std::vector<Eigen::Array<Scalar,M,N> >& v)
 }
 
 /// unit vector of length N into direction i
-template <int N, int i, typename Scalar = double>
+//ATTNETION S.D.
+template <int N, int i, typename Scalar = precise_real_type>
 constexpr auto UnitVector() -> Eigen::Matrix<Scalar,N,1>
 {
    return Eigen::Matrix<Scalar,N,1>::Unit(i);
 }
 
 /// unit vector of length N into direction i
-template <int N, typename Scalar = double>
+template <int N, typename Scalar = precise_real_type>
 constexpr auto UnitVector(int i) -> Eigen::Matrix<Scalar,N,1>
 {
    return Eigen::Matrix<Scalar,N,1>::Unit(i);
 }
 
 /// unit vector of length N into direction i
-Eigen::VectorXd UnitVector(int N, int i);
+Eigen::VectorXdp UnitVector(int N, int i);
 
 /// matrix projector of size MxN into direction i, j
-template <int M, int N, int i, int j, typename Scalar = double>
+template <int M, int N, int i, int j, typename Scalar = precise_real_type>
 auto MatrixProjector() -> Eigen::Matrix<Scalar,M,N>
 {
    Eigen::Matrix<Scalar,M,N> proj(Eigen::Matrix<Scalar,M,N>::Zero());
@@ -750,7 +875,7 @@ auto MatrixProjector() -> Eigen::Matrix<Scalar,M,N>
 }
 
 /// matrix projector of size MxN into direction i, j
-template <int M, int N, typename Scalar = double>
+template <int M, int N, typename Scalar = precise_real_type>
 auto MatrixProjector(int i, int j) -> Eigen::Matrix<Scalar,M,N>
 {
    Eigen::Matrix<Scalar,M,N> proj(Eigen::Matrix<Scalar,M,N>::Zero());
@@ -760,7 +885,7 @@ auto MatrixProjector(int i, int j) -> Eigen::Matrix<Scalar,M,N>
 }
 
 /// unit matrix projector of size MxN into direction i, j
-Eigen::MatrixXd MatrixProjector(int M, int N, int i, int j);
+Eigen::MatrixXdp MatrixProjector(int M, int N, int i, int j);
 
 /// step function (0 for x < 0, 1 otherwise)
 template <typename T>
@@ -770,6 +895,7 @@ constexpr int UnitStep(T x) noexcept
 }
 
 double ZeroSqrt(double x) noexcept;
+precise_real_type ZeroSqrt(precise_real_type x) noexcept;
 
 template <typename Derived>
 Derived ZeroSqrt(const Eigen::ArrayBase<Derived>& m)

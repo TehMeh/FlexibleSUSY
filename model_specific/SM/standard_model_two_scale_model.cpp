@@ -57,7 +57,7 @@ std::string StandardModel<Two_scale>::name() const
    return Standard_model::name();
 }
 
-void StandardModel<Two_scale>::run_to(double scale, double eps)
+void StandardModel<Two_scale>::run_to(precise_real_type scale, precise_real_type eps)
 {
    Standard_model::run_to(scale, eps);
 }
@@ -67,7 +67,7 @@ void StandardModel<Two_scale>::print(std::ostream& out) const
    Standard_model::print(out);
 }
 
-void StandardModel<Two_scale>::set_precision(double p)
+void StandardModel<Two_scale>::set_precision(precise_real_type p)
 {
    Standard_model::set_precision(p);
 }

@@ -70,18 +70,18 @@ namespace runge_kutta {
  * @param[in] derivs function calculating the derivatives
  * @param[in] tol desired accuracy to use in integration step
  */
-void RKF_integrator::operator()(double start, double end,
-                                Eigen::ArrayXd& pars, const Derivs& derivs,
-                                double tol) const
+void RKF_integrator::operator()(precise_real_type start, precise_real_type end,
+                                Eigen::ArrayXdp& pars, const Derivs& derivs,
+                                precise_real_type tol) const
 {
-   using state_type = Eigen::ArrayXd;
+   using state_type = Eigen::ArrayXdp;
    using stepper_type = boost::numeric::odeint::runge_kutta_fehlberg78<
-      state_type, double, state_type, double,
+      state_type, precise_real_type, state_type, precise_real_type,
       boost::numeric::odeint::vector_space_algebra
       >;
 
-   const double guess = (end - start) * 0.1; // first step size
-   const auto derivatives = [derivs] (const state_type& y, state_type& dydt, double t) -> void {
+   const precise_real_type guess = (end - start) * 0.1; // first step size
+   const auto derivatives = [derivs] (const state_type& y, state_type& dydt, precise_real_type t) -> void {
       dydt = derivs(t, y);
    };
 
@@ -90,7 +90,7 @@ void RKF_integrator::operator()(double start, double end,
       stepper, derivatives, pars, start, end, guess, RKF_observer());
 }
 
-void RKF_integrator::RKF_observer::operator()(const Eigen::ArrayXd& state, double t) const
+void RKF_integrator::RKF_observer::operator()(const Eigen::ArrayXdp& state, precise_real_type t) const
 {
    if (!IsFinite(state)) {
       int max_step_dir = 0;
@@ -102,10 +102,10 @@ void RKF_integrator::RKF_observer::operator()(const Eigen::ArrayXd& state, doubl
       }
 #ifdef ENABLE_VERBOSE
       ERROR("RKF_integrator: non-perturbative running at Q = "
-            << std::exp(t) << " GeV of parameter y(" << max_step_dir
+            << exp(t) << " GeV of parameter y(" << max_step_dir
             << ") = " << state(max_step_dir));
 #endif
-      throw NonPerturbativeRunningError(std::exp(t), max_step_dir, state(max_step_dir));
+      throw NonPerturbativeRunningError(exp(t), max_step_dir, state(max_step_dir));
    }
 }
 
@@ -131,8 +131,8 @@ namespace runge_kutta {
  * @param[in] derivs function calculating the derivatives
  * @param[in] tol desired accuracy to use in integration step
  */
-void RKF_integrator::operator()(double, double, Eigen::ArrayXd&, const Derivs&,
-                                double) const
+void RKF_integrator::operator()(precise_real_type, precise_real_type, Eigen::ArrayXdpp&, const Derivs&,
+                                precise_real_type) const
 {
    throw DisabledOdeintError("Cannot call operator(), because odeint support is disabled.");
 }

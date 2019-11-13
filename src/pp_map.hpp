@@ -26,6 +26,8 @@
  * prior written authorization from the authors.
  */
 
+#include "precise.hpp"
+
 #ifndef PP_MAP_H
 #define PP_MAP_H
 

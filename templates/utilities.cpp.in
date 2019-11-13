@@ -28,7 +28,7 @@
 #include "wrappers.hpp"
 #include "lowe.h"
 
-#include <fstream>
+//#include <fstream>
 #include <sstream>
 #include <iostream>
 #include <iomanip>
@@ -47,7 +47,7 @@ void append(std::vector<std::string>& a, const Iterable& b)
    a.insert(a.end(), begin(b), end(b));
 }
 
-void append(Eigen::ArrayXd& a, const Eigen::ArrayXd& b)
+void append(Eigen::ArrayXdp& a, const Eigen::ArrayXdp& b)
 {
    const auto a_rows = a.rows();
    a.conservativeResize(a_rows + b.rows());
@@ -58,15 +58,15 @@ void append(Eigen::ArrayXd& a, const Eigen::ArrayXd& b)
 
 namespace {
 
-std::valarray<double> to_valarray(double v)
+boost::compute::valarray<precise_real_type> to_valarray(precise_real_type v)
 {
-   return std::valarray<double>(&v, 1);
+   return boost::compute::valarray<precise_real_type>(&v, 1);
 }
 
 template <class Scalar, int M, int N>
-std::valarray<double> to_valarray(const Eigen::Array<Scalar, M, N>& v)
+boost::compute::valarray<precise_real_type> to_valarray(const Eigen::Array<Scalar, M, N>& v)
 {
-   return std::valarray<double>(v.data(), v.size());
+   return boost::compute::valarray<precise_real_type>(v.data(), v.size());
 }
 
 } // anonymous namespace
@@ -92,7 +92,7 @@ void @ModelName@_spectrum_plotter::write_to_file(const std::string& file_name) c
    if (spectrum.empty())
       return;
 
-   std::ofstream filestr(file_name, std::ios::out);
+   boost::filesystem::ofstream filestr(file_name, std::ios::out);
    VERBOSE_MSG("@ModelName@_spectrum_plotter::write_to_file: opening file: "
                << file_name);
    if (filestr.fail()) {
@@ -109,7 +109,7 @@ void @ModelName@_spectrum_plotter::write_to_file(const std::string& file_name) c
                << file_name);
 }
 
-void @ModelName@_spectrum_plotter::write_spectrum(const TSpectrum& spectrum, std::ofstream& filestr) const
+void @ModelName@_spectrum_plotter::write_spectrum(const TSpectrum& spectrum, boost::filesystem::ofstream& filestr) const
 {
    if (!filestr.good()) {
       ERROR("@ModelName@_spectrum_plotter::write_spectrum: "
@@ -117,15 +117,15 @@ void @ModelName@_spectrum_plotter::write_spectrum(const TSpectrum& spectrum, std
       return;
    }
 
-   for (std::size_t s = 0; s < spectrum.size(); ++s) {
+   for (size_t s = 0; s < spectrum.size(); ++s) {
       const std::string& name = spectrum[s].name;
       const std::string& latex_name = spectrum[s].latex_name;
-      const std::valarray<double>& masses = spectrum[s].masses;
-      const std::size_t multiplicity = masses.size();
+      const boost::compute::valarray<precise_real_type>& masses = spectrum[s].masses;
+      const size_t multiplicity = masses.size();
 
       filestr << std::left << "# " << name << '\n';
 
-      for (std::size_t i = 0; i < multiplicity; ++i) {
+      for (size_t i = 0; i < multiplicity; ++i) {
          const std::string lname("$" + latex_name + "$");
          std::stringstream lname_with_index;
          lname_with_index << "$" << latex_name;
@@ -134,7 +134,7 @@ void @ModelName@_spectrum_plotter::write_spectrum(const TSpectrum& spectrum, std
          lname_with_index  << "$";
 
          filestr << std::left << std::setw(width) << s
-                 << std::left << std::setw(width) << masses[i]
+                 << std::left << std::setw(width) << (precise_real_type)masses[i]
                  << std::left << std::setw(width) << name
                  << std::left << std::setw(2*width) << lname
                  << std::left << lname_with_index.str()
@@ -164,7 +164,7 @@ void to_database(
    using utilities::append;
 
    std::vector<std::string> names(9,"");
-   Eigen::ArrayXd values(9);
+   Eigen::ArrayXdp values(9);
 
    // fill settings
    names[0] = "RGE_loop_order";
@@ -235,10 +235,10 @@ void to_database(
 }
 
 namespace {
-Eigen::ArrayXd extract_entry(const std::string& file_name, long long entry)
+Eigen::ArrayXdp extract_entry(const std::string& file_name, long long entry)
 {
    database::Database db(file_name);
-   Eigen::ArrayXd values;
+   Eigen::ArrayXdp values;
 
    try {
       values = db.extract("Point", entry);
@@ -287,7 +287,7 @@ Eigen::ArrayXd extract_entry(const std::string& file_name, long long entry)
       + number_of_low_energy_input_parameters
       + number_of_extra_physical_input_parameters + number_of_observables;
 
-   const Eigen::ArrayXd values(extract_entry(file_name, entry));
+   const Eigen::ArrayXdp values(extract_entry(file_name, entry));
 
    if (values.rows() < total_entries) {
       ERROR("data set " << entry << " extracted from " << file_name

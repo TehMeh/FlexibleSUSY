@@ -47,9 +47,9 @@ void Beta_function::reset()
  * @param x2 renormalization scale to run parameters to
  * @param eps RG running precision
  */
-void Beta_function::run_to(double x2, double eps)
+void Beta_function::run_to(precise_real_type x2, precise_real_type eps)
 {
-   const double tol = get_tolerance(eps);
+   const precise_real_type tol = get_tolerance(eps);
    run(scale, x2, tol);
 }
 
@@ -61,19 +61,19 @@ void Beta_function::run_to(double x2, double eps)
  * @param x2 renormalization scale to run parameters to
  * @param eps RG running precision
  */
-void Beta_function::run(double x1, double x2, double eps)
+void Beta_function::run(precise_real_type x1, precise_real_type x2, precise_real_type eps)
 {
    if (get_loops() > 0) {
-      const double tol = get_tolerance(eps);
+      const precise_real_type tol = get_tolerance(eps);
 
-      if (std::fabs(x1) < tol)
+      if (fabs(x1) < tol)
          throw NonPerturbativeRunningError(x1);
-      if (std::fabs(x2) < tol)
+      if (fabs(x2) < tol)
          throw NonPerturbativeRunningError(x2);
 
-      Eigen::ArrayXd y(get());
+      Eigen::ArrayXdp y(get());
 
-      Derivs derivs = [this] (double x, const Eigen::ArrayXd& y) {
+      Derivs derivs = [this] (precise_real_type x, const Eigen::ArrayXdp& y) {
          return derivatives(x, y);
       };
 
@@ -95,7 +95,7 @@ void Beta_function::run(double x1, double x2, double eps)
  *
  * @return array of beta functions
  */
-Eigen::ArrayXd Beta_function::derivatives(double x, const Eigen::ArrayXd& y)
+Eigen::ArrayXdp Beta_function::derivatives(precise_real_type x, const Eigen::ArrayXdp& y)
 {
    set_scale(exp(x));
    set(y);
@@ -116,15 +116,15 @@ Eigen::ArrayXd Beta_function::derivatives(double x, const Eigen::ArrayXd& y)
  * @param derivs function which calculates the derivatives (beta functions)
  * @param eps RG running precision
  */
-void Beta_function::call_rk(double x1, double x2, Eigen::ArrayXd & v,
-                            Derivs derivs, double eps)
+void Beta_function::call_rk(precise_real_type x1, precise_real_type x2, Eigen::ArrayXdp & v,
+                            Derivs derivs, precise_real_type eps)
 {
    if (fabs(x1 - x2) < min_tolerance)
       return;
 
-   const double start = std::log(fabs(x1));
-   const double end = std::log(fabs(x2));
-   const double tol = get_tolerance(eps);
+   const precise_real_type start = log(fabs(x1));
+   const precise_real_type end = log(fabs(x2));
+   const precise_real_type tol = get_tolerance(eps);
 
    integrator(start, end, v, derivs, tol);
 
@@ -143,9 +143,9 @@ void Beta_function::call_rk(double x1, double x2, Eigen::ArrayXd & v,
  *
  * @return RG running precision
  */
-double Beta_function::get_tolerance(double eps)
+precise_real_type Beta_function::get_tolerance(precise_real_type eps)
 {
-   double tol;
+   precise_real_type tol;
    if (eps < 0.0)
       tol = tolerance;
    else if (eps < min_tolerance)

@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef H_FS_CONCATENATE
 #define H_FS_CONCATENATE
 

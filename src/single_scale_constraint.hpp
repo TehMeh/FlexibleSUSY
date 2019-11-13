@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef SINGLE_SCALE_CONSTRAINT_H
 #define SINGLE_SCALE_CONSTRAINT_H
 
@@ -30,7 +32,7 @@ class Single_scale_constraint {
 public:
    virtual ~Single_scale_constraint() = default;
    virtual void apply() = 0;                    ///< apply constraint
-   virtual double get_scale() const = 0;        ///< get scale where to apply
+   virtual precise_real_type get_scale() const = 0;        ///< get scale where to apply
    virtual std::string name() const { return "unknown constraint"; } ///< name of constraint
    virtual void set_model(Model*) = 0; ///< set model where to apply the constraint
 };

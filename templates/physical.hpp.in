@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_PHYSICAL_H
 #define @ModelName@_PHYSICAL_H
 
@@ -31,10 +33,10 @@ struct @ModelName@_physical {
    void clear();
    void convert_to_hk();   ///< converts pole masses to HK convention
    void convert_to_slha(); ///< converts pole masses to SLHA convention
-   Eigen::ArrayXd get() const; ///< returns array with all masses and mixings
-   void set(const Eigen::ArrayXd&); ///< set all masses and mixings
-   Eigen::ArrayXd get_masses() const; ///< returns array with all masses
-   void set_masses(const Eigen::ArrayXd&); ///< set all masses
+   Eigen::ArrayXdp get() const; ///< returns array with all masses and mixings
+   void set(const Eigen::ArrayXdp&); ///< set all masses and mixings
+   Eigen::ArrayXdp get_masses() const; ///< returns array with all masses
+   void set_masses(const Eigen::ArrayXdp&); ///< set all masses
    void print(std::ostream&) const;
 
 @physicalMassesDef@

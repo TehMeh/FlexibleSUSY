@@ -28,6 +28,7 @@ LIBFLEXI_SRC := \
 		$(DIR)/pmns.cpp \
 		$(DIR)/problems.cpp \
 		$(DIR)/pv.cpp \
+		$(DIR)/precise.cpp \
 		$(DIR)/rkf_integrator.cpp \
 		$(DIR)/scan.cpp \
 		$(DIR)/slha_io.cpp \
@@ -88,6 +89,7 @@ LIBFLEXI_HDR := \
 		$(DIR)/pp_map.hpp \
 		$(DIR)/problems.hpp \
 		$(DIR)/pv.hpp \
+		$(DIR)/precise.hpp \
 		$(DIR)/raii.hpp \
 		$(DIR)/rg_flow.hpp \
 		$(DIR)/rk.hpp \

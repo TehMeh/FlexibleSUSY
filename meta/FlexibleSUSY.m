@@ -123,6 +123,8 @@ MediumPrecision::usage="";
 HighPrecision::usage="";
 GUTNormalization::usage="Returns GUT normalization of a given coupling";
 
+NumberOfDigits::usage="Sets the number of significant digits"; (*Added S.D.*)
+
 BETA::usage = "Head for beta functions";
 FSModelName;
 FSOutputDir = ""; (* directory for generated code *)
@@ -428,6 +430,8 @@ ReplaceSymbolsInUserInput[rules_] :=
            FlexibleSUSY`HighPoleMassPrecision    = FlexibleSUSY`HighPoleMassPrecision    /. rules;
            FlexibleSUSY`MediumPoleMassPrecision  = FlexibleSUSY`MediumPoleMassPrecision  /. rules;
            FlexibleSUSY`LowPoleMassPrecision     = FlexibleSUSY`LowPoleMassPrecision     /. rules;
+           (*significant figures*)
+           FlexibleSUSY`NumberOfDigits           = FlexibleSUSY`NumberOfDigits           /. rules; (*Added S.D.*)
            (* RG running *)
            FlexibleSUSY`FSPerturbativityThreshold = FlexibleSUSY`FSPerturbativityThreshold /. rules;
            FlexibleSUSY`FSConvergenceCheck        = FlexibleSUSY`FSConvergenceCheck        /. rules;
@@ -590,6 +594,9 @@ CheckModelFileSettings[] :=
            If[Head[FlexibleSUSY`EWSBSubstitutions] =!= List,
               FlexibleSUSY`EWSBSubstitutions = {};
              ];
+           If[Head[FlexibleSUSY`NumberOfDigits] =!= Integer,
+              FlexibleSUSY`NumberOfDigits = 16;
+             ]; (*added S.D.*)
            If[ValueQ[FlexibleSUSY`FSExtraInputParameters],
               Print["Error: the use of FSExtraInputParameters is no longer supported!"];
               Print["   Please add the entries in FSExtraInputParameters to"];
@@ -1012,7 +1019,7 @@ WriteSemiAnalyticConstraintClass[condition_, settings_List, initialGuessSettings
              saveBoundaryValueParameters = SemiAnalytic`SaveBoundaryValueParameters[semiAnalyticSolns];
             ];
           If[isSemiAnalyticConstraint,
-             usingSemiAnalyticScaleGetter = "using Scale_getter = std::function<double()>;\n";
+             usingSemiAnalyticScaleGetter = "using Scale_getter = std::function<precise_real_type()>;\n";
              setSemiAnalyticScaleGetter = "void set_scale(const Scale_getter& s) { scale_getter = s; }\n"
                                           <> "void set_scale(Scale_getter&& s) { scale_getter = std::move(s); }\n";
              semiAnalyticScaleGetter = "Scale_getter scale_getter{};\n";
@@ -2237,9 +2244,9 @@ WriteAMuonClass[calcAMu_, files_List] :=
             muonIndex <> If[muonIndex === "", "", ", "] <>
             muonIndex <> If[muonIndex === "", "", ", "] <>
             "model, " <> discardSMcontributions <> ");",
-            "const std::valarray<std::complex<double>> form_factors {0., 0., 0., 0.};"
+            "const std::valarray<precise_complex_type> form_factors {0., 0., 0., 0.};"
          ];
-
+            
       getMSUSY = AMuon`AMuonGetMSUSY[];
 
       WriteOut`ReplaceInFiles[files,

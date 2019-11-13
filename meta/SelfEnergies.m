@@ -217,7 +217,7 @@ AppendFieldIndices[lst_List, idx__] :=
 
       Cp[Glu[{gO2}], conj[Sd[{gI1}]], Fd[{gI2}]]
 
-   Since Glu has dimension 1, the C variables Glu is a double and must
+   Since Glu has dimension 1, the C variables Glu is a precise_real_type and must
    therefore not be accessed in the form Glu(gO2).
  *)
 Remove1DimensionalFieldIndices[lst_List] :=
@@ -334,7 +334,7 @@ MakeUniqueIdx[] :=
 CreateCouplingFunction[coupling_, expr_, inModelClass_] :=
     Module[{symbol, prototype = "", definition = "",
             indices = {}, body = "", cFunctionName = "", i,
-            type, typeStr},
+            type, typeStr, mytype},
            indices = GetParticleIndicesInCoupling[coupling];
            symbol = CreateCouplingSymbol[coupling];
            cFunctionName = ToValidCSymbolString[GetHead[symbol]];
@@ -349,8 +349,11 @@ CreateCouplingFunction[coupling_, expr_, inModelClass_] :=
               ];
            cFunctionName = cFunctionName <> ")";
            If[Parameters`IsRealExpression[expr],
-              type = CConversion`ScalarType[CConversion`realScalarCType];,
-              type = CConversion`ScalarType[CConversion`complexScalarCType];];
+              type = CConversion`ScalarType[CConversion`realScalarCType];
+              mytype = CConversion`realScalarCType;,
+              type = CConversion`ScalarType[CConversion`complexScalarCType];
+              mytype = CConversion`complexScalarCType;
+              ];
            typeStr = CConversion`CreateCType[type];
            prototype = typeStr <> " " <> cFunctionName <> " const;\n";
            definition = typeStr <> " CLASSNAME::" <> cFunctionName <> " const\n{\n";
@@ -358,8 +361,8 @@ CreateCouplingFunction[coupling_, expr_, inModelClass_] :=
                      Parameters`CreateLocalConstRefsForInputParameters[expr, "LOCALINPUT"],
                      Parameters`CreateLocalConstRefs[expr]
                     ] <> "\n" <>
-                  "const " <> typeStr <> " result = " <>
-                  Parameters`ExpressionToString[expr] <> ";\n\n" <>
+                  (* "const " <> *) typeStr <> " result; \n\n" <> (* " = ("<>typeStr<>")(" <> *)   (* S.D. *)
+                  Parameters`MarkerReplacerIF[Parameters`MarkerReplacerSQR[Parameters`MarkerReplacerSUM[Parameters`ExpressionToStringSequentiallySD[Expand[expr],"result", mytype],mytype],mytype],mytype] <> "\n\n" <>
                   "return result;\n";
 
            body = IndentText[WrapLines[body]];
@@ -492,13 +495,23 @@ CreateFunctionPrototype[selfEnergy_, loops_] :=
     "(" <> CreateCType[CConversion`ScalarType[CConversion`realScalarCType]] <> " p " <> DeclareFieldIndices[GetField[selfEnergy]] <> ") const";
 
 CreateFunctionPrototypeMatrix[s_, loops_] :=
-    CreateFunctionName[s, loops] <> "(double p) const";
+    CreateFunctionName[s, loops] <> "(precise_real_type p) const";
 
 ExpressionToStringSequentially[expr_Plus, heads_, result_String] :=
-    StringJoin[(result <> " += " <> ExpressionToString[#,heads] <> ";\n")& /@ (List @@ expr)];
+    StringJoin[(result <> " += (precise_complex_type)(" <> 
+              Parameters`MarkerReplacerIF[Parameters`MarkerReplacerSQR[Parameters`MarkerReplacerSUM[ExpressionToString[#,heads], CConversion`complexScalarCType],CConversion`complexScalarCType],CConversion`complexScalarCType]
+              <> ");\n")& /@ (List @@ expr)];
 
 ExpressionToStringSequentially[expr_, heads_, result_String] :=
     result <> " = " <> ExpressionToString[expr, heads] <> ";\n";
+
+ExpressionToStringSequentiallySD[expr_Plus, result_String, type_] :=
+    StringJoin[(result <> " +=("<> CreateCType[CConversion`ScalarType[type]]<>")(" <> 
+              Parameters`MarkerReplacerIF[Parameters`MarkerReplacerSQR[Parameters`MarkerReplacerSUM[ExpressionToString[#], type],type],type]
+              <> ");\n")& /@ (List @@ expr)];
+
+ExpressionToStringSequentiallySD[expr_, result_String, type_] :=
+    result <> " = ("<> CreateCType[CConversion`ScalarType[type]]<>")("<> ExpressionToString[expr] <> ");\n";
 
 (* decreases literal indices in SARAH couplings *)
 DecreaseLiteralCouplingIndices[expr_, num_:1] :=
@@ -688,10 +701,10 @@ GetTwoLoopTadpoleCorrections[model_String /; model === "MSSM"] :=
 using namespace flexiblesusy::mssm_twoloophiggs;
 
 // calculate 3rd generation sfermion masses and mixing angles
-double mst_1, mst_2, theta_t;
-double msb_1, msb_2, theta_b;
-double mstau_1, mstau_2, theta_tau;
-double msnu_1, msnu_2, theta_nu;
+precise_real_type mst_1, mst_2, theta_t;
+precise_real_type msb_1, msb_2, theta_b;
+precise_real_type mstau_1, mstau_2, theta_tau;
+precise_real_type msnu_1, msnu_2, theta_nu;
 
 " <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`TopSquark, "mst_1", "mst_2", "theta_t"] <>
 ";
@@ -702,24 +715,24 @@ double msnu_1, msnu_2, theta_nu;
 " <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`Sneutrino, "msnu_1", "msnu_2", "theta_nu"] <>
 ";
 
-const double mst1sq = Sqr(mst_1), mst2sq = Sqr(mst_2);
-const double msb1sq = Sqr(msb_1), msb2sq = Sqr(msb_2);
-const double mstau1sq = Sqr(mstau_1), mstau2sq = Sqr(mstau_2);
-const double msnusq = Sqr(msnu_2);
-const double sxt = Sin(theta_t), cxt = Cos(theta_t);
-const double sxb = Sin(theta_b), cxb = Cos(theta_b);
-const double sintau = Sin(theta_tau), costau = Cos(theta_tau);
-const double gs = " <> g3Str <> ";
-const double rmtsq = Sqr(" <> mtStr <> ");
-const double scalesq = Sqr(get_scale());
-const double vev2 = " <> vev2Str <> ";
-const double tanb = " <> tanbStr <> ";
-const double amu = Re(" <> muStr <> ");
-const double mg = " <> m3Str <> ";
-const double mAsq = Sqr(" <> mA0Str <> ");
-const double cotbeta = 1.0 / tanb;
-const double rmbsq = Sqr(" <> mbStr <> ");
-const double rmtausq = Sqr(" <> mtauStr <> ");
+const precise_real_type mst1sq = Sqr(mst_1), mst2sq = Sqr(mst_2);
+const precise_real_type msb1sq = Sqr(msb_1), msb2sq = Sqr(msb_2);
+const precise_real_type mstau1sq = Sqr(mstau_1), mstau2sq = Sqr(mstau_2);
+const precise_real_type msnusq = Sqr(msnu_2);
+const precise_real_type sxt = Sin(theta_t), cxt = Cos(theta_t);
+const precise_real_type sxb = Sin(theta_b), cxb = Cos(theta_b);
+const precise_real_type sintau = Sin(theta_tau), costau = Cos(theta_tau);
+const precise_real_type gs = " <> g3Str <> ";
+const precise_real_type rmtsq = Sqr(" <> mtStr <> ");
+const precise_real_type scalesq = Sqr(get_scale());
+const precise_real_type vev2 = " <> vev2Str <> ";
+const precise_real_type tanb = " <> tanbStr <> ";
+const precise_real_type amu = Re(" <> muStr <> ");
+const precise_real_type mg = " <> m3Str <> ";
+const precise_real_type mAsq = Sqr(" <> mA0Str <> ");
+const precise_real_type cotbeta = 1.0 / tanb;
+const precise_real_type rmbsq = Sqr(" <> mbStr <> ");
+const precise_real_type rmtausq = Sqr(" <> mtauStr <> ");
 
 " <> GetTadpoleVectorCType[2] <> " tadpole_2l(" <> GetTadpoleVectorCType[2] <> "::Zero());
 
@@ -777,10 +790,10 @@ using namespace flexiblesusy::mssm_twoloophiggs;
 using namespace flexiblesusy::nmssm_twoloophiggs;
 
 // calculate 3rd generation sfermion masses and mixing angles
-double mst_1, mst_2, theta_t;
-double msb_1, msb_2, theta_b;
-double mstau_1, mstau_2, theta_tau;
-double msnu_1, msnu_2, theta_nu;
+precise_real_type mst_1, mst_2, theta_t;
+precise_real_type msb_1, msb_2, theta_b;
+precise_real_type mstau_1, mstau_2, theta_tau;
+precise_real_type msnu_1, msnu_2, theta_nu;
 
 " <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`TopSquark, "mst_1", "mst_2", "theta_t"] <>
 ";
@@ -791,26 +804,26 @@ double msnu_1, msnu_2, theta_nu;
 " <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`Sneutrino, "msnu_1", "msnu_2", "theta_nu"] <>
 ";
 
-const double mst1sq = Sqr(mst_1), mst2sq = Sqr(mst_2);
-const double msb1sq = Sqr(msb_1), msb2sq = Sqr(msb_2);
-const double mstau1sq = Sqr(mstau_1), mstau2sq = Sqr(mstau_2);
-const double msnusq = Sqr(msnu_2);
-const double sxt = Sin(theta_t), cxt = Cos(theta_t);
-const double sxb = Sin(theta_b), cxb = Cos(theta_b);
-const double sintau = Sin(theta_tau), costau = Cos(theta_tau);
-const double gs = " <> g3Str <> ";
-const double rmtsq = Sqr(" <> mtStr <> ");
-const double scalesq = Sqr(get_scale());
-const double vev2 = " <> vev2Str <> ";
-const double tanb = " <> tanbStr <> ";
-const double amu = Re(" <> muStr <> ");
-const double mg = " <> m3Str <> ";
-const double mAsq = " <> mA0Str <> ";
-const double cotbeta = 1.0 / tanb;
-const double rmbsq = Sqr(" <> mbStr <> ");
-const double rmtausq = Sqr(" <> mtauStr <> ");
-const double lam = Re(" <> lambdaStr <> ");
-const double svev = Abs(amu / lam);
+const precise_real_type mst1sq = Sqr(mst_1), mst2sq = Sqr(mst_2);
+const precise_real_type msb1sq = Sqr(msb_1), msb2sq = Sqr(msb_2);
+const precise_real_type mstau1sq = Sqr(mstau_1), mstau2sq = Sqr(mstau_2);
+const precise_real_type msnusq = Sqr(msnu_2);
+const precise_real_type sxt = Sin(theta_t), cxt = Cos(theta_t);
+const precise_real_type sxb = Sin(theta_b), cxb = Cos(theta_b);
+const precise_real_type sintau = Sin(theta_tau), costau = Cos(theta_tau);
+const precise_real_type gs = " <> g3Str <> ";
+const precise_real_type rmtsq = Sqr(" <> mtStr <> ");
+const precise_real_type scalesq = Sqr(get_scale());
+const precise_real_type vev2 = " <> vev2Str <> ";
+const precise_real_type tanb = " <> tanbStr <> ";
+const precise_real_type amu = Re(" <> muStr <> ");
+const precise_real_type mg = " <> m3Str <> ";
+const precise_real_type mAsq = " <> mA0Str <> ";
+const precise_real_type cotbeta = 1.0 / tanb;
+const precise_real_type rmbsq = Sqr(" <> mbStr <> ");
+const precise_real_type rmtausq = Sqr(" <> mtauStr <> ");
+const precise_real_type lam = Re(" <> lambdaStr <> ");
+const precise_real_type svev = Abs(amu / lam);
 
 " <> GetTadpoleVectorCType[3] <> " tadpole_2l(" <> GetTadpoleVectorCType[3] <> "::Zero());
 
@@ -890,16 +903,16 @@ GetNLoopSelfEnergyCorrections[particle_ /; particle === SARAH`HiggsBoson,
 "\
 using namespace flexiblesusy::sm_twoloophiggs;
 
-const double p2 = Sqr(p);
-const double mb = " <> mbStr <> ";
-const double mt = " <> mtStr <> ";
-const double mtau = " <> mtauStr <> ";
-const double yb = " <> ybStr <> ";
-const double yt = " <> ytStr <> ";
-const double ytau = " <> ytauStr <> ";
-const double gs = " <> g3Str <> ";
-const double scale = get_scale();
-double self_energy = 0.;
+const precise_real_type p2 = Sqr(p);
+const precise_real_type mb = " <> mbStr <> ";
+const precise_real_type mt = " <> mtStr <> ";
+const precise_real_type mtau = " <> mtauStr <> ";
+const precise_real_type yb = " <> ybStr <> ";
+const precise_real_type yt = " <> ytStr <> ";
+const precise_real_type ytau = " <> ytauStr <> ";
+const precise_real_type gs = " <> g3Str <> ";
+const precise_real_type scale = get_scale();
+precise_real_type self_energy = 0.;
 
 if (HIGGS_2LOOP_CORRECTION_AT_AT) {
    self_energy -= delta_mh_2loop_at_at_sm(p2, scale, mt, yt, mb);
@@ -934,12 +947,12 @@ GetNLoopSelfEnergyCorrections[particle_ /; particle === SARAH`HiggsBoson,
 "\
 using namespace flexiblesusy::sm_threeloophiggs;
 
-const double mt = " <> mtStr <> ";
-const double yt = " <> ytStr <> ";
-const double gs = " <> g3Str <> ";
-const double mh = " <> mhStr <> ";
-const double scale = get_scale();
-double self_energy = 0.;
+const precise_real_type mt = " <> mtStr <> ";
+const precise_real_type yt = " <> ytStr <> ";
+const precise_real_type gs = " <> g3Str <> ";
+const precise_real_type mh = " <> mhStr <> ";
+const precise_real_type scale = get_scale();
+precise_real_type self_energy = 0.;
 
 if (HIGGS_3LOOP_CORRECTION_AT_AT_AT) {
    self_energy -= delta_mh_3loop_at_at_at_sm(scale, mt, yt, mh);
@@ -970,11 +983,11 @@ GetNLoopSelfEnergyCorrections[particle_ /; particle === SARAH`HiggsBoson,
 "\
 using namespace flexiblesusy::sm_fourloophiggs;
 
-const double mt = " <> mtStr <> ";
-const double yt = " <> ytStr <> ";
-const double gs = " <> g3Str <> ";
-const double scale = get_scale();
-double self_energy = 0.;
+const precise_real_type mt = " <> mtStr <> ";
+const precise_real_type yt = " <> ytStr <> ";
+const precise_real_type gs = " <> g3Str <> ";
+const precise_real_type scale = get_scale();
+precise_real_type self_energy = 0.;
 
 if (HIGGS_4LOOP_CORRECTION_AT_AS_AS_AS) {
    self_energy -= delta_mh_4loop_at_as_as_as_sm(scale, mt, yt, gs);
@@ -997,12 +1010,12 @@ GetNLoopSelfEnergyCorrections[particle_ /; particle === SARAH`HiggsBoson,
 "\
 using namespace flexiblesusy::splitmssm_threeloophiggs;
 
-const double mt = " <> mtStr <> ";
-const double mg = " <> mgStr <> ";
-const double yt = " <> ytStr <> ";
-const double gs = " <> g3Str <> ";
-const double scale = get_scale();
-double self_energy = 0.;
+const precise_real_type mt = " <> mtStr <> ";
+const precise_real_type mg = " <> mgStr <> ";
+const precise_real_type yt = " <> ytStr <> ";
+const precise_real_type gs = " <> g3Str <> ";
+const precise_real_type scale = get_scale();
+precise_real_type self_energy = 0.;
 
 if (HIGGS_3LOOP_CORRECTION_AT_AS_AS) {
    self_energy -= delta_mh_3loop_gluino_split(scale, mt, yt, gs, mg);
@@ -1035,10 +1048,10 @@ GetNLoopSelfEnergyCorrections[particle_ /; particle === SARAH`HiggsBoson,
 using namespace flexiblesusy::mssm_twoloophiggs;
 
 // calculate 3rd generation sfermion masses and mixing angles
-double mst_1, mst_2, theta_t;
-double msb_1, msb_2, theta_b;
-double mstau_1, mstau_2, theta_tau;
-double msnu_1, msnu_2, theta_nu;
+precise_real_type mst_1, mst_2, theta_t;
+precise_real_type msb_1, msb_2, theta_b;
+precise_real_type mstau_1, mstau_2, theta_tau;
+precise_real_type msnu_1, msnu_2, theta_nu;
 
 " <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`TopSquark, "mst_1", "mst_2", "theta_t"] <>
 ";
@@ -1049,24 +1062,24 @@ double msnu_1, msnu_2, theta_nu;
 " <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`Sneutrino, "msnu_1", "msnu_2", "theta_nu"] <>
 ";
 
-const double mst1sq = Sqr(mst_1), mst2sq = Sqr(mst_2);
-const double msb1sq = Sqr(msb_1), msb2sq = Sqr(msb_2);
-const double mstau1sq = Sqr(mstau_1), mstau2sq = Sqr(mstau_2);
-const double msnusq = Sqr(msnu_2);
-const double sxt = Sin(theta_t), cxt = Cos(theta_t);
-const double sxb = Sin(theta_b), cxb = Cos(theta_b);
-const double sintau = Sin(theta_tau), costau = Cos(theta_tau);
-const double gs = " <> g3Str <> ";
-const double rmtsq = Sqr(" <> mtStr <> ");
-const double scalesq = Sqr(get_scale());
-const double vev2 = " <> vev2Str <> ";
-const double tanb = " <> tanbStr <> ";
-const double amu = Re(" <> muStr <> ");
-const double mg = " <> m3Str <> ";
-const double mAsq = Sqr(" <> mA0Str <> ");
-const double cotbeta = 1.0 / tanb;
-const double rmbsq = Sqr(" <> mbStr <> ");
-const double rmtausq = Sqr(" <> mtauStr <> ");
+const precise_real_type mst1sq = Sqr(mst_1), mst2sq = Sqr(mst_2);
+const precise_real_type msb1sq = Sqr(msb_1), msb2sq = Sqr(msb_2);
+const precise_real_type mstau1sq = Sqr(mstau_1), mstau2sq = Sqr(mstau_2);
+const precise_real_type msnusq = Sqr(msnu_2);
+const precise_real_type sxt = Sin(theta_t), cxt = Cos(theta_t);
+const precise_real_type sxb = Sin(theta_b), cxb = Cos(theta_b);
+const precise_real_type sintau = Sin(theta_tau), costau = Cos(theta_tau);
+const precise_real_type gs = " <> g3Str <> ";
+const precise_real_type rmtsq = Sqr(" <> mtStr <> ");
+const precise_real_type scalesq = Sqr(get_scale());
+const precise_real_type vev2 = " <> vev2Str <> ";
+const precise_real_type tanb = " <> tanbStr <> ";
+const precise_real_type amu = Re(" <> muStr <> ");
+const precise_real_type mg = " <> m3Str <> ";
+const precise_real_type mAsq = Sqr(" <> mA0Str <> ");
+const precise_real_type cotbeta = 1.0 / tanb;
+const precise_real_type rmbsq = Sqr(" <> mbStr <> ");
+const precise_real_type rmtausq = Sqr(" <> mtauStr <> ");
 
 " <> CConversion`CreateCType[TreeMasses`GetMassMatrixType[SARAH`HiggsBoson]] <> " self_energy_2l(" <> CConversion`CreateCType[TreeMasses`GetMassMatrixType[SARAH`HiggsBoson]] <> "::Zero());
 
@@ -1121,10 +1134,10 @@ GetNLoopSelfEnergyCorrections[particle_ /; particle === SARAH`PseudoScalar,
 using namespace flexiblesusy::mssm_twoloophiggs;
 
 // calculate 3rd generation sfermion masses and mixing angles
-double mst_1, mst_2, theta_t;
-double msb_1, msb_2, theta_b;
-double mstau_1, mstau_2, theta_tau;
-double msnu_1, msnu_2, theta_nu;
+precise_real_type mst_1, mst_2, theta_t;
+precise_real_type msb_1, msb_2, theta_b;
+precise_real_type mstau_1, mstau_2, theta_tau;
+precise_real_type msnu_1, msnu_2, theta_nu;
 
 " <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`TopSquark, "mst_1", "mst_2", "theta_t"] <>
 ";
@@ -1135,24 +1148,24 @@ double msnu_1, msnu_2, theta_nu;
 " <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`Sneutrino, "msnu_1", "msnu_2", "theta_nu"] <>
 ";
 
-const double mst1sq = Sqr(mst_1), mst2sq = Sqr(mst_2);
-const double msb1sq = Sqr(msb_1), msb2sq = Sqr(msb_2);
-const double mstau1sq = Sqr(mstau_1), mstau2sq = Sqr(mstau_2);
-const double msnusq = Sqr(msnu_2);
-const double sxt = Sin(theta_t), cxt = Cos(theta_t);
-const double sxb = Sin(theta_b), cxb = Cos(theta_b);
-const double sintau = Sin(theta_tau), costau = Cos(theta_tau);
-const double gs = " <> g3Str <> ";
-const double rmtsq = Sqr(" <> mtStr <> ");
-const double scalesq = Sqr(get_scale());
-const double vev2 = " <> vev2Str <> ";
-const double tanb = " <> tanbStr <> ";
-const double amu = Re(" <> muStr <> ");
-const double mg = " <> m3Str <> ";
-const double mAsq = Sqr(" <> mA0Str <> ");
-const double cotbeta = 1.0 / tanb;
-const double rmbsq = Sqr(" <> mbStr <> ");
-const double rmtausq = Sqr(" <> mtauStr <> ");
+const precise_real_type mst1sq = Sqr(mst_1), mst2sq = Sqr(mst_2);
+const precise_real_type msb1sq = Sqr(msb_1), msb2sq = Sqr(msb_2);
+const precise_real_type mstau1sq = Sqr(mstau_1), mstau2sq = Sqr(mstau_2);
+const precise_real_type msnusq = Sqr(msnu_2);
+const precise_real_type sxt = Sin(theta_t), cxt = Cos(theta_t);
+const precise_real_type sxb = Sin(theta_b), cxb = Cos(theta_b);
+const precise_real_type sintau = Sin(theta_tau), costau = Cos(theta_tau);
+const precise_real_type gs = " <> g3Str <> ";
+const precise_real_type rmtsq = Sqr(" <> mtStr <> ");
+const precise_real_type scalesq = Sqr(get_scale());
+const precise_real_type vev2 = " <> vev2Str <> ";
+const precise_real_type tanb = " <> tanbStr <> ";
+const precise_real_type amu = Re(" <> muStr <> ");
+const precise_real_type mg = " <> m3Str <> ";
+const precise_real_type mAsq = Sqr(" <> mA0Str <> ");
+const precise_real_type cotbeta = 1.0 / tanb;
+const precise_real_type rmbsq = Sqr(" <> mbStr <> ");
+const precise_real_type rmtausq = Sqr(" <> mtauStr <> ");
 
 " <> CConversion`CreateCType[TreeMasses`GetMassMatrixType[SARAH`PseudoScalar]] <> " self_energy_2l(" <> CConversion`CreateCType[TreeMasses`GetMassMatrixType[SARAH`PseudoScalar]] <> "::Zero());
 
@@ -1211,10 +1224,10 @@ using namespace flexiblesusy::mssm_twoloophiggs;
 using namespace flexiblesusy::nmssm_twoloophiggs;
 
 // calculate 3rd generation sfermion masses and mixing angles
-double mst_1, mst_2, theta_t;
-double msb_1, msb_2, theta_b;
-double mstau_1, mstau_2, theta_tau;
-double msnu_1, msnu_2, theta_nu;
+precise_real_type mst_1, mst_2, theta_t;
+precise_real_type msb_1, msb_2, theta_b;
+precise_real_type mstau_1, mstau_2, theta_tau;
+precise_real_type msnu_1, msnu_2, theta_nu;
 
 " <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`TopSquark, "mst_1", "mst_2", "theta_t"] <>
 ";
@@ -1225,29 +1238,29 @@ double msnu_1, msnu_2, theta_nu;
 " <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`Sneutrino, "msnu_1", "msnu_2", "theta_nu"] <>
 ";
 
-const double mst1sq = Sqr(mst_1), mst2sq = Sqr(mst_2);
-const double msb1sq = Sqr(msb_1), msb2sq = Sqr(msb_2);
-const double mstau1sq = Sqr(mstau_1), mstau2sq = Sqr(mstau_2);
-const double msnusq = Sqr(msnu_2);
-const double sxt = Sin(theta_t), cxt = Cos(theta_t);
-const double sxb = Sin(theta_b), cxb = Cos(theta_b);
-const double sintau = Sin(theta_tau), costau = Cos(theta_tau);
-const double gs = " <> g3Str <> ";
-const double as = Sqr(gs) / (4.0 * Pi);
-const double rmt = " <> mtStr <> ";
-const double rmtsq = Sqr(rmt);
-const double scalesq = Sqr(get_scale());
-const double vev2 = " <> vev2Str <> ";
-const double tanb = " <> tanbStr <> ";
-const double amu = Re(" <> muStr <> ");
-const double mg = " <> m3Str <> ";
-const double mAsq = " <> mA0Str <> ";
-const double cotb = 1.0 / tanb;
-const double rmb = " <> mbStr <> ";
-const double rmbsq = Sqr(rmb);
-const double rmtausq = Sqr(" <> mtauStr <> ");
-const double lam = Re(" <> lambdaStr <> ");
-const double svev = Abs(amu / lam);
+const precise_real_type mst1sq = Sqr(mst_1), mst2sq = Sqr(mst_2);
+const precise_real_type msb1sq = Sqr(msb_1), msb2sq = Sqr(msb_2);
+const precise_real_type mstau1sq = Sqr(mstau_1), mstau2sq = Sqr(mstau_2);
+const precise_real_type msnusq = Sqr(msnu_2);
+const precise_real_type sxt = Sin(theta_t), cxt = Cos(theta_t);
+const precise_real_type sxb = Sin(theta_b), cxb = Cos(theta_b);
+const precise_real_type sintau = Sin(theta_tau), costau = Cos(theta_tau);
+const precise_real_type gs = " <> g3Str <> ";
+const precise_real_type as = Sqr(gs) / (4.0 * Pi);
+const precise_real_type rmt = " <> mtStr <> ";
+const precise_real_type rmtsq = Sqr(rmt);
+const precise_real_type scalesq = Sqr(get_scale());
+const precise_real_type vev2 = " <> vev2Str <> ";
+const precise_real_type tanb = " <> tanbStr <> ";
+const precise_real_type amu = Re(" <> muStr <> ");
+const precise_real_type mg = " <> m3Str <> ";
+const precise_real_type mAsq = " <> mA0Str <> ";
+const precise_real_type cotb = 1.0 / tanb;
+const precise_real_type rmb = " <> mbStr <> ";
+const precise_real_type rmbsq = Sqr(rmb);
+const precise_real_type rmtausq = Sqr(" <> mtauStr <> ");
+const precise_real_type lam = Re(" <> lambdaStr <> ");
+const precise_real_type svev = Abs(amu / lam);
 
 " <> CConversion`CreateCType[TreeMasses`GetMassMatrixType[SARAH`HiggsBoson]] <> " self_energy_2l(" <> CConversion`CreateCType[TreeMasses`GetMassMatrixType[SARAH`HiggsBoson]] <> "::Zero());
 
@@ -1309,10 +1322,10 @@ using namespace flexiblesusy::mssm_twoloophiggs;
 using namespace flexiblesusy::nmssm_twoloophiggs;
 
 // calculate 3rd generation sfermion masses and mixing angles
-double mst_1, mst_2, theta_t;
-double msb_1, msb_2, theta_b;
-double mstau_1, mstau_2, theta_tau;
-double msnu_1, msnu_2, theta_nu;
+precise_real_type mst_1, mst_2, theta_t;
+precise_real_type msb_1, msb_2, theta_b;
+precise_real_type mstau_1, mstau_2, theta_tau;
+precise_real_type msnu_1, msnu_2, theta_nu;
 
 " <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`TopSquark, "mst_1", "mst_2", "theta_t"] <>
 ";
@@ -1323,29 +1336,29 @@ double msnu_1, msnu_2, theta_nu;
 " <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`Sneutrino, "msnu_1", "msnu_2", "theta_nu"] <>
 ";
 
-const double mst1sq = Sqr(mst_1), mst2sq = Sqr(mst_2);
-const double msb1sq = Sqr(msb_1), msb2sq = Sqr(msb_2);
-const double mstau1sq = Sqr(mstau_1), mstau2sq = Sqr(mstau_2);
-const double msnusq = Sqr(msnu_2);
-const double sxt = Sin(theta_t), cxt = Cos(theta_t);
-const double sxb = Sin(theta_b), cxb = Cos(theta_b);
-const double sintau = Sin(theta_tau), costau = Cos(theta_tau);
-const double gs = " <> g3Str <> ";
-const double as = Sqr(gs) / (4.0 * Pi);
-const double rmt = " <> mtStr <> ";
-const double rmtsq = Sqr(rmt);
-const double scalesq = Sqr(get_scale());
-const double vev2 = " <> vev2Str <> ";
-const double tanb = " <> tanbStr <> ";
-const double amu = Re(" <> muStr <> ");
-const double mg = " <> m3Str <> ";
-const double mAsq = " <> mA0Str <> ";
-const double cotb = 1.0 / tanb;
-const double rmb = " <> mbStr <> ";
-const double rmbsq = Sqr(rmb);
-const double rmtausq = Sqr(" <> mtauStr <> ");
-const double lam = Re(" <> lambdaStr <> ");
-const double svev = Abs(amu / lam);
+const precise_real_type mst1sq = Sqr(mst_1), mst2sq = Sqr(mst_2);
+const precise_real_type msb1sq = Sqr(msb_1), msb2sq = Sqr(msb_2);
+const precise_real_type mstau1sq = Sqr(mstau_1), mstau2sq = Sqr(mstau_2);
+const precise_real_type msnusq = Sqr(msnu_2);
+const precise_real_type sxt = Sin(theta_t), cxt = Cos(theta_t);
+const precise_real_type sxb = Sin(theta_b), cxb = Cos(theta_b);
+const precise_real_type sintau = Sin(theta_tau), costau = Cos(theta_tau);
+const precise_real_type gs = " <> g3Str <> ";
+const precise_real_type as = Sqr(gs) / (4.0 * Pi);
+const precise_real_type rmt = " <> mtStr <> ";
+const precise_real_type rmtsq = Sqr(rmt);
+const precise_real_type scalesq = Sqr(get_scale());
+const precise_real_type vev2 = " <> vev2Str <> ";
+const precise_real_type tanb = " <> tanbStr <> ";
+const precise_real_type amu = Re(" <> muStr <> ");
+const precise_real_type mg = " <> m3Str <> ";
+const precise_real_type mAsq = " <> mA0Str <> ";
+const precise_real_type cotb = 1.0 / tanb;
+const precise_real_type rmb = " <> mbStr <> ";
+const precise_real_type rmbsq = Sqr(rmb);
+const precise_real_type rmtausq = Sqr(" <> mtauStr <> ");
+const precise_real_type lam = Re(" <> lambdaStr <> ");
+const precise_real_type svev = Abs(amu / lam);
 
 " <> CConversion`CreateCType[TreeMasses`GetMassMatrixType[SARAH`PseudoScalar]] <> " self_energy_2l(" <> CConversion`CreateCType[TreeMasses`GetMassMatrixType[SARAH`PseudoScalar]] <> "::Zero());
 
@@ -1412,8 +1425,8 @@ CConversion`CreateCType[TreeMasses`GetMassMatrixType[SARAH`HiggsBoson]] <> " sel
 
 #ifdef ENABLE_HIMALAYA
 // calculate 3rd generation sfermion masses and mixing angles
-double mst_1, mst_2, theta_t;
-double msb_1, msb_2, theta_b;
+precise_real_type mst_1, mst_2, theta_t;
+precise_real_type msb_1, msb_2, theta_b;
 
 " <> TreeMasses`CallGenerationHelperFunctionName[3, SARAH`TopSquark, "mst_1", "mst_2", "theta_t"] <>
 ";
@@ -1553,7 +1566,7 @@ CreateNLoopSelfEnergies[particles_List, model_String, loop_, args_String:""] :=
           ];
 
 CreateTwoLoopSelfEnergiesSM[particles_List] :=
-    CreateNLoopSelfEnergies[particles, "SM", 2, "double p"];
+    CreateNLoopSelfEnergies[particles, "SM", 2, "precise_real_type p"];
 
 CreateThreeLoopSelfEnergiesSM[particles_List] :=
     CreateNLoopSelfEnergies[particles, "SM", 3];

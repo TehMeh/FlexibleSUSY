@@ -24,6 +24,8 @@
  * literature
  */
 
+#include "precise.hpp"
+
 #ifndef LOOP_CORRECTIONS_H
 #define LOOP_CORRECTIONS_H
 

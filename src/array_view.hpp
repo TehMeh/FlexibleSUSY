@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef ARRAY_VIEW_H
 #define ARRAY_VIEW_H
 

@@ -28,6 +28,8 @@
 #ifndef @ModelName@_EDM_H
 #define @ModelName@_EDM_H
 
+#include "precise.hpp"
+
 namespace flexiblesusy {
 class @ModelName@_mass_eigenstates;
 

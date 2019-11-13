@@ -52,7 +52,7 @@ Database::~Database()
  */
 void Database::insert(
    const std::string& table_name, const std::vector<std::string>& names,
-   const Eigen::ArrayXd& data)
+   const Eigen::ArrayXdp& data)
 {
    const std::size_t number_of_elements = data.rows();
 
@@ -93,9 +93,9 @@ void Database::insert(
  * @param row row index (0 = 1st row, 1 = 2nd row, ..., -1 = last row,
  * -2 is 2nd to last row, ...)
  */
-Eigen::ArrayXd Database::extract(const std::string& table_name, long long row)
+Eigen::ArrayXdp Database::extract(const std::string& table_name, long long row)
 {
-   Eigen::ArrayXd values;
+   Eigen::ArrayXdp values;
    const std::string sql =
       (row >= 0 ?
        "SELECT * FROM " + table_name + " LIMIT 1 OFFSET "
@@ -193,10 +193,10 @@ sqlite3* Database::open(const std::string& file_name)
 }
 
 /**
- * Callback function which fills an Eigen::ArrayXd with the data in
+ * Callback function which fills an Eigen::ArrayXdp with the data in
  * the given row.
  *
- * @param data pointer to Eigen::ArrayXd
+ * @param data pointer to Eigen::ArrayXdp
  * @param argc number of columns
  * @param argv array of column entries
  * @param col_name array of column names
@@ -205,7 +205,7 @@ sqlite3* Database::open(const std::string& file_name)
  */
 int Database::extract_callback(void* data, int argc, char** argv, char** col_name)
 {
-   auto values = static_cast<Eigen::ArrayXd*>(data);
+   auto values = static_cast<Eigen::ArrayXdp*>(data);
    values->conservativeResize(argc);
 
    for (int i = 0; i < argc; i++) {
@@ -234,12 +234,12 @@ Database::~Database()
 }
 
 void Database::insert(
-   const std::string&, const std::vector<std::string>&, const Eigen::ArrayXd&)
+   const std::string&, const std::vector<std::string>&, const Eigen::ArrayXdp&)
 {
    throw DisabledSQLiteError("Cannot call insert(), because SQLite support is disabled.");
 }
 
-Eigen::ArrayXd Database::extract(const std::string&, long long)
+Eigen::ArrayXdp Database::extract(const std::string&, long long)
 {
    throw DisabledSQLiteError("Cannot call extract(), because SQLite support is disabled.");
 }

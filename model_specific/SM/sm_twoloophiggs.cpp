@@ -48,31 +48,31 @@ namespace sm_twoloophiggs {
  *
  * @return real part of 1-loop correction
  */
-double delta_mh_1loop_sm(
-   double p, double scale, double mt, double yt,
-   double v, double gY, double g2, double lambda)
+precise_real_type delta_mh_1loop_sm(
+   precise_real_type p, precise_real_type scale, precise_real_type mt, precise_real_type yt,
+   precise_real_type v, precise_real_type gY, precise_real_type g2, precise_real_type lambda)
 {
    using namespace passarino_veltman;
 
-   const double yt2 = Sqr(yt);
-   const double mt2 = Sqr(mt);
-   const double p2 = Sqr(p);
-   const double Q2 = Sqr(scale);
-   const double lambda2 = Sqr(lambda);
-   const double v2 = Sqr(v);
-   const double g22 = Sqr(g2);
-   const double g24 = Sqr(g22);
-   const double gp2 = Sqr(gY);
-   const double G2 = g22 + gp2;
-   const double G4 = Sqr(G2);
-   const double mW2 = g22 * v2/4.;
-   const double mZ2 = G2 * v2/4.;
-   const double mH2 = 2*lambda*v2;
-   const double LogW = FiniteLog(mW2 / Q2);
-   const double LogZ = FiniteLog(mZ2 / Q2);
-   const double LogH = FiniteLog(mH2 / Q2);
+   const precise_real_type yt2 = Sqr(yt);
+   const precise_real_type mt2 = Sqr(mt);
+   const precise_real_type p2 = Sqr(p);
+   const precise_real_type Q2 = Sqr(scale);
+   const precise_real_type lambda2 = Sqr(lambda);
+   const precise_real_type v2 = Sqr(v);
+   const precise_real_type g22 = Sqr(g2);
+   const precise_real_type g24 = Sqr(g22);
+   const precise_real_type gp2 = Sqr(gY);
+   const precise_real_type G2 = g22 + gp2;
+   const precise_real_type G4 = Sqr(G2);
+   const precise_real_type mW2 = g22 * v2/4.;
+   const precise_real_type mZ2 = G2 * v2/4.;
+   const precise_real_type mH2 = 2*lambda*v2;
+   const precise_real_type LogW = FiniteLog(mW2 / Q2);
+   const precise_real_type LogZ = FiniteLog(mZ2 / Q2);
+   const precise_real_type LogH = FiniteLog(mH2 / Q2);
 
-   const double result =
+   const precise_real_type result =
       (+3*yt2*(4*mt2 - p2)*ReB0(p2,mt2,mt2,Q2)
        +6*lambda2*v2*(3*LogH-6+Pi*Sqrt(3))
        -v2/4.*(3*g24-8*lambda*g22+16*lambda2)*ReB0(p2,mW2,mW2,Q2)
@@ -98,17 +98,17 @@ double delta_mh_1loop_sm(
  *
  * @return real part of 1-loop correction O(alpha_t)
  */
-double delta_mh_1loop_at_sm(
-   double p, double scale, double mt, double yt)
+precise_real_type delta_mh_1loop_at_sm(
+   precise_real_type p, precise_real_type scale, precise_real_type mt, precise_real_type yt)
 {
    using namespace passarino_veltman;
 
-   const double yt2 = Sqr(yt);
-   const double mt2 = Sqr(mt);
-   const double p2 = Sqr(p);
-   const double Q2 = Sqr(scale);
+   const precise_real_type yt2 = Sqr(yt);
+   const precise_real_type mt2 = Sqr(mt);
+   const precise_real_type p2 = Sqr(p);
+   const precise_real_type Q2 = Sqr(scale);
 
-   const double result =
+   const precise_real_type result =
       3*yt2*(4.*mt2 - p2)*ReB0(p2,mt2,mt2,Q2);
 
    return result * oneOver16PiSqr;
@@ -128,16 +128,16 @@ double delta_mh_1loop_at_sm(
  *
  * @return real part of 2-loop self-energy \f$O(\alpha_t \alpha_s)\f$
  */
-double self_energy_higgs_2loop_at_as_sm(
-   double p2, double scale, double mt, double yt, double g3)
+precise_real_type self_energy_higgs_2loop_at_as_sm(
+   precise_real_type p2, precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type g3)
 {
-   const double yt2 = Sqr(yt);
-   const double g32 = Sqr(g3);
-   const double t = Sqr(mt);
-   const double q = Sqr(scale);
-   const double lnt = std::log(t/q);
+   const precise_real_type yt2 = Sqr(yt);
+   const precise_real_type g32 = Sqr(g3);
+   const precise_real_type t = Sqr(mt);
+   const precise_real_type q = Sqr(scale);
+   const precise_real_type lnt = log(t/q);
 
-   const double result =
+   const precise_real_type result =
       1./135. * g32 * yt2 * (-10800*t - 1665*p2 + (122*Sqr(p2))/t +
                              540*(12*t + 5*p2) * lnt -
                              1620*(12*t - p2) * Sqr(lnt));
@@ -159,8 +159,8 @@ double self_energy_higgs_2loop_at_as_sm(
  *
  * @return real part of 2-loop self-energy \f$O(\alpha_b \alpha_s)\f$
  */
-double self_energy_higgs_2loop_ab_as_sm(
-   double /* p2 */, double scale, double mb, double yb, double g3)
+precise_real_type self_energy_higgs_2loop_ab_as_sm(
+   precise_real_type /* p2 */, precise_real_type scale, precise_real_type mb, precise_real_type yb, precise_real_type g3)
 {
    return self_energy_higgs_2loop_at_as_sm(0., scale, mb, yb, g3);
 }
@@ -177,16 +177,16 @@ double self_energy_higgs_2loop_ab_as_sm(
  *
  * @return real part of 2-loop self-energy \f$O(\alpha_t \alpha_s)\f$
  */
-double tadpole_higgs_2loop_at_as_sm(
-   double scale, double mt, double yt, double g3)
+precise_real_type tadpole_higgs_2loop_at_as_sm(
+   precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type g3)
 {
-   const double yt2 = Sqr(yt);
-   const double g32 = Sqr(g3);
-   const double t = Sqr(mt);
-   const double q = Sqr(scale);
-   const double lnt = std::log(t/q);
+   const precise_real_type yt2 = Sqr(yt);
+   const precise_real_type g32 = Sqr(g3);
+   const precise_real_type t = Sqr(mt);
+   const precise_real_type q = Sqr(scale);
+   const precise_real_type lnt = log(t/q);
 
-   const double result =
+   const precise_real_type result =
       -16 * g32 * t * yt2 * (5 - 5*lnt + 3*Sqr(lnt));
 
    return result * twoLoop;
@@ -204,21 +204,21 @@ double tadpole_higgs_2loop_at_as_sm(
  *
  * @return real part of 2-loop self-energy \f$O(\alpha_b \alpha_s)\f$
  */
-double tadpole_higgs_2loop_ab_as_sm(
-   double scale, double mb, double yb, double g3)
+precise_real_type tadpole_higgs_2loop_ab_as_sm(
+   precise_real_type scale, precise_real_type mb, precise_real_type yb, precise_real_type g3)
 {
    return tadpole_higgs_2loop_at_as_sm(scale, mb, yb, g3);
 }
 
-double delta_mh_2loop_at_as_sm(
-   double p2, double scale, double mt, double yt, double g3)
+precise_real_type delta_mh_2loop_at_as_sm(
+   precise_real_type p2, precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type g3)
 {
    return - self_energy_higgs_2loop_at_as_sm(p2, scale, mt, yt, g3)
       + tadpole_higgs_2loop_at_as_sm(scale, mt, yt, g3);
 }
 
-double delta_mh_2loop_ab_as_sm(
-   double p2, double scale, double mb, double yb, double g3)
+precise_real_type delta_mh_2loop_ab_as_sm(
+   precise_real_type p2, precise_real_type scale, precise_real_type mb, precise_real_type yb, precise_real_type g3)
 {
    return - self_energy_higgs_2loop_ab_as_sm(p2, scale, mb, yb, g3)
       + tadpole_higgs_2loop_ab_as_sm(scale, mb, yb, g3);
@@ -235,21 +235,21 @@ double delta_mh_2loop_ab_as_sm(
  *
  * @return real part of 2-loop self-energy \f$O((\alpha_b + \alpha_t)^2)\f$
  */
-double self_energy_higgs_2loop_at_at_sm(
-   double /* p2 */, double scale, double mt, double yt, double mb)
+precise_real_type self_energy_higgs_2loop_at_at_sm(
+   precise_real_type /* p2 */, precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type mb)
 {
-   const double Pi2 = Sqr(Pi);
-   const double yt4 = Power4(yt);
-   const double mt2 = Sqr(mt);
-   const double mb2 = Sqr(mb);
-   const double Q2 = Sqr(scale);
-   const double r = mb2/mt2;
-   const double LogT = FiniteLog(mt2 / Q2);
-   const double LogT2 = Sqr(LogT);
-   const double LogTB = 0.5*FiniteLog(r);
-   const double LogTB2 = Sqr(LogTB);
+   const precise_real_type Pi2 = Sqr(Pi);
+   const precise_real_type yt4 = Power4(yt);
+   const precise_real_type mt2 = Sqr(mt);
+   const precise_real_type mb2 = Sqr(mb);
+   const precise_real_type Q2 = Sqr(scale);
+   const precise_real_type r = mb2/mt2;
+   const precise_real_type LogT = FiniteLog(mt2 / Q2);
+   const precise_real_type LogT2 = Sqr(LogT);
+   const precise_real_type LogTB = 0.5*FiniteLog(r);
+   const precise_real_type LogTB2 = Sqr(LogTB);
 
-   const double result =
+   const precise_real_type result =
       3 * mt2 * yt4 * (19 + Pi2 - 27 * LogT + 9 * LogT2)
       - 3 * mt2 * yt4 * (5 + 3*Pi2 - 3*LogT + 9*LogT2)*r
       + 3./2. * mt2 * yt4 * (35 + 6*Pi2 + 6*LogT - 18*LogT2
@@ -270,21 +270,21 @@ double self_energy_higgs_2loop_at_at_sm(
  *
  * @return real part of 2-loop self-energy \f$O((\alpha_b + \alpha_t)^2)\f$
  */
-double tadpole_higgs_2loop_at_at_sm(
-   double scale, double mt, double yt, double mb)
+precise_real_type tadpole_higgs_2loop_at_at_sm(
+   precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type mb)
 {
-   const double Pi2 = Sqr(Pi);
-   const double yt4 = Power4(yt);
-   const double mt2 = Sqr(mt);
-   const double mb2 = Sqr(mb);
-   const double Q2 = Sqr(scale);
-   const double r = mb2/mt2;
-   const double LogT = FiniteLog(mt2 / Q2);
-   const double LogT2 = Sqr(LogT);
-   const double LogTB = 0.5*FiniteLog(r);
-   const double LogTB2 = Sqr(LogTB);
+   const precise_real_type Pi2 = Sqr(Pi);
+   const precise_real_type yt4 = Power4(yt);
+   const precise_real_type mt2 = Sqr(mt);
+   const precise_real_type mb2 = Sqr(mb);
+   const precise_real_type Q2 = Sqr(scale);
+   const precise_real_type r = mb2/mt2;
+   const precise_real_type LogT = FiniteLog(mt2 / Q2);
+   const precise_real_type LogT2 = Sqr(LogT);
+   const precise_real_type LogTB = 0.5*FiniteLog(r);
+   const precise_real_type LogTB2 = Sqr(LogTB);
 
-   const double result =
+   const precise_real_type result =
       mt2 * yt4 * (45 + Pi2 - 39*LogT + 9*LogT2)
       - 3 * mt2 * yt4 * (5 + Pi2 - 5*LogT + 3*LogT2)*r
       + 3./2. * mt2 * yt4 * (5 + 2*Pi2 + LogTB*(8 - 24*LogT) + 10*LogT
@@ -295,8 +295,8 @@ double tadpole_higgs_2loop_at_at_sm(
    return result * twoLoop;
 }
 
-double delta_mh_2loop_at_at_sm(
-   double p2, double scale, double mt, double yt, double mb)
+precise_real_type delta_mh_2loop_at_at_sm(
+   precise_real_type p2, precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type mb)
 {
    return - self_energy_higgs_2loop_at_at_sm(p2, scale, mt, yt, mb)
       + tadpole_higgs_2loop_at_at_sm(scale, mt, yt, mb);
@@ -312,16 +312,16 @@ double delta_mh_2loop_at_at_sm(
  *
  * @return real part of 2-loop self-energy \f$O(\alpha_tau^2) \f$
  */
-double self_energy_higgs_2loop_atau_atau_sm(
-   double /* p2 */, double scale, double mtau, double ytau)
+precise_real_type self_energy_higgs_2loop_atau_atau_sm(
+   precise_real_type /* p2 */, precise_real_type scale, precise_real_type mtau, precise_real_type ytau)
 {
-   const double ytau4 = Power4(ytau);
-   const double mtau2 = Sqr(mtau);
-   const double Q2 = Sqr(scale);
-   const double LogT = FiniteLog(mtau2 / Q2);
-   const double LogT2 = Sqr(LogT);
+   const precise_real_type ytau4 = Power4(ytau);
+   const precise_real_type mtau2 = Sqr(mtau);
+   const precise_real_type Q2 = Sqr(scale);
+   const precise_real_type LogT = FiniteLog(mtau2 / Q2);
+   const precise_real_type LogT2 = Sqr(LogT);
 
-   const double result =
+   const precise_real_type result =
       mtau2 * ytau4 * (19 + Sqr(Pi) - 27 * LogT + 9 * LogT2);
 
    return result * twoLoop;
@@ -336,23 +336,23 @@ double self_energy_higgs_2loop_atau_atau_sm(
  *
  * @return real part of 2-loop self-energy \f$O(\alpha_tau^2) \f$
  */
-double tadpole_higgs_2loop_atau_atau_sm(
-   double scale, double mtau, double ytau)
+precise_real_type tadpole_higgs_2loop_atau_atau_sm(
+   precise_real_type scale, precise_real_type mtau, precise_real_type ytau)
 {
-   const double ytau4 = Power4(ytau);
-   const double mtau2 = Sqr(mtau);
-   const double Q2 = Sqr(scale);
-   const double LogT = FiniteLog(mtau2 / Q2);
-   const double LogT2 = Sqr(LogT);
+   const precise_real_type ytau4 = Power4(ytau);
+   const precise_real_type mtau2 = Sqr(mtau);
+   const precise_real_type Q2 = Sqr(scale);
+   const precise_real_type LogT = FiniteLog(mtau2 / Q2);
+   const precise_real_type LogT2 = Sqr(LogT);
 
-   const double result =
+   const precise_real_type result =
       1./3. * mtau2 * ytau4 * (45 + Sqr(Pi) - 39*LogT + 9*LogT2);
 
    return result * twoLoop;
 }
 
-double delta_mh_2loop_atau_atau_sm(
-   double p2, double scale, double mtau, double ytau)
+precise_real_type delta_mh_2loop_atau_atau_sm(
+   precise_real_type p2, precise_real_type scale, precise_real_type mtau, precise_real_type ytau)
 {
    return - self_energy_higgs_2loop_atau_atau_sm(p2, scale, mtau, ytau)
       + tadpole_higgs_2loop_atau_atau_sm(scale, mtau, ytau);
@@ -360,12 +360,12 @@ double delta_mh_2loop_atau_atau_sm(
 
 namespace {
 
-double QA0(double m, double Q) {
+precise_real_type QA0(precise_real_type m, precise_real_type Q) {
    using namespace flexiblesusy::passarino_veltman;
    return ReA0(m*m, Q*Q);
 }
 
-double QB0(double p, double m1, double m2, double Q) {
+precise_real_type QB0(precise_real_type p, precise_real_type m1, precise_real_type m2, precise_real_type Q) {
    using namespace flexiblesusy::passarino_veltman;
    return ReB0(p*p, m1*m1, m2*m2, Q*Q);
 }
@@ -387,14 +387,14 @@ double QB0(double p, double m1, double m2, double Q) {
  *
  * @return real part of 1-loop self-energy
  */
-double delta_mh_1loop_sm_SUSYHD(
-   double vev, double Mt, double mh, double MW, double MZ, double Q)
+precise_real_type delta_mh_1loop_sm_SUSYHD(
+   precise_real_type vev, precise_real_type Mt, precise_real_type mh, precise_real_type MW, precise_real_type MZ, precise_real_type Q)
 {
-   using namespace std;
+   //using namespace std;
 
-   const double Pi = M_PI;
+   const precise_real_type Pi = M_PI;
 
-   const double delta_lambda =
+   const precise_real_type delta_lambda =
       ((pow(mh,4) + pow(mh,2)*
          (-6*pow(Mt,2) + 2*pow(MW,2) + pow(MZ,2)) -
         8*(2*pow(MW,4) + pow(MZ,4)))/4. -
@@ -412,7 +412,7 @@ double delta_mh_1loop_sm_SUSYHD(
      ((pow(mh,4) - 4*pow(mh,2)*pow(MZ,2) + 12*pow(MZ,4))*
       QB0(mh,MZ,MZ,Q))/4.)/(16.*pow(Pi,2)*pow(vev,4));
 
-   const double sigma = 2 * delta_lambda * vev * vev;
+   const precise_real_type sigma = 2 * delta_lambda * vev * vev;
 
    return sigma;
 }
@@ -431,20 +431,20 @@ double delta_mh_1loop_sm_SUSYHD(
  *
  * @return real part of 2-loop self-energy
  */
-double delta_mh_2loop_sm_SUSYHD(
-   double vev, double Mt, double Mh, double g3)
+precise_real_type delta_mh_2loop_sm_SUSYHD(
+   precise_real_type vev, precise_real_type Mt, precise_real_type Mh, precise_real_type g3)
 {
-   using namespace std;
+   //using namespace std;
 
-   const double Pi = M_PI;
+   const precise_real_type Pi = M_PI;
 
-   const double delta_lambda_QCD = pow(g3,2)*(
+   const precise_real_type delta_lambda_QCD = pow(g3,2)*(
       -23.88 + 0.12*(-125 + Mh) - 0.64*(-173 + Mt))/(256.*pow(Pi,4));
-   const double delta_lambda_EW =
+   const precise_real_type delta_lambda_EW =
       (-9.45 - 0.12*(-125 + Mh) - 0.21*(-173 + Mt))/(256.*pow(Pi,4));
-   const double delta_lambda = delta_lambda_QCD + delta_lambda_EW;
+   const precise_real_type delta_lambda = delta_lambda_QCD + delta_lambda_EW;
 
-   const double sigma = 2 * delta_lambda * vev * vev;
+   const precise_real_type sigma = 2 * delta_lambda * vev * vev;
 
    return sigma;
 }

@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef GLOBAL_THREAD_POOL
 #define GLOBAL_THREAD_POOL
 

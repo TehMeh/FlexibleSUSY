@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef INITIAL_GUESSER_H
 #define INITIAL_GUESSER_H
 

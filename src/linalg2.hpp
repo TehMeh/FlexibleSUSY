@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef linalg2_hpp
 #define linalg2_hpp
 
@@ -25,8 +27,9 @@
 #include <cmath>
 #include <complex>
 #include <algorithm>
-#include <Eigen/Core>
-#include <Eigen/SVD>
+
+//#include <Eigen/Core>
+//#include <Eigen/SVD>
 #include <Eigen/Eigenvalues>
 #include <unsupported/Eigen/MatrixFunctions>
 #include "config.h"
@@ -133,11 +136,11 @@ void disna(const char& JOB, const Eigen::Array<Real, MIN_(M, N), 1>& D,
       if (K == 1)
          SEP(0) = std::numeric_limits<Real>::max();
       else {
-         OLDGAP = std::fabs(D(1) - D(0));
+         OLDGAP = fabs(D(1) - D(0));
          SEP(0) = OLDGAP;
          for (I = 1; I < K - 1; I++) {
-            NEWGAP = std::fabs(D(I+1) - D(I));
-            SEP(I) = std::min(OLDGAP, NEWGAP);
+            NEWGAP = fabs(D(I+1) - D(I));
+            SEP(I) = min(OLDGAP, NEWGAP);
             OLDGAP = NEWGAP;
 	 }
          SEP(K-1) = OLDGAP;
@@ -145,9 +148,9 @@ void disna(const char& JOB, const Eigen::Array<Real, MIN_(M, N), 1>& D,
       if (SINGUL)
          if ((LEFT && M > N) || (RIGHT && M < N)) {
             if (INCR)
-               SEP( 0 ) = std::min(SEP( 0 ), D( 0 ));
+               SEP( 0 ) = min(SEP( 0 ), D( 0 ));
             if (DECR)
-               SEP(K-1) = std::min(SEP(K-1), D(K-1));
+               SEP(K-1) = min(SEP(K-1), D(K-1));
          }
 //
 //     Ensure that reciprocal condition numbers are not less than
@@ -158,13 +161,13 @@ void disna(const char& JOB, const Eigen::Array<Real, MIN_(M, N), 1>& D,
       // while DLAMCH('E') is the smallest eps such that 1.0 - eps < 1.0
       EPS = std::numeric_limits<Real>::epsilon();
       SAFMIN = std::numeric_limits<Real>::min();
-      ANORM = std::max(std::fabs(D(0)), std::fabs(D(K-1)));
+      ANORM = max(fabs(D(0)), fabs(D(K-1)));
       if (ANORM == ZERO)
          THRESH = EPS;
       else
-         THRESH = std::max(EPS*ANORM, SAFMIN);
+         THRESH = max(EPS*ANORM, SAFMIN);
       for (I = 0; I < K; I++)
-	 SEP(I) = std::max(SEP(I), THRESH);
+	 SEP(I) = max(SEP(I), THRESH);
 }
 
 
@@ -349,7 +352,7 @@ void diagonalize_hermitian_errbd
     // see http://www.netlib.org/lapack/lug/node89.html
     if (!w_errbd) return;
     const Real EPSMCH = std::numeric_limits<Real>::epsilon();
-    Real mnorm = std::max(std::abs(w[0]), std::abs(w[N-1]));
+    Real mnorm = max(abs(w[0]), abs(w[N-1]));
     *w_errbd = EPSMCH * mnorm;
 
     if (!z_errbd) return;
@@ -466,9 +469,9 @@ void diagonalize_hermitian
 
 template<class Real, int N>
 void diagonalize_symmetric_errbd
-(const Eigen::Matrix<std::complex<Real>, N, N>& m,
+(const Eigen::Matrix<precise_complex_type, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N> *u = 0,
+ Eigen::Matrix<precise_complex_type, N, N> *u = 0,
  Real *s_errbd = 0,
  Eigen::Array<Real, N, 1> *u_errbd = 0)
 {
@@ -476,7 +479,7 @@ void diagonalize_symmetric_errbd
 	svd_errbd(m, s, u, u, s_errbd, u_errbd);
 	return;
     }
-    Eigen::Matrix<std::complex<Real>, N, N> vh;
+    Eigen::Matrix<precise_complex_type, N, N> vh;
     svd_errbd(m, s, u, &vh, s_errbd, u_errbd);
     // see Eq. (5) of https://doi.org/10.1016/j.amc.2014.01.170
     *u *= (u->adjoint() * vh.transpose()).sqrt().eval();
@@ -497,9 +500,9 @@ void diagonalize_symmetric_errbd
  */
 template<class Real, int N>
 void diagonalize_symmetric
-(const Eigen::Matrix<std::complex<Real>, N, N>& m,
+(const Eigen::Matrix<precise_complex_type, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N>& u)
+ Eigen::Matrix<precise_complex_type, N, N>& u)
 {
     diagonalize_symmetric_errbd(m, s, &u);
 }
@@ -517,9 +520,9 @@ void diagonalize_symmetric
  */
 template<class Real, int N>
 void diagonalize_symmetric
-(const Eigen::Matrix<std::complex<Real>, N, N>& m,
+(const Eigen::Matrix<precise_complex_type, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N>& u,
+ Eigen::Matrix<precise_complex_type, N, N>& u,
  Real& s_errbd)
 {
     diagonalize_symmetric_errbd(m, s, &u, &s_errbd);
@@ -538,9 +541,9 @@ void diagonalize_symmetric
  */
 template<class Real, int N>
 void diagonalize_symmetric
-(const Eigen::Matrix<std::complex<Real>, N, N>& m,
+(const Eigen::Matrix<precise_complex_type, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N>& u,
+ Eigen::Matrix<precise_complex_type, N, N>& u,
  Real& s_errbd,
  Eigen::Array<Real, N, 1>& u_errbd)
 {
@@ -558,7 +561,7 @@ void diagonalize_symmetric
  */
 template<class Real, int N>
 void diagonalize_symmetric
-(const Eigen::Matrix<std::complex<Real>, N, N>& m,
+(const Eigen::Matrix<precise_complex_type, N, N>& m,
  Eigen::Array<Real, N, 1>& s)
 {
     diagonalize_symmetric_errbd(m, s);
@@ -577,7 +580,7 @@ void diagonalize_symmetric
  */
 template<class Real, int N>
 void diagonalize_symmetric
-(const Eigen::Matrix<std::complex<Real>, N, N>& m,
+(const Eigen::Matrix<precise_complex_type, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
  Real& s_errbd)
 {
@@ -586,9 +589,9 @@ void diagonalize_symmetric
 
 template<class Real>
 struct FlipSignOp {
-    std::complex<Real> operator() (const std::complex<Real>& z) const {
-	return z.real() < 0 ? std::complex<Real>(0,1) :
-	    std::complex<Real>(1,0);
+    precise_complex_type operator() (const precise_complex_type& z) const {
+	return z.real() < 0 ? precise_complex_type(0,1) :
+	    precise_complex_type(1,0);
     }
 };
 
@@ -596,14 +599,14 @@ template<class Real, int N>
 void diagonalize_symmetric_errbd
 (const Eigen::Matrix<Real, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N> *u = 0,
+ Eigen::Matrix<precise_complex_type, N, N> *u = 0,
  Real *s_errbd = 0,
  Eigen::Array<Real, N, 1> *u_errbd = 0)
 {
     Eigen::Matrix<Real, N, N> z;
     diagonalize_hermitian_errbd(m, s, u ? &z : 0, s_errbd, u_errbd);
     // see http://forum.kde.org/viewtopic.php?f=74&t=62606
-    if (u) *u = z * s.template cast<std::complex<Real> >().
+    if (u) *u = z * s.template cast<precise_complex_type >().
 		unaryExpr(FlipSignOp<Real>()).matrix().asDiagonal();
     s = s.abs();
 }
@@ -627,7 +630,7 @@ template<class Real, int N>
 void diagonalize_symmetric
 (const Eigen::Matrix<Real, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N>& u)
+ Eigen::Matrix<precise_complex_type, N, N>& u)
 {
     diagonalize_symmetric_errbd(m, s, &u);
 }
@@ -647,7 +650,7 @@ template<class Real, int N>
 void diagonalize_symmetric
 (const Eigen::Matrix<Real, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N>& u,
+ Eigen::Matrix<precise_complex_type, N, N>& u,
  Real& s_errbd)
 {
     diagonalize_symmetric_errbd(m, s, &u, &s_errbd);
@@ -668,7 +671,7 @@ template<class Real, int N>
 void diagonalize_symmetric
 (const Eigen::Matrix<Real, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N>& u,
+ Eigen::Matrix<precise_complex_type, N, N>& u,
  Real& s_errbd,
  Eigen::Array<Real, N, 1>& u_errbd)
 {
@@ -863,9 +866,9 @@ void reorder_svd
 
 template<class Real, int N>
 void reorder_diagonalize_symmetric_errbd
-(const Eigen::Matrix<std::complex<Real>, N, N>& m,
+(const Eigen::Matrix<precise_complex_type, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N> *u = 0,
+ Eigen::Matrix<precise_complex_type, N, N> *u = 0,
  Real *s_errbd = 0,
  Eigen::Array<Real, N, 1> *u_errbd = 0)
 {
@@ -879,7 +882,7 @@ template<class Real, int N>
 void reorder_diagonalize_symmetric_errbd
 (const Eigen::Matrix<Real, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N> *u = 0,
+ Eigen::Matrix<precise_complex_type, N, N> *u = 0,
  Real *s_errbd = 0,
  Eigen::Array<Real, N, 1> *u_errbd = 0)
 {
@@ -918,7 +921,7 @@ template<class Real, class Scalar, int N>
 void reorder_diagonalize_symmetric
 (const Eigen::Matrix<Scalar, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N>& u)
+ Eigen::Matrix<precise_complex_type, N, N>& u)
 {
     reorder_diagonalize_symmetric_errbd(m, s, &u);
 }
@@ -938,7 +941,7 @@ template<class Real, class Scalar, int N>
 void reorder_diagonalize_symmetric
 (const Eigen::Matrix<Scalar, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N>& u,
+ Eigen::Matrix<precise_complex_type, N, N>& u,
  Real& s_errbd)
 {
     reorder_diagonalize_symmetric_errbd(m, s, &u, &s_errbd);
@@ -959,7 +962,7 @@ template<class Real, class Scalar, int N>
 void reorder_diagonalize_symmetric
 (const Eigen::Matrix<Scalar, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N>& u,
+ Eigen::Matrix<precise_complex_type, N, N>& u,
  Real& s_errbd,
  Eigen::Array<Real, N, 1>& u_errbd)
 {
@@ -1166,10 +1169,10 @@ template<class Real, int M, int N>
 void fs_svd
 (const Eigen::Matrix<Real, M, N>& m,
  Eigen::Array<Real, MIN_(M, N), 1>& s,
- Eigen::Matrix<std::complex<Real>, M, M>& u,
- Eigen::Matrix<std::complex<Real>, N, N>& v)
+ Eigen::Matrix<precise_complex_type, M, M>& u,
+ Eigen::Matrix<precise_complex_type, N, N>& v)
 {
-    fs_svd(m.template cast<std::complex<Real> >().eval(), s, u, v);
+    fs_svd(m.template cast<precise_complex_type >().eval(), s, u, v);
 }
 
 /**
@@ -1187,11 +1190,11 @@ template<class Real, int M, int N>
 void fs_svd
 (const Eigen::Matrix<Real, M, N>& m,
  Eigen::Array<Real, MIN_(M, N), 1>& s,
- Eigen::Matrix<std::complex<Real>, M, M>& u,
- Eigen::Matrix<std::complex<Real>, N, N>& v,
+ Eigen::Matrix<precise_complex_type, M, M>& u,
+ Eigen::Matrix<precise_complex_type, N, N>& v,
  Real& s_errbd)
 {
-    fs_svd(m.template cast<std::complex<Real> >().eval(), s, u, v, s_errbd);
+    fs_svd(m.template cast<precise_complex_type >().eval(), s, u, v, s_errbd);
 }
 
 /**
@@ -1210,13 +1213,13 @@ template<class Real, int M, int N>
 void fs_svd
 (const Eigen::Matrix<Real, M, N>& m,
  Eigen::Array<Real, MIN_(M, N), 1>& s,
- Eigen::Matrix<std::complex<Real>, M, M>& u,
- Eigen::Matrix<std::complex<Real>, N, N>& v,
+ Eigen::Matrix<precise_complex_type, M, M>& u,
+ Eigen::Matrix<precise_complex_type, N, N>& v,
  Real& s_errbd,
  Eigen::Array<Real, MIN_(M, N), 1>& u_errbd,
  Eigen::Array<Real, MIN_(M, N), 1>& v_errbd)
 {
-    fs_svd(m.template cast<std::complex<Real> >().eval(), s, u, v,
+    fs_svd(m.template cast<precise_complex_type >().eval(), s, u, v,
 	   s_errbd, u_errbd, v_errbd);
 }
 
@@ -1224,7 +1227,7 @@ template<class Real, class Scalar, int N>
 void fs_diagonalize_symmetric_errbd
 (const Eigen::Matrix<Scalar, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N> *u = 0,
+ Eigen::Matrix<precise_complex_type, N, N> *u = 0,
  Real *s_errbd = 0,
  Eigen::Array<Real, N, 1> *u_errbd = 0)
 {
@@ -1251,7 +1254,7 @@ template<class Real, class Scalar, int N>
 void fs_diagonalize_symmetric
 (const Eigen::Matrix<Scalar, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N>& u)
+ Eigen::Matrix<precise_complex_type, N, N>& u)
 {
     fs_diagonalize_symmetric_errbd(m, s, &u);
 }
@@ -1271,7 +1274,7 @@ template<class Real, class Scalar, int N>
 void fs_diagonalize_symmetric
 (const Eigen::Matrix<Scalar, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N>& u,
+ Eigen::Matrix<precise_complex_type, N, N>& u,
  Real& s_errbd)
 {
     fs_diagonalize_symmetric_errbd(m, s, &u, &s_errbd);
@@ -1292,7 +1295,7 @@ template<class Real, class Scalar, int N>
 void fs_diagonalize_symmetric
 (const Eigen::Matrix<Scalar, N, N>& m,
  Eigen::Array<Real, N, 1>& s,
- Eigen::Matrix<std::complex<Real>, N, N>& u,
+ Eigen::Matrix<precise_complex_type, N, N>& u,
  Real& s_errbd,
  Eigen::Array<Real, N, 1>& u_errbd)
 {
@@ -1349,7 +1352,7 @@ void fs_diagonalize_hermitian_errbd
     Eigen::PermutationMatrix<N> p;
     p.setIdentity();
     std::sort(p.indices().data(), p.indices().data() + p.indices().size(),
-              [&w] (int i, int j) { return std::abs(w[i]) < std::abs(w[j]); });
+              [&w] (int i, int j) { return abs(w[i]) < abs(w[j]); });
 #if EIGEN_VERSION_AT_LEAST(3,1,4)
     w.matrix().transpose() *= p;
     if (z_errbd) z_errbd->matrix().transpose() *= p;

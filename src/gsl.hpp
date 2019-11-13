@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef CXX_GUIDLINES_SUPPORT_LIBRARY_H
 #define CXX_GUIDLINES_SUPPORT_LIBRARY_H
 

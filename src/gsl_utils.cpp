@@ -32,11 +32,11 @@ namespace flexiblesusy {
  */
 bool is_finite(const gsl_vector* x)
 {
-   const std::size_t length = x->size;
+   const size_t length = x->size;
    bool is_finite = true;
 
-   for (std::size_t i = 0; i < length; i++)
-      is_finite = is_finite && std::isfinite(gsl_vector_get(x, i));
+   for (size_t i = 0; i < length; i++)
+      is_finite = is_finite && isfinite(gsl_vector_get(x, i));
 
    return is_finite;
 }
@@ -50,11 +50,11 @@ bool is_finite(const gsl_vector* x)
  */
 bool is_finite(const GSL_vector& v)
 {
-   const std::size_t length = v.size();
+   const size_t length = v.size();
    bool finite = true;
 
-   for (std::size_t i = 0; i < length; i++)
-      finite = finite && std::isfinite(v[i]);
+   for (size_t i = 0; i < length; i++)
+      finite = finite && isfinite(v[i]);
 
    return finite;
 }
@@ -66,7 +66,7 @@ bool is_finite(const GSL_vector& v)
  * @param v GSL vector
  * @return Eigen array
  */
-Eigen::ArrayXd to_eigen_array(const gsl_vector* v)
+Eigen::ArrayXdp to_eigen_array(const gsl_vector* v)
 {
    return to_eigen_vector(v);
 }
@@ -78,7 +78,7 @@ Eigen::ArrayXd to_eigen_array(const gsl_vector* v)
  * @param v GSL vector
  * @return Eigen array
  */
-Eigen::ArrayXd to_eigen_array(const GSL_vector& v)
+Eigen::ArrayXdp to_eigen_array(const GSL_vector& v)
 {
    return to_eigen_vector(v);
 }
@@ -90,7 +90,7 @@ Eigen::ArrayXd to_eigen_array(const GSL_vector& v)
  * @param v GSL vector
  * @return Eigen vector
  */
-Eigen::VectorXd to_eigen_vector(const gsl_vector* v)
+Eigen::VectorXdp to_eigen_vector(const gsl_vector* v)
 {
    return to_eigen_vector(GSL_vector(v));
 }
@@ -102,11 +102,11 @@ Eigen::VectorXd to_eigen_vector(const gsl_vector* v)
  * @param v GSL vector
  * @return Eigen vector
  */
-Eigen::VectorXd to_eigen_vector(const GSL_vector& v)
+Eigen::VectorXdp to_eigen_vector(const GSL_vector& v)
 {
-   Eigen::VectorXd v2(v.size());
+   Eigen::VectorXdp v2(v.size());
 
-   for (std::size_t i = 0; i < v.size(); i++)
+   for (size_t i = 0; i < v.size(); i++)
       v2(i) = v[i];
 
    return v2;

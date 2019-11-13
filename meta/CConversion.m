@@ -32,6 +32,9 @@ integerScalarCType::usage="represents an integer C type";
 realScalarCType::usage="represents a real scalar C type";
 complexScalarCType::usage="represents a complex scalar C type";
 
+preciseRealScalarCType::usage="represents a precise real scalar C type"; (*added*)
+preciseComplexScalarCType::usage="represents a precise complex scalar C type"; (*added*)
+
 ToRealType::usage="converts a given type to a type with real elements";
 
 IsIntegerType::usage="Returns true if given type has integer elements";
@@ -85,6 +88,8 @@ ToValidCSymbol::usage="creates a valid C variable name from a symbol";
 
 ToValidCSymbolString::usage="returns the result of ToValidCSymbol[] as
 a string";
+
+MakePrecise::usage="Correctly initializes numbers, e.g. 1.23->1.23_p"; 
 
 RValueToCFormString::usage="converts a Mathematica expression to a C
 expression.";
@@ -207,7 +212,13 @@ ToRealType[CConversion`ArrayType[_,n_]] := CConversion`ArrayType[realScalarCType
 ToRealType[CConversion`VectorType[_,n_]] := CConversion`VectorType[realScalarCType, n];
 ToRealType[CConversion`MatrixType[_,m_,n_]] := CConversion`MatrixType[realScalarCType, m, n];
 ToRealType[CConversion`TensorType[_,n__]] := CConversion`TensorType[realScalarCType, n];
-
+(* Addition S.D. *)
+ToPreciseRealType[CConversion`ScalarType[_]] := CConversion`ScalarType[preciseRealScalarCType];
+ToPreciseRealType[CConversion`ArrayType[_,n_]] := CConversion`ArrayType[preciseRealScalarCType, n];
+ToPreciseRealType[CConversion`VectorType[_,n_]] := CConversion`VectorType[preciseRealScalarCType, n];
+ToPreciseRealType[CConversion`MatrixType[_,m_,n_]] := CConversion`MatrixType[preciseRealScalarCType, m, n];
+ToPreciseRealType[CConversion`TensorType[_,n__]] := CConversion`TensorType[preciseRealScalarCType, n];
+(* Addition S.D. *)
 IsIntegerType[_[CConversion`integerScalarCType, ___]] := True;
 IsIntegerType[_] := False;
 
@@ -215,17 +226,32 @@ IsRealType[_[CConversion`realScalarCType, ___]] := True;
 IsRealType[_[CConversion`integerScalarCType, ___]] := True;
 IsRealType[_] := False;
 
+(* Additions S.D. *)
+
+IsRealType[_[CConversion`preciseRealScalarCType, ___]] := True;
+
+(* end of additions S.D. *)
+
 CreateCType[type_] :=
     Print["Error: CreateCType: unknown type: " <> ToString[type]];
 
 CreateCType[CConversion`ScalarType[integerScalarCType]] :=
     "int";
 
-CreateCType[CConversion`ScalarType[realScalarCType]] :=
+(* CreateCType[CConversion`ScalarType[realScalarCType]] :=
     "double";
 
 CreateCType[CConversion`ScalarType[complexScalarCType]] :=
     "std::complex<" <> CreateCType[CConversion`ScalarType[realScalarCType]] <> ">";
+ *)
+(*Additions S.D.*)
+CreateCType[CConversion`ScalarType[realScalarCType]] :=
+    "precise_real_type";
+
+CreateCType[CConversion`ScalarType[complexScalarCType]] :=
+    "precise_complex_type";
+
+(*End of Additions S.D.*)
 
 CreateCType[CConversion`ArrayType[t_, entries_]] :=
     EigenArray[CreateCType[ScalarType[t]], ToString[entries]];
@@ -244,7 +270,7 @@ CastTo[expr_String, toType_ /; toType === None] := expr;
 CastTo[expr_String, toType_] :=
     Switch[toType,
            CConversion`ScalarType[CConversion`realScalarCType],
-           "Re(" <> expr <> ")"
+           "Re((precise_complex_type)(" <> expr <> "))" (* S.D. *)
            ,
            CConversion`VectorType[CConversion`realScalarCType,_] |
            CConversion`ArrayType[ CConversion`realScalarCType,_] |
@@ -671,6 +697,11 @@ ToValidCSymbol[symbol_ /; Length[symbol] > 0] :=
    a valid C variable name and removing matrix indices *)
 ToValidCSymbolString[symbol_String] := symbol;
 
+(*S.D.*)
+(* ToValidCSymbolString[symbol_Real] :=
+    ToString[ToValidCSymbol[symbol]]<>"_p"; *)
+
+
 ToValidCSymbolString[symbol_] :=
     ToString[ToValidCSymbol[symbol]];
 
@@ -865,7 +896,19 @@ FactorElementwiseProd[fac_] :=
  *
  * etc.
  *)
-RValueToCFormString[expr_String] := expr;
+MakePrecise[expr_String] := Module[{res = ""},
+  res = StringReplace[expr, 
+           x:DigitCharacter..~~"."~~y:DigitCharacter.. -> x ~~ "." ~~ y ~~ "_p"];
+  res = StringReplace[res, 
+           "." ~~ y : DigitCharacter .. ~~ "_pe" ~~ x : Characters["+-"] ... ~~z : DigitCharacter .. -> "." ~~ y ~~ "e" ~~ x ~~ z ~~ "_p"];
+  res =  StringReplace[res, 
+           x : DigitCharacter .. ~~ "e" ~~ y : DigitCharacter .. -> x ~~ "e" ~~ y ~~ "_p" ];
+  res = StringReplace[res, "_p_p" -> "_p"];
+  
+  res
+  ];
+
+RValueToCFormString[expr_String] := MakePrecise[expr];
 
 RValueToCFormString[expr_] :=
     Module[{times, result, greekSymbolsRules, conjSimplification = {}},
@@ -941,7 +984,7 @@ RValueToCFormString[expr_] :=
                                                 Piecewise[{{val_, cond_}}, default_] :> If[cond, val, default] }]
                           /. times -> Times
                          ];
-           ToString[HoldForm @@ result]
+           RValueToCFormString[ToString[HoldForm @@ result]]
           ];
 
 (* returns the head of a symbol

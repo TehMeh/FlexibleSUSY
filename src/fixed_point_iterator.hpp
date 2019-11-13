@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef FIXED_POINT_ITERATOR_H
 #define FIXED_POINT_ITERATOR_H
 
@@ -42,7 +44,7 @@ namespace fixed_point_iterator {
 
 class Convergence_tester_absolute {
 public:
-   explicit Convergence_tester_absolute(double precision_ = 1.0e-2)
+   explicit Convergence_tester_absolute(precise_real_type precision_ = 1.0e-2)
       : precision(precision_)
    {}
 
@@ -61,13 +63,13 @@ public:
       if (a.size() != b.size()) throw SetupError("Error: vectors have different size.");
 
       const auto dimension = a.size();
-      double residual = 0.;
+      precise_real_type residual = 0.;
 
       if (precision < 0.)
          GSL_ERROR("absolute tolerance is negative", GSL_EBADTOL);
 
       for (std::size_t i = 0; i < dimension; ++i)
-         residual += Sqr(a[i] - b[i]);
+         residual += Sqr(precise_real_type(a[i] - b[i]));
 
       residual = Sqrt(residual);
 
@@ -75,12 +77,12 @@ public:
    }
 
 private:
-   double precision;                 ///< precision goal
+   precise_real_type precision;                 ///< precision goal
 };
 
 class Convergence_tester_relative {
 public:
-   explicit Convergence_tester_relative(double precision_ = 1.0e-2)
+   explicit Convergence_tester_relative(precise_real_type precision_ = 1.0e-2)
       : precision(precision_)
    {}
 
@@ -99,7 +101,7 @@ public:
       if (a.size() != b.size()) throw SetupError("Error: vectors have different size.");
 
       const auto dimension = a.size();
-      double rel_diff = 0.;
+      precise_real_type rel_diff = 0.;
 
       if (precision < 0.)
          GSL_ERROR("relative tolerance is negative", GSL_EBADTOL);
@@ -110,21 +112,20 @@ public:
          if (rel_diff > precision)
             return GSL_CONTINUE;
       }
-
       return GSL_SUCCESS;
    }
 
 private:
-   double precision;                 ///< precision goal
+   precise_real_type precision;                 ///< precision goal
 };
 
 template <std::size_t dimension>
 class Convergence_tester_tadpole {
 public:
-   using Vector_t = Eigen::Matrix<double,dimension,1>;
-   using Function_t = std::function<Vector_t(const Vector_t&)>;
+   using Vector_t = Eigen::Matrix<precise_real_type,dimension,1>;
+   using Function_t = boost::function<Vector_t(const Vector_t&)>;
 
-   Convergence_tester_tadpole(double precision_,
+   Convergence_tester_tadpole(precise_real_type precision_,
                               const Function_t& tadpole_function_)
       : precision(precision_)
       , tadpole_function(tadpole_function_)
@@ -150,13 +151,13 @@ public:
       if (precision < 0.)
          GSL_ERROR("relative tolerance is negative", GSL_EBADTOL);
 
-      const double max_rel_diff =
+      const precise_real_type max_rel_diff =
          MaxRelDiff(to_eigen_vector(a), to_eigen_vector(b));
 
       if (max_rel_diff > precision)
          return GSL_CONTINUE;
 
-      static const double eps = 10*std::pow(10., -std::numeric_limits<double>::digits10);
+      static const precise_real_type eps = 10*pow(10., -std::numeric_limits<precise_real_type>::digits10);
 
       if (max_rel_diff < eps)
          return GSL_SUCCESS;
@@ -165,12 +166,12 @@ public:
    }
 
 private:
-   double precision;                 ///< precision goal
+   precise_real_type precision;                 ///< precision goal
    const Function_t tadpole_function; ///< function to calculate tadpole
 
    int check_tadpoles(const GSL_vector& x) const {
       const GSL_vector t(to_GSL_vector(tadpole_function(to_eigen_vector(x))));
-      return gsl_multiroot_test_residual(t.raw(), precision);
+      return gsl_multiroot_test_residual(t.raw(), (double)(precision)); //S.D.
    }
 };
 
@@ -200,8 +201,8 @@ private:
 template <std::size_t dimension, class Convergence_tester = fixed_point_iterator::Convergence_tester_relative>
 class Fixed_point_iterator : public EWSB_solver {
 public:
-   using Vector_t = Eigen::Matrix<double,dimension,1>;
-   using Function_t = std::function<Vector_t(const Vector_t&)>;
+   using Vector_t = Eigen::Matrix<precise_real_type,dimension,1>;
+   using Function_t = boost::function<Vector_t(const Vector_t&)>;
 
    Fixed_point_iterator() = default;
    template <typename F>
@@ -209,14 +210,14 @@ public:
    virtual ~Fixed_point_iterator() = default;
 
    template <typename F>
-   void set_function(F&& f) { function = std::forward<F>(f); }
-   void set_max_iterations(std::size_t n) { max_iterations = n; }
-   int find_fixed_point(const Eigen::VectorXd&);
+   void set_function(F&& f) {function = boost::forward<F>(f); }
+   void set_max_iterations(std::size_t n) {max_iterations = n; }
+   int find_fixed_point(const Eigen::VectorXdp&);
 
    // EWSB_solver interface methods
    virtual std::string name() const override { return "Fixed_point_iterator<" + convergence_tester.name() + ">"; }
-   virtual int solve(const Eigen::VectorXd&) override;
-   virtual Eigen::VectorXd get_solution() const override;
+   virtual int solve(const Eigen::VectorXdp&) override;
+   virtual Eigen::VectorXdp get_solution() const override;
 
 private:
    std::size_t max_iterations{100};         ///< maximum number of iterations
@@ -245,7 +246,7 @@ Fixed_point_iterator<dimension,Convergence_tester>::Fixed_point_iterator(
    const Convergence_tester& convergence_tester_
 )
    : max_iterations(max_iterations_)
-   , function(std::forward<F>(function_))
+   , function(boost::forward<F>(function_))
    , convergence_tester(convergence_tester_)
 {
 }
@@ -259,9 +260,16 @@ Fixed_point_iterator<dimension,Convergence_tester>::Fixed_point_iterator(
  */
 template <std::size_t dimension, class Convergence_tester>
 int Fixed_point_iterator<dimension,Convergence_tester>::find_fixed_point(
-   const Eigen::VectorXd& start
-)
-{
+   const Eigen::VectorXdp& start)
+{     
+  
+  Eigen::VectorXd start2(start.size()); // for GSL compatibility! S.D.
+  
+   for(int i=0; i<start.size();i++){
+      start2(i)=(double)(start(i));
+   }
+
+    
    if (!function)
       throw SetupError("Fixed_point_iterator: function not callable");
 
@@ -272,25 +280,19 @@ int Fixed_point_iterator<dimension,Convergence_tester>::find_fixed_point(
    gsl_set_error_handler_off();
 #endif
 
-   fixed_point = xn = to_GSL_vector(start);
-
+   fixed_point = xn = to_GSL_vector(start2);
 #ifdef ENABLE_VERBOSE
    print_state(iter);
 #endif
-
    do {
       iter++;
       status = fixed_point_iterator_iterate();
-
 #ifdef ENABLE_VERBOSE
       print_state(iter);
 #endif
-
       if (status)   // check if iterator has problems
          break;
-
       status = convergence_tester(fixed_point, xn);
-
    } while (status == GSL_CONTINUE && iter < max_iterations);
 
    VERBOSE_MSG("\t\t\tFixed_point_iterator status = "
@@ -363,15 +365,15 @@ int Fixed_point_iterator<dimension,Convergence_tester>::gsl_function(const gsl_v
 }
 
 template <std::size_t dimension, class Convergence_tester>
-int Fixed_point_iterator<dimension,Convergence_tester>::solve(const Eigen::VectorXd& start)
+int Fixed_point_iterator<dimension,Convergence_tester>::solve(const Eigen::VectorXdp& start)
 {
    return (find_fixed_point(start) == GSL_SUCCESS ?
            EWSB_solver::SUCCESS : EWSB_solver::FAIL);
 }
 
 template <std::size_t dimension, class Convergence_tester>
-Eigen::VectorXd Fixed_point_iterator<dimension,Convergence_tester>::get_solution() const
-{
+Eigen::VectorXdp Fixed_point_iterator<dimension,Convergence_tester>::get_solution() const
+{ 
    return to_eigen_vector(fixed_point);
 }
 

@@ -29,16 +29,16 @@ namespace standard_model {
 
 Standard_model_physical::Standard_model_physical()
    :
-    MVG(0), MHp(0), MFv(Eigen::Array<double,3,1>::Zero()), MAh(0), Mhh(0), MVP
-       (0), MVZ(0), MFd(Eigen::Array<double,3,1>::Zero()), MFu(Eigen::Array<double
-       ,3,1>::Zero()), MFe(Eigen::Array<double,3,1>::Zero()), MVWp(0), MVPVZ(
-       Eigen::Array<double,2,1>::Zero())
+    MVG(0), MHp(0), MFv(Eigen::Array<precise_real_type,3,1>::Zero()), MAh(0), Mhh(0), MVP
+       (0), MVZ(0), MFd(Eigen::Array<precise_real_type,3,1>::Zero()), MFu(Eigen::Array<precise_real_type
+       ,3,1>::Zero()), MFe(Eigen::Array<precise_real_type,3,1>::Zero()), MVWp(0), MVPVZ(
+       Eigen::Array<precise_real_type,2,1>::Zero())
 
-   , Vd(Eigen::Matrix<std::complex<double>,3,3>::Zero()), Ud(Eigen::Matrix<
-      std::complex<double>,3,3>::Zero()), Vu(Eigen::Matrix<std::complex<double>,3,
-      3>::Zero()), Uu(Eigen::Matrix<std::complex<double>,3,3>::Zero()), Ve(
-      Eigen::Matrix<std::complex<double>,3,3>::Zero()), Ue(Eigen::Matrix<
-      std::complex<double>,3,3>::Zero()), ZZ(Eigen::Matrix<double,2,2>::Zero())
+   , Vd(Eigen::Matrix<precise_complex_type,3,3>::Zero()), Ud(Eigen::Matrix<
+      precise_complex_type,3,3>::Zero()), Vu(Eigen::Matrix<precise_complex_type,3,
+      3>::Zero()), Uu(Eigen::Matrix<precise_complex_type,3,3>::Zero()), Ve(
+      Eigen::Matrix<precise_complex_type,3,3>::Zero()), Ue(Eigen::Matrix<
+      precise_complex_type,3,3>::Zero()), ZZ(Eigen::Matrix<precise_real_type,2,2>::Zero())
 
 {
 }
@@ -47,23 +47,23 @@ void Standard_model_physical::clear()
 {
    MVG = 0.;
    MHp = 0.;
-   MFv = Eigen::Matrix<double,3,1>::Zero();
+   MFv = Eigen::Matrix<precise_real_type,3,1>::Zero();
    MAh = 0.;
    Mhh = 0.;
    MVP = 0.;
    MVZ = 0.;
-   MFd = Eigen::Matrix<double,3,1>::Zero();
-   Vd = Eigen::Matrix<std::complex<double>,3,3>::Zero();
-   Ud = Eigen::Matrix<std::complex<double>,3,3>::Zero();
-   MFu = Eigen::Matrix<double,3,1>::Zero();
-   Vu = Eigen::Matrix<std::complex<double>,3,3>::Zero();
-   Uu = Eigen::Matrix<std::complex<double>,3,3>::Zero();
-   MFe = Eigen::Matrix<double,3,1>::Zero();
-   Ve = Eigen::Matrix<std::complex<double>,3,3>::Zero();
-   Ue = Eigen::Matrix<std::complex<double>,3,3>::Zero();
+   MFd = Eigen::Matrix<precise_real_type,3,1>::Zero();
+   Vd = Eigen::Matrix<precise_complex_type,3,3>::Zero();
+   Ud = Eigen::Matrix<precise_complex_type,3,3>::Zero();
+   MFu = Eigen::Matrix<precise_real_type,3,1>::Zero();
+   Vu = Eigen::Matrix<precise_complex_type,3,3>::Zero();
+   Uu = Eigen::Matrix<precise_complex_type,3,3>::Zero();
+   MFe = Eigen::Matrix<precise_real_type,3,1>::Zero();
+   Ve = Eigen::Matrix<precise_complex_type,3,3>::Zero();
+   Ue = Eigen::Matrix<precise_complex_type,3,3>::Zero();
    MVWp = 0.;
-   MVPVZ = Eigen::Matrix<double,2,1>::Zero();
-   ZZ = Eigen::Matrix<double,2,2>::Zero();
+   MVPVZ = Eigen::Matrix<precise_real_type,2,1>::Zero();
+   ZZ = Eigen::Matrix<precise_real_type,2,2>::Zero();
 
 }
 
@@ -87,9 +87,9 @@ void Standard_model_physical::convert_to_slha()
 
 }
 
-Eigen::ArrayXd Standard_model_physical::get() const
+Eigen::ArrayXdp Standard_model_physical::get() const
 {
-   Eigen::ArrayXd pars(get_masses());
+   Eigen::ArrayXdp pars(get_masses());
 
    pars.conservativeResize(127);
 
@@ -206,70 +206,70 @@ Eigen::ArrayXd Standard_model_physical::get() const
    return pars;
 }
 
-void Standard_model_physical::set(const Eigen::ArrayXd& pars)
+void Standard_model_physical::set(const Eigen::ArrayXdp& pars)
 {
    set_masses(pars);
 
-   Vd(0,0) = std::complex<double>(pars(19), pars(20));
-   Vd(0,1) = std::complex<double>(pars(21), pars(22));
-   Vd(0,2) = std::complex<double>(pars(23), pars(24));
-   Vd(1,0) = std::complex<double>(pars(25), pars(26));
-   Vd(1,1) = std::complex<double>(pars(27), pars(28));
-   Vd(1,2) = std::complex<double>(pars(29), pars(30));
-   Vd(2,0) = std::complex<double>(pars(31), pars(32));
-   Vd(2,1) = std::complex<double>(pars(33), pars(34));
-   Vd(2,2) = std::complex<double>(pars(35), pars(36));
-   Ud(0,0) = std::complex<double>(pars(37), pars(38));
-   Ud(0,1) = std::complex<double>(pars(39), pars(40));
-   Ud(0,2) = std::complex<double>(pars(41), pars(42));
-   Ud(1,0) = std::complex<double>(pars(43), pars(44));
-   Ud(1,1) = std::complex<double>(pars(45), pars(46));
-   Ud(1,2) = std::complex<double>(pars(47), pars(48));
-   Ud(2,0) = std::complex<double>(pars(49), pars(50));
-   Ud(2,1) = std::complex<double>(pars(51), pars(52));
-   Ud(2,2) = std::complex<double>(pars(53), pars(54));
-   Vu(0,0) = std::complex<double>(pars(55), pars(56));
-   Vu(0,1) = std::complex<double>(pars(57), pars(58));
-   Vu(0,2) = std::complex<double>(pars(59), pars(60));
-   Vu(1,0) = std::complex<double>(pars(61), pars(62));
-   Vu(1,1) = std::complex<double>(pars(63), pars(64));
-   Vu(1,2) = std::complex<double>(pars(65), pars(66));
-   Vu(2,0) = std::complex<double>(pars(67), pars(68));
-   Vu(2,1) = std::complex<double>(pars(69), pars(70));
-   Vu(2,2) = std::complex<double>(pars(71), pars(72));
-   Uu(0,0) = std::complex<double>(pars(73), pars(74));
-   Uu(0,1) = std::complex<double>(pars(75), pars(76));
-   Uu(0,2) = std::complex<double>(pars(77), pars(78));
-   Uu(1,0) = std::complex<double>(pars(79), pars(80));
-   Uu(1,1) = std::complex<double>(pars(81), pars(82));
-   Uu(1,2) = std::complex<double>(pars(83), pars(84));
-   Uu(2,0) = std::complex<double>(pars(85), pars(86));
-   Uu(2,1) = std::complex<double>(pars(87), pars(88));
-   Uu(2,2) = std::complex<double>(pars(89), pars(90));
-   Ve(0,0) = std::complex<double>(pars(91), pars(92));
-   Ve(0,1) = std::complex<double>(pars(93), pars(94));
-   Ve(0,2) = std::complex<double>(pars(95), pars(96));
-   Ve(1,0) = std::complex<double>(pars(97), pars(98));
-   Ve(1,1) = std::complex<double>(pars(99), pars(100));
-   Ve(1,2) = std::complex<double>(pars(101), pars(102));
-   Ve(2,0) = std::complex<double>(pars(103), pars(104));
-   Ve(2,1) = std::complex<double>(pars(105), pars(106));
-   Ve(2,2) = std::complex<double>(pars(107), pars(108));
-   Ue(0,0) = std::complex<double>(pars(109), pars(110));
-   Ue(0,1) = std::complex<double>(pars(111), pars(112));
-   Ue(0,2) = std::complex<double>(pars(113), pars(114));
-   Ue(1,0) = std::complex<double>(pars(115), pars(116));
-   Ue(1,1) = std::complex<double>(pars(117), pars(118));
-   Ue(1,2) = std::complex<double>(pars(119), pars(120));
-   Ue(2,0) = std::complex<double>(pars(121), pars(122));
-   Ue(2,1) = std::complex<double>(pars(123), pars(124));
-   Ue(2,2) = std::complex<double>(pars(125), pars(126));
+   Vd(0,0) = precise_complex_type(pars(19), pars(20));
+   Vd(0,1) = precise_complex_type(pars(21), pars(22));
+   Vd(0,2) = precise_complex_type(pars(23), pars(24));
+   Vd(1,0) = precise_complex_type(pars(25), pars(26));
+   Vd(1,1) = precise_complex_type(pars(27), pars(28));
+   Vd(1,2) = precise_complex_type(pars(29), pars(30));
+   Vd(2,0) = precise_complex_type(pars(31), pars(32));
+   Vd(2,1) = precise_complex_type(pars(33), pars(34));
+   Vd(2,2) = precise_complex_type(pars(35), pars(36));
+   Ud(0,0) = precise_complex_type(pars(37), pars(38));
+   Ud(0,1) = precise_complex_type(pars(39), pars(40));
+   Ud(0,2) = precise_complex_type(pars(41), pars(42));
+   Ud(1,0) = precise_complex_type(pars(43), pars(44));
+   Ud(1,1) = precise_complex_type(pars(45), pars(46));
+   Ud(1,2) = precise_complex_type(pars(47), pars(48));
+   Ud(2,0) = precise_complex_type(pars(49), pars(50));
+   Ud(2,1) = precise_complex_type(pars(51), pars(52));
+   Ud(2,2) = precise_complex_type(pars(53), pars(54));
+   Vu(0,0) = precise_complex_type(pars(55), pars(56));
+   Vu(0,1) = precise_complex_type(pars(57), pars(58));
+   Vu(0,2) = precise_complex_type(pars(59), pars(60));
+   Vu(1,0) = precise_complex_type(pars(61), pars(62));
+   Vu(1,1) = precise_complex_type(pars(63), pars(64));
+   Vu(1,2) = precise_complex_type(pars(65), pars(66));
+   Vu(2,0) = precise_complex_type(pars(67), pars(68));
+   Vu(2,1) = precise_complex_type(pars(69), pars(70));
+   Vu(2,2) = precise_complex_type(pars(71), pars(72));
+   Uu(0,0) = precise_complex_type(pars(73), pars(74));
+   Uu(0,1) = precise_complex_type(pars(75), pars(76));
+   Uu(0,2) = precise_complex_type(pars(77), pars(78));
+   Uu(1,0) = precise_complex_type(pars(79), pars(80));
+   Uu(1,1) = precise_complex_type(pars(81), pars(82));
+   Uu(1,2) = precise_complex_type(pars(83), pars(84));
+   Uu(2,0) = precise_complex_type(pars(85), pars(86));
+   Uu(2,1) = precise_complex_type(pars(87), pars(88));
+   Uu(2,2) = precise_complex_type(pars(89), pars(90));
+   Ve(0,0) = precise_complex_type(pars(91), pars(92));
+   Ve(0,1) = precise_complex_type(pars(93), pars(94));
+   Ve(0,2) = precise_complex_type(pars(95), pars(96));
+   Ve(1,0) = precise_complex_type(pars(97), pars(98));
+   Ve(1,1) = precise_complex_type(pars(99), pars(100));
+   Ve(1,2) = precise_complex_type(pars(101), pars(102));
+   Ve(2,0) = precise_complex_type(pars(103), pars(104));
+   Ve(2,1) = precise_complex_type(pars(105), pars(106));
+   Ve(2,2) = precise_complex_type(pars(107), pars(108));
+   Ue(0,0) = precise_complex_type(pars(109), pars(110));
+   Ue(0,1) = precise_complex_type(pars(111), pars(112));
+   Ue(0,2) = precise_complex_type(pars(113), pars(114));
+   Ue(1,0) = precise_complex_type(pars(115), pars(116));
+   Ue(1,1) = precise_complex_type(pars(117), pars(118));
+   Ue(1,2) = precise_complex_type(pars(119), pars(120));
+   Ue(2,0) = precise_complex_type(pars(121), pars(122));
+   Ue(2,1) = precise_complex_type(pars(123), pars(124));
+   Ue(2,2) = precise_complex_type(pars(125), pars(126));
 
 }
 
-Eigen::ArrayXd Standard_model_physical::get_masses() const
+Eigen::ArrayXdp Standard_model_physical::get_masses() const
 {
-   Eigen::ArrayXd pars(19);
+   Eigen::ArrayXdp pars(19);
 
    pars(0) = MVG;
    pars(1) = MHp;
@@ -294,7 +294,7 @@ Eigen::ArrayXd Standard_model_physical::get_masses() const
    return pars;
 }
 
-void Standard_model_physical::set_masses(const Eigen::ArrayXd& pars)
+void Standard_model_physical::set_masses(const Eigen::ArrayXdp& pars)
 {
    MVG = pars(0);
    MHp = pars(1);

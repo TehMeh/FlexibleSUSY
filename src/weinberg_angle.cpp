@@ -122,17 +122,17 @@ void Weinberg_angle::set_data(const Data& data_)
    data = data_;
 }
 
-void Weinberg_angle::set_precision_goal(double p)
+void Weinberg_angle::set_precision_goal(precise_real_type p)
 {
    precision_goal = p;
 }
 
-double Weinberg_angle::get_rho_hat() const
+precise_real_type Weinberg_angle::get_rho_hat() const
 {
    return rho_hat;
 }
 
-double Weinberg_angle::get_sin_theta() const
+precise_real_type Weinberg_angle::get_sin_theta() const
 {
    return sin_theta;
 }
@@ -151,19 +151,19 @@ double Weinberg_angle::get_sin_theta() const
  *
  * @return value != 0 if an error has occured
  */
-int Weinberg_angle::calculate(double rho_start, double sin_start)
+int Weinberg_angle::calculate(precise_real_type rho_start, precise_real_type sin_start)
 {
-   const double alphaDRbar = data.alpha_em_drbar;
-   const double mz_pole    = data.mz_pole;
-   const double gfermi     = data.fermi_contant;
+   const precise_real_type alphaDRbar = data.alpha_em_drbar;
+   const precise_real_type mz_pole    = data.mz_pole;
+   const precise_real_type gfermi     = data.fermi_contant;
 
    int iteration = 0;
    bool not_converged = true;
-   double rho_old = rho_start, sin_old = sin_start;
-   double rho_new = rho_start, sin_new = sin_start;
+   precise_real_type rho_old = rho_start, sin_old = sin_start;
+   precise_real_type rho_new = rho_start, sin_new = sin_start;
 
    while (not_converged && iteration < number_of_iterations) {
-      double deltaR
+      precise_real_type deltaR
          = calculate_delta_r(rho_old, sin_old, data, susy_contributions,
                              number_of_loops);
 
@@ -174,14 +174,14 @@ int Weinberg_angle::calculate(double rho_start, double sin_start)
          deltaR = 0.;
       }
 
-      if (!std::isfinite(deltaR)) {
+      if (!isfinite(deltaR)) {
 #if defined(ENABLE_VERBOSE) || defined(ENABLE_DEBUG)
          WARNING("delta_r non-finite");
 #endif
          deltaR = 0.;
       }
 
-      double sin2thetasqO4 = Pi * alphaDRbar /
+      precise_real_type sin2thetasqO4 = Pi * alphaDRbar /
          (ROOT2 * Sqr(mz_pole) * gfermi * (1.0 - deltaR));
 
       if (sin2thetasqO4 >= 0.25)
@@ -190,16 +190,16 @@ int Weinberg_angle::calculate(double rho_start, double sin_start)
       if (sin2thetasqO4 < 0.0)
          sin2thetasqO4 = 0.0;
 
-      const double sin2theta = Sqrt(4.0 * sin2thetasqO4);
-      const double theta = 0.5 * ArcSin(sin2theta);
+      const precise_real_type sin2theta = Sqrt(4.0 * sin2thetasqO4);
+      const precise_real_type theta = 0.5 * ArcSin(sin2theta);
 
       sin_new = Sin(theta);
 
-      double deltaRho
+      precise_real_type deltaRho
          = calculate_delta_rho(rho_old, sin_new, data, susy_contributions,
                                number_of_loops);
 
-      if (!std::isfinite(deltaRho)) {
+      if (!isfinite(deltaRho)) {
 #if defined(ENABLE_VERBOSE) || defined(ENABLE_DEBUG)
          WARNING("delta_rho non-finite");
 #endif
@@ -211,8 +211,8 @@ int Weinberg_angle::calculate(double rho_start, double sin_start)
       else
          rho_new = 1.0;
 
-      const double precision
-         = Abs(rho_old / rho_new - 1.0) + Abs(sin_old / sin_new - 1.0);
+      const precise_real_type precision
+         = Abs(precise_real_type(rho_old / rho_new - 1.0)) + Abs(precise_real_type(sin_old / sin_new - 1.0));
 
       VERBOSE_MSG("\t\tIteration step " << iteration
                   << ": prec=" << precision
@@ -248,25 +248,25 @@ int Weinberg_angle::calculate(double rho_start, double sin_start)
  *
  * @return \f$\Delta\hat{\rho}\f$ as defined in (C.5) and (C.5) from hep-ph/9606211
  */
-double Weinberg_angle::calculate_delta_rho(
-   double rho,
-   double sinThetaW,
+precise_real_type Weinberg_angle::calculate_delta_rho(
+   precise_real_type rho,
+   precise_real_type sinThetaW,
    const Data& data,
    bool add_susy_contributions,
    int number_of_loops
 )
 {
-   const double mz = data.mz_pole;
-   const double mw = data.mw_pole;
-   const double mt = data.mt_pole;
-   const double mh = data.mh_drbar;
-   const double sinb = Sin(ArcTan(data.tan_beta));
-   const double xt = 3.0 * data.fermi_contant * Sqr(mt) * ROOT2 * oneOver16PiSqr;
-   const double alphaDRbar = data.alpha_em_drbar;
-   const double g3 = data.g3;
-   const double pizztMZ = data.self_energy_z_at_mz;
-   const double piwwtMW = data.self_energy_w_at_mw;
-   const double hmix12 = data.hmix_12;
+   const precise_real_type mz = data.mz_pole;
+   const precise_real_type mw = data.mw_pole;
+   const precise_real_type mt = data.mt_pole;
+   const precise_real_type mh = data.mh_drbar;
+   const precise_real_type sinb = Sin(ArcTan(data.tan_beta));
+   const precise_real_type xt = 3.0 * data.fermi_contant * Sqr(mt) * ROOT2 * oneOver16PiSqr;
+   const precise_real_type alphaDRbar = data.alpha_em_drbar;
+   const precise_real_type g3 = data.g3;
+   const precise_real_type pizztMZ = data.self_energy_z_at_mz;
+   const precise_real_type piwwtMW = data.self_energy_w_at_mw;
+   const precise_real_type hmix12 = data.hmix_12;
 
 #if defined(ENABLE_VERBOSE) || defined(ENABLE_DEBUG)
    WARN_IF_ZERO(rho, calculate_delta_rho)
@@ -285,16 +285,16 @@ double Weinberg_angle::calculate_delta_rho(
    }
 #endif
 
-   double hmix_r = 1.0;
+   precise_real_type hmix_r = 1.0;
    if (add_susy_contributions)
-      hmix_r = Sqr(hmix12 / sinb);
+      hmix_r = Sqr(precise_real_type(hmix12 / sinb));
 
-   double deltaRhoOneLoop = 0.;
+   precise_real_type deltaRhoOneLoop = 0.;
 
    if (number_of_loops > 0)
       deltaRhoOneLoop = pizztMZ / (rho * Sqr(mz)) - piwwtMW / Sqr(mw);
 
-   double deltaRho2LoopSm = 0.;
+   precise_real_type deltaRho2LoopSm = 0.;
 
    if (number_of_loops > 1) {
       deltaRho2LoopSm = alphaDRbar * Sqr(g3) /
@@ -305,7 +305,7 @@ double Weinberg_angle::calculate_delta_rho(
          rho_2(mh / mt) / 3.0;
    }
 
-   const double deltaRho = deltaRhoOneLoop + deltaRho2LoopSm;
+   const precise_real_type deltaRho = deltaRhoOneLoop + deltaRho2LoopSm;
 
    return deltaRho;
 }
@@ -322,26 +322,26 @@ double Weinberg_angle::calculate_delta_rho(
  *
  * @return \f$\Delta\hat{r}\f$ as defined in (C.5) and (C.5) from hep-ph/9606211
  */
-double Weinberg_angle::calculate_delta_r(
-   double rho,
-   double sinThetaW,
+precise_real_type Weinberg_angle::calculate_delta_r(
+   precise_real_type rho,
+   precise_real_type sinThetaW,
    const Data& data,
    bool add_susy_contributions,
    int number_of_loops
 )
 {
-   const double outcos = Cos(ArcSin(sinThetaW));
-   const double sinb = Sin(ArcTan(data.tan_beta));
-   const double mz = data.mz_pole;
-   const double mw = data.mw_pole;
-   const double mt = data.mt_pole;
-   const double mh = data.mh_drbar;
-   const double xt = 3.0 * data.fermi_contant * Sqr(mt) * ROOT2 * oneOver16PiSqr;
-   const double alphaDRbar = data.alpha_em_drbar;
-   const double g3 = data.g3;
-   const double pizztMZ = data.self_energy_z_at_mz;
-   const double piwwt0 = data.self_energy_w_at_0;
-   const double hmix12 = data.hmix_12;
+   const precise_real_type outcos = Cos(ArcSin(sinThetaW));
+   const precise_real_type sinb = Sin(ArcTan(data.tan_beta));
+   const precise_real_type mz = data.mz_pole;
+   const precise_real_type mw = data.mw_pole;
+   const precise_real_type mt = data.mt_pole;
+   const precise_real_type mh = data.mh_drbar;
+   const precise_real_type xt = 3.0 * data.fermi_contant * Sqr(mt) * ROOT2 * oneOver16PiSqr;
+   const precise_real_type alphaDRbar = data.alpha_em_drbar;
+   const precise_real_type g3 = data.g3;
+   const precise_real_type pizztMZ = data.self_energy_z_at_mz;
+   const precise_real_type piwwt0 = data.self_energy_w_at_0;
+   const precise_real_type hmix12 = data.hmix_12;
 
 #if defined(ENABLE_VERBOSE) || defined(ENABLE_DEBUG)
    WARN_IF_ZERO(rho, calculate_delta_r)
@@ -361,32 +361,32 @@ double Weinberg_angle::calculate_delta_r(
    }
 #endif
 
-   double dvb = 0.;
+   precise_real_type dvb = 0.;
 
    if (number_of_loops > 0)
       dvb = calculate_delta_vb(rho, sinThetaW, data, add_susy_contributions);
 
-   double hmix_r = 1.0;
+   precise_real_type hmix_r = 1.0;
    if (add_susy_contributions)
-      hmix_r = Sqr(hmix12 / sinb);
+      hmix_r = Sqr(precise_real_type(hmix12 / sinb));
 
-   double deltaR = 0.;
+   precise_real_type deltaR = 0.;
 
    if (number_of_loops > 0)
       deltaR = rho * piwwt0 / Sqr(mw) - pizztMZ / Sqr(mz) + dvb;
 
-   double deltaR2LoopSm = 0.;
+   precise_real_type deltaR2LoopSm = 0.;
 
    if (number_of_loops > 1) {
       deltaR2LoopSm = alphaDRbar * Sqr(g3) /
          (16.0 * Sqr(Pi) * Pi * Sqr(sinThetaW) * Sqr(outcos)) *
-         (2.145 * Sqr(mt) / Sqr(mz) + 0.575 * log(mt / mz) - 0.224
+         (2.145 * Sqr(mt) / Sqr(mz) + 0.575 * log(precise_real_type(mt / mz)) - 0.224
           - 0.144 * Sqr(mz) / Sqr(mt)) -
          Sqr(xt) * hmix_r *
          rho_2(mh / mt) * (1.0 - deltaR) * rho / 3.0;
    }
 
-   const double deltaR_full = deltaR + deltaR2LoopSm;
+   const precise_real_type deltaR_full = deltaR + deltaR2LoopSm;
 
    return deltaR_full;
 }
@@ -403,19 +403,19 @@ double Weinberg_angle::calculate_delta_r(
  *
  * @return \f$\delta_{\text{VB}}\f$ as defined in (C.11) from hep-ph/9606211
  */
-double Weinberg_angle::calculate_delta_vb(
-   double rho,
-   double sinThetaW,
+precise_real_type Weinberg_angle::calculate_delta_vb(
+   precise_real_type rho,
+   precise_real_type sinThetaW,
    const Data& data,
    bool add_susy_contributions)
 {
-   double deltaVbSusy = 0.;
-   const double deltaVbSm = calculate_delta_vb_sm(rho, sinThetaW, data);
+   precise_real_type deltaVbSusy = 0.;
+   const precise_real_type deltaVbSm = calculate_delta_vb_sm(rho, sinThetaW, data);
 
    if (add_susy_contributions)
       deltaVbSusy = calculate_delta_vb_susy(sinThetaW, data);
 
-   const double deltaVb = deltaVbSm + deltaVbSusy;
+   const precise_real_type deltaVb = deltaVbSm + deltaVbSusy;
 
    return deltaVb;
 }
@@ -432,21 +432,21 @@ double Weinberg_angle::calculate_delta_vb(
  * @return \f$\delta_{\text{VB}}^{\text{SM}}\f$ as defined in (C.11)
  * from hep-ph/9606211
  */
-double Weinberg_angle::calculate_delta_vb_sm(
-   double rho,
-   double sinThetaW,
+precise_real_type Weinberg_angle::calculate_delta_vb_sm(
+   precise_real_type rho,
+   precise_real_type sinThetaW,
    const Data& data
 )
 {
-  const double mz      = data.mz_pole;
-  const double mw      = data.mw_pole;
-  const double costh   = mw / mz;
-  const double cw2     = Sqr(costh);
-  const double sw2     = 1.0 - cw2;
-  const double sinThetaW2 = Sqr(sinThetaW);
-  const double outcos  = Sqrt(1.0 - sinThetaW2);
-  const double alphaDRbar = data.alpha_em_drbar;
-  const double scale   = data.scale;
+  const precise_real_type mz      = data.mz_pole;
+  const precise_real_type mw      = data.mw_pole;
+  const precise_real_type costh   = mw / mz;
+  const precise_real_type cw2     = Sqr(costh);
+  const precise_real_type sw2     = 1.0 - cw2;
+  const precise_real_type sinThetaW2 = Sqr(sinThetaW);
+  const precise_real_type outcos  = Sqrt(precise_real_type(1.0 - sinThetaW2));
+  const precise_real_type alphaDRbar = data.alpha_em_drbar;
+  const precise_real_type scale   = data.scale;
 
 #if defined(ENABLE_VERBOSE) || defined(ENABLE_DEBUG)
    WARN_IF_ZERO(rho, calculate_delta_vb_sm)
@@ -456,11 +456,11 @@ double Weinberg_angle::calculate_delta_vb_sm(
    WARN_IF_ZERO(alphaDRbar, calculate_delta_vb_sm)
 #endif
 
-  const double deltaVbSm =
+  const precise_real_type deltaVbSm =
      rho * alphaDRbar / (4.0 * Pi * sinThetaW2) *
      (6.0 + log(cw2) / sw2 *
       (3.5 - 2.5 * sw2 - sinThetaW2 * (5.0 - 1.5 * cw2 / Sqr(outcos)))
-      - 4. * Log(Sqr(mz/scale)));
+      - 4. * Log(Sqr(precise_real_type(mz/scale))));
 
   return deltaVbSm;
 }
@@ -476,27 +476,27 @@ double Weinberg_angle::calculate_delta_vb_sm(
  * @return \f$\delta_{\text{VB}}^{\text{SUSY}}\f$ as defined in (C.11)
  * from hep-ph/9606211
  */
-double Weinberg_angle::calculate_delta_vb_susy(
-   double sinThetaW,
+precise_real_type Weinberg_angle::calculate_delta_vb_susy(
+   precise_real_type sinThetaW,
    const Data& data
 )
 {
-  const double g       = data.g2;
-  const double gp      = data.gY;
-  const double mz      = data.mz_pole;
-  const double sinThetaW2 = Sqr(sinThetaW);
-  const double outcos  = Sqrt(1.0 - sinThetaW2);
-  const double q       = data.scale;
-  const double alphaDRbar = data.alpha_em_drbar;
-  const double mselL = data.msel_drbar;
-  const double msmuL = data.msmul_drbar;
-  const double msnue = data.msve_drbar;
-  const double msnumu = data.msvm_drbar;
-  const Eigen::ArrayXd& mneut(data.mn_drbar);
-  const Eigen::ArrayXd& mch(data.mc_drbar);
-  const Eigen::MatrixXcd& n(data.zn);
-  const Eigen::MatrixXcd& u(data.um);
-  const Eigen::MatrixXcd& v(data.up);
+  const precise_real_type g       = data.g2;
+  const precise_real_type gp      = data.gY;
+  const precise_real_type mz      = data.mz_pole;
+  const precise_real_type sinThetaW2 = Sqr(sinThetaW);
+  const precise_real_type outcos  = Sqrt(precise_real_type(1.0 - sinThetaW2));
+  const precise_real_type q       = data.scale;
+  const precise_real_type alphaDRbar = data.alpha_em_drbar;
+  const precise_real_type mselL = data.msel_drbar;
+  const precise_real_type msmuL = data.msmul_drbar;
+  const precise_real_type msnue = data.msve_drbar;
+  const precise_real_type msnumu = data.msvm_drbar;
+  const Eigen::ArrayXdp& mneut(data.mn_drbar);
+  const Eigen::ArrayXdp& mch(data.mc_drbar);
+  const Eigen::MatrixXcdp& n(data.zn);
+  const Eigen::MatrixXcdp& u(data.um);
+  const Eigen::MatrixXcdp& v(data.up);
 
 #if defined(ENABLE_VERBOSE) || defined(ENABLE_DEBUG)
    WARN_IF_ZERO(sinThetaW, calculate_delta_vb_susy)
@@ -524,12 +524,12 @@ double Weinberg_angle::calculate_delta_vb_susy(
   const int dimN = mneut.rows();
   const int dimC = mch.rows();
 
-  Eigen::VectorXd bPsi0NuNul(Eigen::VectorXd::Zero(dimN)),
-     bPsicNuSell(Eigen::VectorXd::Zero(dimC));
-  Eigen::VectorXd bPsi0ESell(Eigen::VectorXd::Zero(dimN)),
-     aPsicESnul(Eigen::VectorXd::Zero(dimC));
-  Eigen::VectorXcd bChi0NuNul, bChicNuSell;
-  Eigen::VectorXcd bChi0ESell, aChicESnul;
+  Eigen::VectorXdp bPsi0NuNul(Eigen::VectorXdp::Zero(dimN)),
+     bPsicNuSell(Eigen::VectorXdp::Zero(dimC));
+  Eigen::VectorXdp bPsi0ESell(Eigen::VectorXdp::Zero(dimN)),
+     aPsicESnul(Eigen::VectorXdp::Zero(dimC));
+  Eigen::VectorXcdp bChi0NuNul, bChicNuSell;
+  Eigen::VectorXcdp bChi0ESell, aChicESnul;
 
   bPsicNuSell(0) = g;
   bPsi0NuNul(1) = ROOT2 * g * 0.5;
@@ -544,7 +544,7 @@ double Weinberg_angle::calculate_delta_vb_susy(
 
   aChicESnul = v.conjugate() * aPsicESnul;
 
-  double deltaZnue = 0.0, deltaZe = 0.0;
+  precise_real_type deltaZnue = 0.0, deltaZe = 0.0;
   for (int i = 0; i < dimN; i++) {
      deltaZnue += - Sqr(Abs(bChi0NuNul(i))) * b1(0.0, mneut(i), msnue, q);
      deltaZe   += - Sqr(Abs(bChi0ESell(i))) * b1(0.0, mneut(i), mselL, q);
@@ -554,11 +554,11 @@ double Weinberg_angle::calculate_delta_vb_susy(
      deltaZe   += - Sqr(Abs(aChicESnul(i))) * b1(0.0, mch(i), msnue, q);
   }
 
-  Eigen::VectorXd bPsicNuSmul(Eigen::VectorXd::Zero(dimC));
-  Eigen::VectorXd bPsi0MuSmul(Eigen::VectorXd::Zero(dimN)),
-     aPsicMuSnul(Eigen::VectorXd::Zero(dimC));
-  Eigen::VectorXcd bChicNuSmul;
-  Eigen::VectorXcd bChi0MuSmul, aChicMuSnul;
+  Eigen::VectorXdp bPsicNuSmul(Eigen::VectorXdp::Zero(dimC));
+  Eigen::VectorXdp bPsi0MuSmul(Eigen::VectorXdp::Zero(dimN)),
+     aPsicMuSnul(Eigen::VectorXdp::Zero(dimC));
+  Eigen::VectorXcdp bChicNuSmul;
+  Eigen::VectorXcdp bChi0MuSmul, aChicMuSnul;
 
   bPsicNuSmul(0) = g;
   aPsicMuSnul(0) = g;
@@ -569,7 +569,7 @@ double Weinberg_angle::calculate_delta_vb_susy(
   bChi0MuSmul =  n * bPsi0MuSmul;
   aChicMuSnul = v.conjugate() * aPsicMuSnul;
 
-  double deltaZnumu = 0.0, deltaZmu = 0.0;
+  precise_real_type deltaZnumu = 0.0, deltaZmu = 0.0;
   for (int i = 0; i < dimN; i++) {
      deltaZnumu += - Sqr(Abs(bChi0NuNul(i))) * b1(0.0, mneut(i), msnumu, q);
      deltaZmu   += - Sqr(Abs(bChi0MuSmul(i))) * b1(0.0, mneut(i), msmuL, q);
@@ -579,29 +579,29 @@ double Weinberg_angle::calculate_delta_vb_susy(
      deltaZmu   += - Sqr(Abs(aChicMuSnul(i))) * b1(0.0, mch(i), msnumu, q);
   }
 
-  Eigen::MatrixXd aPsi0PsicW(Eigen::MatrixXd::Zero(dimN,dimC)),
-     bPsi0PsicW(Eigen::MatrixXd::Zero(dimN,dimC)),
-     fW(Eigen::MatrixXd::Zero(dimN,dimC)),
-     gW(Eigen::MatrixXd::Zero(dimN,dimC));
-  Eigen::MatrixXcd aChi0ChicW, bChi0ChicW;
+  Eigen::MatrixXdp aPsi0PsicW(Eigen::MatrixXdp::Zero(dimN,dimC)),
+     bPsi0PsicW(Eigen::MatrixXdp::Zero(dimN,dimC)),
+     fW(Eigen::MatrixXdp::Zero(dimN,dimC)),
+     gW(Eigen::MatrixXdp::Zero(dimN,dimC));
+  Eigen::MatrixXcdp aChi0ChicW, bChi0ChicW;
 
   aPsi0PsicW(1, 0) = - g;
   bPsi0PsicW(1, 0) = - g;
   aPsi0PsicW(3, 1) = g / ROOT2;
   bPsi0PsicW(2, 1) = -g / ROOT2;
 
-  aChi0ChicW = n.conjugate() * aPsi0PsicW * v.transpose();
-  bChi0ChicW = n * bPsi0PsicW * u.adjoint();
+  aChi0ChicW = n.conjugate() * Eigen::MatrixXcdp(aPsi0PsicW) * v.transpose();
+  bChi0ChicW = n * Eigen::MatrixXcdp(bPsi0PsicW) * u.adjoint();
 
-  const double b0_0_mselL_msnue = b0(0.0, mselL, msnue, q);
-  const double b0_0_mnmuL_msnumu = b0(0.0, msmuL, msnumu, q);
+  const precise_real_type b0_0_mselL_msnue = b0(0.0, mselL, msnue, q);
+  const precise_real_type b0_0_mnmuL_msnumu = b0(0.0, msmuL, msnumu, q);
 
-  std::complex<double> deltaVE;
+  precise_complex_type deltaVE;
   for (int i = 0; i < dimC; i++) {
      for (int j = 0; j < dimN; j++) {
-        const double c0_mselL_mch_mneut = c0(mselL, mch(i), mneut(j));
-        const double c0_msnue_mch_mneut = c0(msnue, mch(i), mneut(j));
-        const double b0_0_mch_mneut = b0(0.0, mch(i), mneut(j), q);
+        const precise_real_type c0_mselL_mch_mneut = c0(mselL, mch(i), mneut(j));
+        const precise_real_type c0_msnue_mch_mneut = c0(msnue, mch(i), mneut(j));
+        const precise_real_type b0_0_mch_mneut = b0(0.0, mch(i), mneut(j), q);
 
         deltaVE += bChicNuSell(i) * Conj(bChi0ESell(j)) *
            (- ROOT2 / g * aChi0ChicW(j, i) * mch(i) * mneut(j) *
@@ -625,12 +625,12 @@ double Weinberg_angle::calculate_delta_vb_susy(
          c0(mneut(j), mselL, msnue) + 0.5);
   }
 
-  std::complex<double> deltaVMu;
+  precise_complex_type deltaVMu;
   for (int i = 0; i < dimC; i++) {
      for (int j = 0; j < dimN; j++) {
-        const double c0_msmuL_mch_mneut = c0(msmuL, mch(i), mneut(j));
-        const double c0_msnumu_mch_mneut = c0(msnumu, mch(i), mneut(j));
-        const double b0_0_mch_mneut = b0(0.0, mch(i), mneut(j), q);
+        const precise_real_type c0_msmuL_mch_mneut = c0(msmuL, mch(i), mneut(j));
+        const precise_real_type c0_msnumu_mch_mneut = c0(msnumu, mch(i), mneut(j));
+        const precise_real_type b0_0_mch_mneut = b0(0.0, mch(i), mneut(j), q);
 
         deltaVMu += bChicNuSmul(i) * Conj(bChi0MuSmul(j)) *
            (- ROOT2 / g * aChi0ChicW(j, i) * mch(i) * mneut(j) *
@@ -654,7 +654,7 @@ double Weinberg_angle::calculate_delta_vb_susy(
          c0(mneut(j), msmuL, msnumu) + 0.5);
   }
 
-  std::complex<double> a1;
+  precise_complex_type a1;
   for(int i = 0; i < dimC; i++) {
      for(int j = 0; j < dimN; j++) {
         a1 += 0.5 * aChicMuSnul(i) * Conj(bChicNuSell(i)) *
@@ -672,7 +672,7 @@ double Weinberg_angle::calculate_delta_vb_susy(
      }
   }
 
-  const double deltaVbSusy =
+  const precise_real_type deltaVbSusy =
      (-sinThetaW2 * Sqr(outcos) / (2.0 * Pi * alphaDRbar) * Sqr(mz)
       * a1.real() + deltaVE.real() + deltaVMu.real() +
       0.5 * (deltaZe + deltaZnue + deltaZmu + deltaZnumu) ) * oneOver16PiSqr;
@@ -688,11 +688,11 @@ double Weinberg_angle::calculate_delta_vb_susy(
  *
  * @return \f$\rho^{(2)}(r)\f$
  */
-double Weinberg_angle::rho_2(double r)
+precise_real_type Weinberg_angle::rho_2(precise_real_type r)
 {
-   const double Pi2 = Pi * Pi;
+   const precise_real_type Pi2 = Pi * Pi;
 
-   if (r <= std::numeric_limits<double>::epsilon()) {
+   if (r <= std::numeric_limits<precise_real_type>::epsilon()) {
 #if defined(ENABLE_VERBOSE) || defined(ENABLE_DEBUG)
       WARNING("rho_2: value of r is invalid: r = " << r);
       WARNING("-> setting 2-loop corrections ~ xt^2 to 0");
@@ -701,13 +701,13 @@ double Weinberg_angle::rho_2(double r)
    }
 
    if (r <= 1.9) {
-      const double r2 = Sqr(r);
+      const precise_real_type r2 = Sqr(r);
       return 19.0 - 16.5 * r + 43.0 * r2 / 12.0 + 7.0 / 120.0 * r2 * r -
          Pi * Sqrt(r) * (4.0 - 1.5 * r + 3.0 / 32.0 * r2 + r2 * r /
                          256.0) - Pi2 * (2.0 - 2.0 * r + 0.5 * r2) -
          Log(r) * (3.0 * r - 0.5 * r2);
    } else {
-      const double rm1 = 1.0 / r, rm2 = Sqr(rm1), rm3 = rm2 * rm1,
+      const precise_real_type rm1 = 1.0 / r, rm2 = Sqr(rm1), rm3 = rm2 * rm1,
          rm4 = rm3 * rm1, rm5 = rm4 * rm1;
       return Sqr(Log(r)) * (1.5 - 9.0 * rm1 - 15.0 * rm2 - 48.0 * rm3 - 168.0
                             * rm4 - 612.0 * rm5) -
@@ -729,15 +729,15 @@ double Weinberg_angle::rho_2(double r)
  *
  * @return 1-loop top-quark contribution to W boson self-energy
  */
-double Weinberg_angle::calculate_self_energy_w_top(
-   double p, double mt, const Self_energy_data& data)
+precise_real_type Weinberg_angle::calculate_self_energy_w_top(
+   precise_real_type p, precise_real_type mt, const Self_energy_data& data)
 {
-   const double q = data.scale;
-   const double mb = data.mb_drbar;
-   const double Nc = 3.0;
-   const double g2 = data.g2;
+   const precise_real_type q = data.scale;
+   const precise_real_type mb = data.mb_drbar;
+   const precise_real_type Nc = 3.0;
+   const precise_real_type g2 = data.g2;
 
-   const double self_energy_w =
+   const precise_real_type self_energy_w =
       0.5 * Nc * hfn(p, mt, mb, q) * Sqr(g2) * oneOver16PiSqr;
 
    return self_energy_w;
@@ -752,21 +752,21 @@ double Weinberg_angle::calculate_self_energy_w_top(
  *
  * @return 1-loop top-quark contribution to Z boson self-energy
  */
-double Weinberg_angle::calculate_self_energy_z_top(
-   double p, double mt, const Self_energy_data& data)
+precise_real_type Weinberg_angle::calculate_self_energy_z_top(
+   precise_real_type p, precise_real_type mt, const Self_energy_data& data)
 {
-   const double q = data.scale;
-   const double Nc = 3.0;
-   const double gY = data.gY;
-   const double g2 = data.g2;
-   const double gY2 = Sqr(gY);
-   const double g22 = Sqr(g2);
-   const double sw2 = gY2 / (gY2 + g22);
-   const double cw2 = 1.0 - sw2;
-   const double guL = 0.5 - 2.0 * sw2 / 3.0;
-   const double guR = 2.0 * sw2 / 3.0;
+   const precise_real_type q = data.scale;
+   const precise_real_type Nc = 3.0;
+   const precise_real_type gY = data.gY;
+   const precise_real_type g2 = data.g2;
+   const precise_real_type gY2 = Sqr(gY);
+   const precise_real_type g22 = Sqr(g2);
+   const precise_real_type sw2 = gY2 / (gY2 + g22);
+   const precise_real_type cw2 = 1.0 - sw2;
+   const precise_real_type guL = 0.5 - 2.0 * sw2 / 3.0;
+   const precise_real_type guR = 2.0 * sw2 / 3.0;
 
-   const double self_energy_z =
+   const precise_real_type self_energy_z =
       Nc * (hfn(p, mt, mt, q) * (Sqr(guL) + Sqr(guR))
              - 4.0 * guL * guR * Sqr(mt) * b0(p, mt, mt, q))
       * Sqr(g2) / cw2 * oneOver16PiSqr;
@@ -784,18 +784,18 @@ double Weinberg_angle::calculate_self_energy_z_top(
  *
  * @return W self-energy with top DR-bar mass replaced by top pole mass
  */
-double Weinberg_angle::replace_mtop_in_self_energy_w(
-   double self_energy_w, double p, const Self_energy_data& data)
+precise_real_type Weinberg_angle::replace_mtop_in_self_energy_w(
+   precise_real_type self_energy_w, precise_real_type p, const Self_energy_data& data)
 {
-   const double mt_pole = data.mt_pole;
-   const double mt_drbar = data.mt_drbar;
+   const precise_real_type mt_pole = data.mt_pole;
+   const precise_real_type mt_drbar = data.mt_drbar;
 
-   const double self_energy_w_mt_drbar
+   const precise_real_type self_energy_w_mt_drbar
       = calculate_self_energy_w_top(p, mt_drbar, data);
-   const double self_energy_w_mt_pole
+   const precise_real_type self_energy_w_mt_pole
       = calculate_self_energy_w_top(p, mt_pole, data);
 
-   const double self_energy_w_with_mt_pole
+   const precise_real_type self_energy_w_with_mt_pole
       = self_energy_w - self_energy_w_mt_drbar + self_energy_w_mt_pole;
 
    return self_energy_w_with_mt_pole;
@@ -811,18 +811,18 @@ double Weinberg_angle::replace_mtop_in_self_energy_w(
  *
  * @return Z self-energy with top DR-bar mass replaced by top pole mass
  */
-double Weinberg_angle::replace_mtop_in_self_energy_z(
-   double self_energy_z, double p, const Self_energy_data& data)
+precise_real_type Weinberg_angle::replace_mtop_in_self_energy_z(
+   precise_real_type self_energy_z, precise_real_type p, const Self_energy_data& data)
 {
-   const double mt_pole = data.mt_pole;
-   const double mt_drbar = data.mt_drbar;
+   const precise_real_type mt_pole = data.mt_pole;
+   const precise_real_type mt_drbar = data.mt_drbar;
 
-   const double self_energy_z_mt_drbar
+   const precise_real_type self_energy_z_mt_drbar
       = calculate_self_energy_z_top(p, mt_drbar, data);
-   const double self_energy_z_mt_pole
+   const precise_real_type self_energy_z_mt_pole
       = calculate_self_energy_z_top(p, mt_pole, data);
 
-   const double self_energy_z_with_mt_pole
+   const precise_real_type self_energy_z_with_mt_pole
       = self_energy_z - self_energy_z_mt_drbar + self_energy_z_mt_pole;
 
    return self_energy_z_with_mt_pole;

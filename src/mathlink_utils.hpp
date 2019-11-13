@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef MATHLINK_UTILS_H
 #define MATHLINK_UTILS_H
 
@@ -38,42 +40,42 @@ inline void MLPut(MLINK link, int c)
    MLPutInteger(link, c);
 }
 
-inline void MLPut(MLINK link, double c)
+inline void MLPut(MLINK link, precise_real_type c)
 {
-   MLPutReal(link, c);
+   MLPutReal(link, (double)(c));
 }
 
-inline void MLPut(MLINK link, std::complex<double> c)
+inline void MLPut(MLINK link, precise_complex_type c)
 {
-   if (std::imag(c) == 0.) {
-      MLPutReal(link, std::real(c));
+   if (imag(c) == 0.) {
+      MLPutReal(link, (double)(real(c)));
    } else {
       MLPutFunction(link, "Complex", 2);
-      MLPutReal(link, std::real(c));
-      MLPutReal(link, std::imag(c));
+      MLPutReal(link, (double)(real(c)));
+      MLPutReal(link, (double)(imag(c)));
    }
 }
 
 template <int M>
-void MLPut(MLINK link, const Eigen::Array<double,M,1>& a)
+void MLPut(MLINK link, const Eigen::Array<precise_real_type,M,1>& a)
 {
-   double v[M];
+   precise_real_type v[M];
    for (int i = 0; i < M; i++)
       v[i] = a(i);
-   MLPutRealList(link, v, M);
+   MLPutRealList(link, (const double*)(v), M);
 }
 
 template <int M>
-void MLPut(MLINK link, const Eigen::Matrix<double,M,1>& m)
+void MLPut(MLINK link, const Eigen::Matrix<precise_real_type,M,1>& m)
 {
-   const Eigen::Array<double,M,1> a(m.array());
+   const Eigen::Array<precise_real_type,M,1> a(m.array());
    MLPut(link, a);
 }
 
 template <int M, int N>
-void MLPut(MLINK link, const Eigen::Matrix<double,M,N>& m)
+void MLPut(MLINK link, const Eigen::Matrix<precise_real_type,M,N>& m)
 {
-   double mat[M][N];
+   precise_real_type mat[M][N];
    for (int i = 0; i < M; i++)
       for (int k = 0; k < N; k++)
          mat[i][k] = m(i, k);
@@ -83,7 +85,7 @@ void MLPut(MLINK link, const Eigen::Matrix<double,M,N>& m)
 }
 
 template <int M>
-void MLPut(MLINK link, const Eigen::Array<std::complex<double>,M,1>& a)
+void MLPut(MLINK link, const Eigen::Array<precise_complex_type,M,1>& a)
 {
    MLPutFunction(link, "List", M);
    for (int i = 0; i < M; i++)
@@ -91,14 +93,14 @@ void MLPut(MLINK link, const Eigen::Array<std::complex<double>,M,1>& a)
 }
 
 template <int M>
-void MLPut(MLINK link, const Eigen::Matrix<std::complex<double>,M,1>& m)
+void MLPut(MLINK link, const Eigen::Matrix<precise_complex_type,M,1>& m)
 {
-   const Eigen::Array<std::complex<double>,M,1> a(m.array());
+   const Eigen::Array<precise_complex_type,M,1> a(m.array());
    MLPut(link, a);
 }
 
 template <int M, int N>
-void MLPut(MLINK link, const Eigen::Matrix<std::complex<double>,M,N>& m)
+void MLPut(MLINK link, const Eigen::Matrix<precise_complex_type,M,N>& m)
 {
    MLPutFunction(link, "List", M);
    for (int i = 0; i < M; i++) {

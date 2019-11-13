@@ -16,10 +16,12 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef PHYSICAL_INPUT_H
 #define PHYSICAL_INPUT_H
 
-#include <array>
+#include <boost/array.hpp>
 #include <string>
 #include <Eigen/Core>
 
@@ -43,15 +45,15 @@ public:
 
    Physical_input();
 
-   double get(Input) const;    ///< get value of input parameter
-   Eigen::ArrayXd get() const; ///< get all input parameter values
-   static const std::array<std::string, NUMBER_OF_INPUT_PARAMETERS>& get_names(); ///< get names of input parameters
-   void set(Input, double);   ///< set value of input parameter
-   void set(const Eigen::ArrayXd&); ///< set all input parameter values
+   precise_real_type get(Input) const;    ///< get value of input parameter
+   Eigen::ArrayXdp get() const; ///< get all input parameter values
+   static const boost::array<std::string, NUMBER_OF_INPUT_PARAMETERS>& get_names(); ///< get names of input parameters
+   void set(Input, precise_real_type);   ///< set value of input parameter
+   void set(const Eigen::ArrayXdp&); ///< set all input parameter values
    void reset();              ///< resets all input parameters to their defaults
 
 private:
-   std::array<double, NUMBER_OF_INPUT_PARAMETERS> values; ///< input parameter values
+   boost::array<precise_real_type, NUMBER_OF_INPUT_PARAMETERS> values; ///< input parameter values
 };
 
 } // namespace flexiblesusy

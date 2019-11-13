@@ -23,6 +23,8 @@
  * @FlexibleSUSYVersion@ and SARAH @SARAHVersion@ .
  */
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_FFVFormFactors_H
 #define @ModelName@_FFVFormFactors_H
 

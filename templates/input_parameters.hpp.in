@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_INPUT_PARAMETERS_H
 #define @ModelName@_INPUT_PARAMETERS_H
 
@@ -29,8 +31,8 @@ namespace flexiblesusy {
 struct @ModelName@_input_parameters {
 @defineInputParameters@
 
-   Eigen::ArrayXd get() const;
-   void set(const Eigen::ArrayXd&);
+   Eigen::ArrayXdp get() const;
+   void set(const Eigen::ArrayXdp&);
 };
 
 std::ostream& operator<<(std::ostream&, const @ModelName@_input_parameters&);

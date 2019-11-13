@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef FUNCTORS_H
 #define FUNCTORS_H
 
@@ -33,9 +35,9 @@ namespace flexiblesusy {
 template <typename RealScalar>
 struct Chop {
    Chop() = default;
-   Chop(RealScalar threshold_) : threshold(std::abs(threshold_)) {}
+   Chop(RealScalar threshold_) : threshold(abs(threshold_)) {}
    const RealScalar operator()(const RealScalar& x) const noexcept {
-      return std::abs(x) < threshold ? RealScalar{} : x;
+      return abs(x) < threshold ? RealScalar{} : x;
    }
    RealScalar threshold{std::numeric_limits<RealScalar>::epsilon()};
 };

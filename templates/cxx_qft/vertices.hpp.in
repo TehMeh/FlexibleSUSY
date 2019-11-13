@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 /**
  * @file cxx_qft/@ModelName@_vertices.hpp
  *
@@ -47,12 +49,12 @@ namespace @ModelName@_cxx_diagrams {
    class ScalarVertex
    {
    private:
-      std::complex<double> val;
+      precise_complex_type val;
 
    public:
-      ScalarVertex(std::complex<double> v) : val(v) {}
+      ScalarVertex(precise_complex_type v) : val(v) {}
 
-      std::complex<double> value() const { return val; }
+      precise_complex_type value() const { return val; }
 
       bool isZero() const
       {
@@ -63,17 +65,17 @@ namespace @ModelName@_cxx_diagrams {
    class ChiralVertex
    {
    private:
-      std::pair<std::complex<double>, std::complex<double>> value;
+      std::pair<precise_complex_type, precise_complex_type> value;
 
    public:
-      ChiralVertex(const std::complex<double>& left,
-                   const std::complex<double>& right)
+      ChiralVertex(const precise_complex_type& left,
+                   const precise_complex_type& right)
          : value(left, right)
       {
       }
 
-      std::complex<double> left() const { return value.first; }
-      std::complex<double> right() const { return value.second; }
+      precise_complex_type left() const { return value.first; }
+      precise_complex_type right() const { return value.second; }
 
       bool isZero() const
       {
@@ -89,13 +91,13 @@ namespace @ModelName@_cxx_diagrams {
  * momentum the vertex is proportional.
  **/
 class MomentumVertex {
-  std::complex<double> val;
+  precise_complex_type val;
    int ind;
 public:
    /** \brief Contruct a MomentumVertex from a
     * complex number representing and a field index.
     **/
-   MomentumVertex(const std::complex<double>& v, int i)
+   MomentumVertex(const precise_complex_type& v, int i)
       : val(v), ind(i)
    {}
 
@@ -110,7 +112,7 @@ public:
     * the vertex is proportional.
     * \returns the coefficient of the even permutation
     **/
-   std::complex<double> value(int i) const
+   precise_complex_type value(int i) const
    {
       if (i != ind)
          throw std::invalid_argument(
@@ -146,13 +148,13 @@ public:
    struct even_permutation {};
    struct odd_permutation {};
 private:
-   std::complex<double> val;
+   precise_complex_type val;
    bool even;
 public:
    /** \brief Contruct a TripleVectorVertex from a
     * complex number representing the even coefficient.
     **/
-   TripleVectorVertex(const std::complex<double>& v,
+   TripleVectorVertex(const precise_complex_type& v,
                       even_permutation)
       : val(v), even(true)
    {}
@@ -160,7 +162,7 @@ public:
    /** \brief Contruct a TripleVectorVertex from a
     * complex number representing the odd coefficient.
     **/
-   TripleVectorVertex(const std::complex<double>& v,
+   TripleVectorVertex(const precise_complex_type& v,
                       odd_permutation)
       : val(v), even(false)
    {}
@@ -174,13 +176,13 @@ public:
    /** \brief Retrieve the coefficient of the even permutation
     * \returns the coefficient of the even permutation
     **/
-   std::complex<double> value(even_permutation) const
+   precise_complex_type value(even_permutation) const
    { return even ? val : - val; }
 
    /** \brief Retrieve the coefficient of the odd permutation
     * \returns the coefficient of the odd permutation
     **/
-   std::complex<double> value(odd_permutation) const
+   precise_complex_type value(odd_permutation) const
    { return even ? - val : val; }
 
    bool isZero() const
@@ -199,33 +201,33 @@ public:
  * \f}
  **/
 class QuadrupleVectorVertex {
-   std::complex<double> part1, part2, part3;
+   precise_complex_type part1, part2, part3;
 
 public:
    /** \brief Contruct a QuadrupleVectorVertex from three
     * complex numbers representing the coefficients in the
     * basis expansion.
     **/
-   QuadrupleVectorVertex(const std::complex<double>& p1,
-                         const std::complex<double>& p2,
-                         const std::complex<double>& p3)
+   QuadrupleVectorVertex(const precise_complex_type& p1,
+                         const precise_complex_type& p2,
+                         const precise_complex_type& p3)
       : part1(p1), part2(p2), part3(p3)
    {}
 
    /** \brief Retrieve the coefficient of \f$ g[l1, l2] g[l3, l4] \f$
     * \returns the corresponding coefficient
     **/
-   std::complex<double> value1() const { return part1; }
+   precise_complex_type value1() const { return part1; }
 
    /** \brief Retrieve the coefficient of \f$ g[l1, l3] g[l2, l4] \f$
     * \returns the corresponding coefficient
     **/
-   std::complex<double> value2() const { return part2; }
+   precise_complex_type value2() const { return part2; }
 
    /** \brief Retrieve the coefficient of \f$ g[l1, l4] g[l2, l3] \f$
     * \returns the corresponding coefficient
     **/
-   std::complex<double> value3() const { return part3; }
+   precise_complex_type value3() const { return part3; }
 
    bool isZero() const
    {
@@ -236,14 +238,14 @@ public:
 };
 
 class MomentumDifferenceVertex {
-   std::complex<double> val;
+   precise_complex_type val;
    int minuendIndex;
    int subtrahendIndex;
 public:
-   MomentumDifferenceVertex(std::complex<double> v, int mi, int si)
+   MomentumDifferenceVertex(precise_complex_type v, int mi, int si)
       : val(v), minuendIndex(mi), subtrahendIndex(si) {}
 
-   std::complex<double> value(int mi, int si) const
+   precise_complex_type value(int mi, int si) const
    {
       if (mi == minuendIndex && si == subtrahendIndex)
          return val;
@@ -265,11 +267,11 @@ public:
 };
 
 class InverseMetricVertex {
-   std::complex<double> val;
+   precise_complex_type val;
 public:
-   InverseMetricVertex(std::complex<double> v) : val(v) {}
+   InverseMetricVertex(precise_complex_type v) : val(v) {}
 
-   std::complex<double> value() const { return val; }
+   precise_complex_type value() const { return val; }
 
    bool isZero() const
    {
@@ -359,7 +361,7 @@ ChiralVertex unit_charge(const context_base& context);
 
 inline double unit_charge(const context_base& context)
 {
-   return -(detail::unit_charge(context).left().real() /
+   return -(double)(detail::unit_charge(context).left().real() /
             fields::Electron::electric_charge);
 }
 

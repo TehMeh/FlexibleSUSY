@@ -75,16 +75,16 @@ standard_model::Standard_model @ModelName@_effective_couplings::initialise_SM() 
    return sm;
 }
 
-void @ModelName@_effective_couplings::run_SM_strong_coupling_to(standard_model::Standard_model sm, double m)
+void @ModelName@_effective_couplings::run_SM_strong_coupling_to(standard_model::Standard_model sm, precise_real_type m)
 {
    sm.run_to(m);
 
 @setSMStrongCoupling@
 }
 
-std::complex<double> @ModelName@_effective_couplings::scalar_scalar_qcd_factor(double m_decay, double m_loop) const
+precise_complex_type @ModelName@_effective_couplings::scalar_scalar_qcd_factor(precise_real_type m_decay, precise_real_type m_loop) const
 {
-   std::complex<double> result(1.0, 0.0);
+   precise_complex_type result(1.0, 0.0);
 
    if (include_qcd_corrections) {
 @calculateScalarScalarLoopQCDFactor@
@@ -93,9 +93,9 @@ std::complex<double> @ModelName@_effective_couplings::scalar_scalar_qcd_factor(d
    return result;
 }
 
-std::complex<double> @ModelName@_effective_couplings::scalar_fermion_qcd_factor(double m_decay, double m_loop) const
+precise_complex_type @ModelName@_effective_couplings::scalar_fermion_qcd_factor(precise_real_type m_decay, precise_real_type m_loop) const
 {
-   std::complex<double> result(1.0, 0.0);
+   precise_complex_type result(1.0, 0.0);
 
    if (include_qcd_corrections) {
 @calculateScalarFermionLoopQCDFactor@
@@ -104,9 +104,9 @@ std::complex<double> @ModelName@_effective_couplings::scalar_fermion_qcd_factor(
    return result;
 }
 
-std::complex<double> @ModelName@_effective_couplings::pseudoscalar_fermion_qcd_factor(double m_decay, double m_loop) const
+precise_complex_type @ModelName@_effective_couplings::pseudoscalar_fermion_qcd_factor(precise_real_type m_decay, precise_real_type m_loop) const
 {
-   std::complex<double> result(1.0, 0.0);
+   precise_complex_type result(1.0, 0.0);
 
    if (include_qcd_corrections) {
 @calculatePseudoscalarFermionLoopQCDFactor@
@@ -115,7 +115,7 @@ std::complex<double> @ModelName@_effective_couplings::pseudoscalar_fermion_qcd_f
    return result;
 }
 
-double @ModelName@_effective_couplings::number_of_active_flavours(double m) const
+precise_real_type @ModelName@_effective_couplings::number_of_active_flavours(precise_real_type m) const
 {
    if (m < qedqcd.displayMbMb()) {
       return 4.0;
@@ -126,21 +126,21 @@ double @ModelName@_effective_couplings::number_of_active_flavours(double m) cons
    }
 }
 
-double @ModelName@_effective_couplings::scalar_scaling_factor(double m) const
+precise_real_type @ModelName@_effective_couplings::scalar_scaling_factor(precise_real_type m) const
 {
-   const double Nf = number_of_active_flavours(m);
-   const double mtpole = qedqcd.displayPoleMt();
-   const double l = Log(Sqr(m) / Sqr(mtpole));
+   const precise_real_type Nf = number_of_active_flavours(m);
+   const precise_real_type mtpole = qedqcd.displayPoleMt();
+   const precise_real_type l = Log(Sqr(m) / Sqr(mtpole));
 
 @calculateScalarQCDScalingFactor@
    return Sqrt(1.0 + nlo_qcd + nnlo_qcd + nnnlo_qcd);
 }
 
-double @ModelName@_effective_couplings::pseudoscalar_scaling_factor(double m) const
+precise_real_type @ModelName@_effective_couplings::pseudoscalar_scaling_factor(precise_real_type m) const
 {
-   const double Nf = number_of_active_flavours(m);
-   const double mtpole = qedqcd.displayPoleMt();
-   const double l = Log(Sqr(m) / Sqr(mtpole));
+   const precise_real_type Nf = number_of_active_flavours(m);
+   const precise_real_type mtpole = qedqcd.displayPoleMt();
+   const precise_real_type l = Log(Sqr(m) / Sqr(mtpole));
 
 @calculatePseudoscalarQCDScalingFactor@
    return Sqrt(1.0 + nlo_qcd + nnlo_qcd + nnnlo_qcd);

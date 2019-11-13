@@ -147,13 +147,13 @@ bool Command_line_options::starts_with(const std::string& str,
  *
  * @param str full option string, including the parameter value (--m0=125)
  * @param prefix option string, without the parameter value (--m0=)
- * @param[out] parameter output parameter value (of type double)
+ * @param[out] parameter output parameter value (of type precise_real_type)
  *
  * @return true, if str starts with prefix, false otherwise
  */
 bool Command_line_options::get_parameter_value(const std::string& str,
                                                const std::string& prefix,
-                                               double& parameter)
+                                               precise_real_type& parameter)
 {
    if (starts_with(str, prefix)) {
       parameter = stod(str.substr(prefix.length()));

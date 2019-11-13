@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef GSL_VECTOR_H
 #define GSL_VECTOR_H
 
@@ -30,7 +32,7 @@ namespace flexiblesusy {
 class GSL_vector {
 public:
    GSL_vector() = default;
-   GSL_vector(std::size_t);
+   GSL_vector(size_t);
    GSL_vector(const gsl_vector*);        ///< create copy of given gsl_vector
    GSL_vector(const GSL_vector&);
    GSL_vector(GSL_vector&&) noexcept;
@@ -39,24 +41,24 @@ public:
 
    const GSL_vector& operator=(const GSL_vector&);
    GSL_vector& operator=(GSL_vector&&) noexcept;
-   double& operator[](std::size_t);      ///< element read/write access
-   double operator[](std::size_t) const; ///< element read access
-   double& operator()(std::size_t);      ///< element read/write access w/ range check
-   double operator()(std::size_t) const; ///< element read access w/ range check
+   double& operator[](size_t);      ///< element read/write access
+   double operator[](size_t) const; ///< element read access
+   double& operator()(size_t);      ///< element read/write access w/ range check
+   double operator()(size_t) const; ///< element read access w/ range check
 
    bool empty() const noexcept;             ///< check if empty
    const gsl_vector* raw() const noexcept;  ///< get raw pointer
    gsl_vector* raw() noexcept;              ///< get raw pointer
    gsl::owner<gsl_vector>* release() noexcept; ///< release raw pointer from this object
-   void set_all(double) noexcept;           ///< set all elemets to same value
-   std::size_t size() const noexcept;       ///< number of elements
+   void set_all(precise_real_type) noexcept;           ///< set all elemets to same value
+   size_t size() const noexcept;       ///< number of elements
 
 private:
    gsl::owner<gsl_vector>* vec{nullptr};    ///< raw gsl_vector
 
    void assign(const gsl_vector*);          ///< assign from gsl_vector
    void move_assign(GSL_vector&&) noexcept; ///< move assign
-   void range_check(std::size_t) const;
+   void range_check(size_t) const;
 };
 
 double* begin(GSL_vector&); ///< iterator to begin of GSL_vector

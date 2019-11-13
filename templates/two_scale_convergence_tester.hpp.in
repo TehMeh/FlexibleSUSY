@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_TWO_SCALE_CONVERGENCE_TESTER_H
 #define @ModelName@_TWO_SCALE_CONVERGENCE_TESTER_H
 
@@ -35,11 +37,11 @@ class @ModelName@_convergence_tester<Two_scale> : public Convergence_tester_DRba
 public:
    using Scale_getter = Convergence_tester_DRbar<@ModelName@<Two_scale>>::Scale_getter;
 
-   @ModelName@_convergence_tester(@ModelName@<Two_scale>*, double, const Scale_getter& sg = Scale_getter());
+   @ModelName@_convergence_tester(@ModelName@<Two_scale>*, precise_real_type, const Scale_getter& sg = Scale_getter());
    virtual ~@ModelName@_convergence_tester() = default;
 
 protected:
-   virtual double max_rel_diff() const;
+   virtual precise_real_type max_rel_diff() const;
 };
 
 } // namespace flexiblesusy

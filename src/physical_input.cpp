@@ -32,35 +32,35 @@ Physical_input::Physical_input()
    reset();
 }
 
-double Physical_input::get(Input o) const
+precise_real_type Physical_input::get(Input o) const
 {
    return values.at(o);
 }
 
-Eigen::ArrayXd Physical_input::get() const
+Eigen::ArrayXdp Physical_input::get() const
 {
-   Eigen::ArrayXd vec(values.size());
+   Eigen::ArrayXdp vec(values.size());
 
    std::copy(values.cbegin(), values.cend(), vec.data());
 
    return vec;
 }
 
-const std::array<std::string, Physical_input::NUMBER_OF_INPUT_PARAMETERS>& Physical_input::get_names()
+const boost::array<std::string, Physical_input::NUMBER_OF_INPUT_PARAMETERS>& Physical_input::get_names()
 {
-   static const std::array<std::string, NUMBER_OF_INPUT_PARAMETERS> names = {
+   static const boost::array<std::string, NUMBER_OF_INPUT_PARAMETERS> names = {
       "alpha_em(0)",
       "mh_pole"
    };
    return names;
 }
 
-void Physical_input::set(Input o, double value)
+void Physical_input::set(Input o, precise_real_type value)
 {
    values.at(o) = value;
 }
 
-void Physical_input::set(const Eigen::ArrayXd& vec)
+void Physical_input::set(const Eigen::ArrayXdp& vec)
 {
    if (vec.size() != static_cast<decltype(vec.size())>(values.size()))
       throw SetupError("Parameters array has wrong size");
@@ -73,8 +73,8 @@ void Physical_input::set(const Eigen::ArrayXd& vec)
  *
  * | enum                             | possible values              | default value   |
  * |----------------------------------|------------------------------|-----------------|
- * | alpha_em_0                       | any positive double          | 1/137.035999074 |
- * | mh_pole                          | any positive double          | 125.09          |
+ * | alpha_em_0                       | any positive precise_real_type          | 1/137.035999074 |
+ * | mh_pole                          | any positive precise_real_type          | 125.09          |
  */
 void Physical_input::reset()
 {

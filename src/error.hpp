@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef ERROR_H
 #define ERROR_H
 
@@ -80,7 +82,7 @@ private:
 class NoSinThetaWConvergenceError : public Error {
 public:
    NoSinThetaWConvergenceError(int number_of_iterations_,
-                               double sin_theta_)
+                               precise_real_type sin_theta_)
       : Error("Calculation of Weinberg angle did not converge")
       , number_of_iterations(number_of_iterations_)
       , sin_theta(sin_theta_)
@@ -89,13 +91,13 @@ public:
    std::string what_detailed() const override {
       return "NoSinThetaWConvergenceError: no convergence after "
          + std::to_string(number_of_iterations) + " iterations (sin(theta)="
-         + std::to_string(sin_theta) + ")";
+         + std::to_string((double)sin_theta) + ")";
    }
    int get_number_of_iterations() const { return number_of_iterations; }
-   double get_sin_theta() const { return sin_theta; }
+   precise_real_type get_sin_theta() const { return sin_theta; }
 private:
    int number_of_iterations;
-   double sin_theta;
+   precise_real_type sin_theta;
 };
 
 /**
@@ -125,7 +127,7 @@ public:
     * The parameter index can be set to -1 (default) to indicate that
     * something is wrong with the target renormalization scale.
     */
-   explicit NonPerturbativeRunningError(double scale_, int parameter_index_ = -1, double value_ = 0)
+   explicit NonPerturbativeRunningError(precise_real_type scale_, int parameter_index_ = -1, precise_real_type value_ = 0)
       : Error("Non-perturbative RG running")
       , scale(scale_)
       , value(value_)
@@ -134,22 +136,22 @@ public:
    virtual ~NonPerturbativeRunningError() = default;
    std::string what_detailed() const override {
       if (parameter_index == -1)
-         return "NonPerturbativeRunningError: scale Q = " + std::to_string(value);
+         return "NonPerturbativeRunningError: scale Q = " + std::to_string((double)value);
 
       return "NonPerturbativeRunningError: non-perturbative running of parameter "
-         + std::to_string(parameter_index) + " to scale " + std::to_string(scale);
+         + std::to_string((double)parameter_index) + " to scale " + std::to_string((double)scale);
    }
    std::string what(const std::string& parameter_name) const {
       return "NonPerturbativeRunningError: non-perturbative running"
-         " of " + parameter_name + " = " + std::to_string(value)
-         + " to scale " + std::to_string(scale);
+         " of " + parameter_name + " = " + std::to_string((double)value)
+         + " to scale " + std::to_string((double)scale);
    }
    int get_parameter_index() const { return parameter_index; }
-   double get_parameter_value() const { return value; }
-   double get_scale() const { return scale; }
+   precise_real_type get_parameter_value() const { return value; }
+   precise_real_type get_scale() const { return scale; }
 private:
-   double scale; ///< renormalization scale
-   double value; ///< value of parameter that becomes non-perturbative
+   precise_real_type scale; ///< renormalization scale
+   precise_real_type value; ///< value of parameter that becomes non-perturbative
    int parameter_index; ///< index of parameter that becomes non-perturbative
 };
 

@@ -229,16 +229,16 @@ CreateFields[] :=
                         ">;\n" <>
                 "static constexpr int numberOfFieldIndices = " <>
                    ToString @ NumberOfFieldIndices[#] <> ";\n" <>
-                "static constexpr double electric_charge = " <>
+                "static constexpr double electric_charge = " <> (*static constexpr -> const; does not really do the job S.D. *)
                    CConversion`RValueToCFormString[TreeMasses`GetElectricCharge[#]] <> ";\n" <>
                 "using lorentz_conjugate = " <>
                    CXXNameOfField[LorentzConjugate[#]] <> ";\n"] <>
               "};" &) /@ fields, "\n\n"] <> "\n\n" <>
-
+       
        "// Named fields\n" <>
        "using Photon = " <> CXXNameOfField[SARAH`Photon] <> ";\n" <>
        "using Electron = " <> CXXNameOfField[AtomHead @ TreeMasses`GetSMElectronLepton[]] <> ";\n\n" <>
-
+       
        "// Fields that are their own Lorentz conjugates.\n" <>
        StringJoin @ Riffle[
          ("template<> struct " <> LorentzConjugateOperation[#] <> "<" <> CXXNameOfField[#] <> ">" <>
@@ -1256,9 +1256,9 @@ CreateMassFunctions[] :=
     StringJoin @ Riffle[
       Module[{fieldInfo = TreeMasses`FieldInfo[#], numberOfIndices},
              numberOfIndices = Length @ fieldInfo[[5]];
-
+                                   
              "template<> inline\n" <>
-             "double context_base::mass_impl<" <>
+             "precise_real_type context_base::mass_impl<" <>
                CXXNameOfField[#, prefixNamespace -> "fields"] <>
              ">(const std::array<int, " <> ToString @ numberOfIndices <>
              ">& indices) const\n" <>

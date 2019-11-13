@@ -16,6 +16,7 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
 
 #ifndef STANDARD_MODEL_TWO_SCALE_LOW_SCALE_CONSTRAINT_H
 #define STANDARD_MODEL_TWO_SCALE_LOW_SCALE_CONSTRAINT_H
@@ -41,7 +42,7 @@ public:
    Standard_model_low_scale_constraint(StandardModel<Two_scale>*, const softsusy::QedQcd&);
    virtual ~Standard_model_low_scale_constraint() = default;
    virtual void apply() override;
-   virtual double get_scale() const override;
+   virtual precise_real_type get_scale() const override;
    virtual std::string name() const override { return "Standard model low-scale constraint"; }
    virtual void set_model(Model*) override;
 
@@ -51,7 +52,7 @@ public:
    void set_sm_parameters(const softsusy::QedQcd&);
 
 private:
-   double scale{0.};
+   precise_real_type scale{0.};
    StandardModel<Two_scale>* model{nullptr};
    softsusy::QedQcd qedqcd{};
 };

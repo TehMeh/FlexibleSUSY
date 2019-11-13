@@ -18,6 +18,9 @@
 
 // File generated at Sat 13 Feb 2016 15:47:12
 
+
+#include "precise.hpp"
+
 #ifndef STANDARD_MODEL_PHYSICAL_H
 #define STANDARD_MODEL_PHYSICAL_H
 
@@ -35,32 +38,32 @@ struct Standard_model_physical {
    void clear();
    void convert_to_hk();   ///< converts pole masses to HK convention
    void convert_to_slha(); ///< converts pole masses to SLHA convention
-   Eigen::ArrayXd get() const; ///< returns array with all masses and mixings
-   void set(const Eigen::ArrayXd&); ///< set all masses and mixings
-   Eigen::ArrayXd get_masses() const; ///< returns array with all masses
-   void set_masses(const Eigen::ArrayXd&); ///< set all masses
+   Eigen::ArrayXdp get() const; ///< returns array with all masses and mixings
+   void set(const Eigen::ArrayXdp&); ///< set all masses and mixings
+   Eigen::ArrayXdp get_masses() const; ///< returns array with all masses
+   void set_masses(const Eigen::ArrayXdp&); ///< set all masses
    void print(std::ostream&) const;
 
-   double MVG;
-   double MHp;
-   Eigen::Array<double,3,1> MFv;
-   double MAh;
-   double Mhh;
-   double MVP;
-   double MVZ;
-   Eigen::Array<double,3,1> MFd;
-   Eigen::Array<double,3,1> MFu;
-   Eigen::Array<double,3,1> MFe;
-   double MVWp;
-   Eigen::Array<double,2,1> MVPVZ;
+   precise_real_type MVG;
+   precise_real_type MHp;
+   Eigen::Array<precise_real_type,3,1> MFv;
+   precise_real_type MAh;
+   precise_real_type Mhh;
+   precise_real_type MVP;
+   precise_real_type MVZ;
+   Eigen::Array<precise_real_type,3,1> MFd;
+   Eigen::Array<precise_real_type,3,1> MFu;
+   Eigen::Array<precise_real_type,3,1> MFe;
+   precise_real_type MVWp;
+   Eigen::Array<precise_real_type,2,1> MVPVZ;
 
-   Eigen::Matrix<std::complex<double>,3,3> Vd;
-   Eigen::Matrix<std::complex<double>,3,3> Ud;
-   Eigen::Matrix<std::complex<double>,3,3> Vu;
-   Eigen::Matrix<std::complex<double>,3,3> Uu;
-   Eigen::Matrix<std::complex<double>,3,3> Ve;
-   Eigen::Matrix<std::complex<double>,3,3> Ue;
-   Eigen::Matrix<double,2,2> ZZ;
+   Eigen::Matrix<precise_complex_type,3,3> Vd;
+   Eigen::Matrix<precise_complex_type,3,3> Ud;
+   Eigen::Matrix<precise_complex_type,3,3> Vu;
+   Eigen::Matrix<precise_complex_type,3,3> Uu;
+   Eigen::Matrix<precise_complex_type,3,3> Ve;
+   Eigen::Matrix<precise_complex_type,3,3> Ue;
+   Eigen::Matrix<precise_real_type,2,2> ZZ;
 
 };
 

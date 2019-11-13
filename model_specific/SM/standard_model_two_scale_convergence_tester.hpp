@@ -18,6 +18,9 @@
 
 // File generated at Fri 28 Oct 2016 12:11:14
 
+
+#include "precise.hpp"
+
 #ifndef STANDARD_MODEL_TWO_SCALE_CONVERGENCE_TESTER_H
 #define STANDARD_MODEL_TWO_SCALE_CONVERGENCE_TESTER_H
 
@@ -37,11 +40,11 @@ class Standard_model_convergence_tester<Two_scale>
 public:
    using Scale_getter = Convergence_tester_DRbar<StandardModel<Two_scale>>::Scale_getter;
 
-   Standard_model_convergence_tester(StandardModel<Two_scale>*, double, const Scale_getter& sg = Scale_getter());
+   Standard_model_convergence_tester(StandardModel<Two_scale>*, precise_real_type, const Scale_getter& sg = Scale_getter());
    virtual ~Standard_model_convergence_tester() = default;
 
 protected:
-   virtual double max_rel_diff() const override;
+   virtual precise_real_type max_rel_diff() const override;
 };
 
 } // namespace standard_model

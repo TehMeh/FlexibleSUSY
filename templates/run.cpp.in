@@ -96,9 +96,9 @@ int run_solver(flexiblesusy::@ModelName@_slha_io& slha_io,
       slha_io.set_spinfo(problems);
       slha_io.set_input(input);
       if (show_result) {
-         slha_io.set_print_imaginary_parts_of_majorana_mixings(
-            spectrum_generator_settings.get(
-               Spectrum_generator_settings::force_positive_masses));
+         slha_io.set_print_imaginary_parts_of_majorana_mixings((bool)
+            (spectrum_generator_settings.get(
+               Spectrum_generator_settings::force_positive_masses)));
          slha_io.set_spectrum(models);
          slha_io.set_extra(std::get<0>(models), scales, observables);
       }

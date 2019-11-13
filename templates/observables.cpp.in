@@ -68,7 +68,7 @@ const int @ModelName@_observables::NUMBER_OF_OBSERVABLES;
 {
 }
 
-Eigen::ArrayXd @ModelName@_observables::get() const
+Eigen::ArrayXdp @ModelName@_observables::get() const
 {
 @getObservables@
    return vec;
@@ -85,7 +85,7 @@ void @ModelName@_observables::clear()
 @clearObservables@
 }
 
-void @ModelName@_observables::set(const Eigen::ArrayXd& vec)
+void @ModelName@_observables::set(const Eigen::ArrayXdp& vec)
 {
 @setObservables@
 }
@@ -93,7 +93,7 @@ void @ModelName@_observables::set(const Eigen::ArrayXd& vec)
 @ModelName@_observables calculate_observables(@ModelName@_mass_eigenstates& model,
                                               const softsusy::QedQcd& qedqcd,
                                               const Physical_input& physical_input,
-                                              double scale)
+                                              precise_real_type scale)
 {
    auto model_at_scale = model;
 

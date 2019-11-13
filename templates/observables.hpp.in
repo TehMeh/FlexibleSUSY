@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_OBSERVABLES_H
 #define @ModelName@_OBSERVABLES_H
 
@@ -38,10 +40,10 @@ struct @ModelName@_observables {
    static const int NUMBER_OF_OBSERVABLES = @numberOfObservables@;
 
    @ModelName@_observables();
-   Eigen::ArrayXd get() const; ///< returns vector of all observables
+   Eigen::ArrayXdp get() const; ///< returns vector of all observables
    static std::vector<std::string> get_names(); ///< returns vector of all observable names
    void clear(); ///< sets all observables to zero
-   void set(const Eigen::ArrayXd&); ///< sets all observables from given vector
+   void set(const Eigen::ArrayXdp&); ///< sets all observables from given vector
 
 @observablesDef@
 };
@@ -52,7 +54,7 @@ struct @ModelName@_observables {
 
 @ModelName@_observables calculate_observables(
    @ModelName@_mass_eigenstates&, const softsusy::QedQcd&,
-   const Physical_input&, double scale);
+   const Physical_input&, precise_real_type scale);
 
 } // namespace flexiblesusy
 

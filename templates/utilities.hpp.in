@@ -18,6 +18,8 @@
 
 // File generated at @DateAndTime@
 
+#include "precise.hpp"
+
 #ifndef @ModelName@_UTILITIES_H
 #define @ModelName@_UTILITIES_H
 
@@ -66,7 +68,7 @@ private:
 
 public:
    /// returns DR-bar parameters
-   Eigen::ArrayXd get_parameters(const @ModelName@_mass_eigenstates& model) {
+   Eigen::ArrayXdp get_parameters(const @ModelName@_mass_eigenstates& model) {
       return model.get();
    }
 
@@ -126,9 +128,9 @@ private:
    struct TParticle {
       std::string name;
       std::string latex_name;
-      std::valarray<double> masses;
+      boost::compute::valarray<precise_real_type> masses;
       TParticle(const std::string& name_, const std::string& latex_name_,
-                const std::valarray<double>& masses_)
+                const boost::compute::valarray<precise_real_type>& masses_)
          : name(name_)
          , latex_name(latex_name_)
          , masses(masses_)
@@ -136,10 +138,10 @@ private:
    };
    using TSpectrum = std::vector<TParticle>;
    TSpectrum spectrum{};
-   double scale{0.};
+   precise_real_type scale{0.};
    int width{16};
 
-   void write_spectrum(const TSpectrum&, std::ofstream&) const;
+   void write_spectrum(const TSpectrum&, boost::filesystem::ofstream&) const;
 };
 
 namespace @ModelName@_database {

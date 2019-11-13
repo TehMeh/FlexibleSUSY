@@ -21,6 +21,8 @@
  * @brief contains functions to calculate derivatives numerically
  */
 
+#include "precise.hpp"
+
 #ifndef DERIVATIVE_H
 #define DERIVATIVE_H
 

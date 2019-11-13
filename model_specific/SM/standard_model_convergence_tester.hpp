@@ -18,6 +18,9 @@
 
 // File generated at Fri 28 Oct 2016 12:11:14
 
+
+#include "precise.hpp"
+
 #ifndef STANDARD_MODEL_CONVERGENCE_TESTER_H
 #define STANDARD_MODEL_CONVERGENCE_TESTER_H
 

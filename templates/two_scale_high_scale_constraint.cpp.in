@@ -69,7 +69,7 @@ namespace flexiblesusy {
       himalaya::Parameters pars;                                        \
 @fillHimalayaInput@
                                                                         \
-      double lambda_3L = 0.;                                            \
+      precise_real_type lambda_3L = 0.;                                            \
                                                                         \
       try {                                                             \
          const bool verbose = false;                                    \
@@ -134,12 +134,12 @@ bool @ModelName@_high_scale_constraint<Two_scale>::check_non_perturbative()
    return problem;
 }
 
-double @ModelName@_high_scale_constraint<Two_scale>::get_scale() const
+precise_real_type @ModelName@_high_scale_constraint<Two_scale>::get_scale() const
 {
    return scale;
 }
 
-double @ModelName@_high_scale_constraint<Two_scale>::get_initial_scale_guess() const
+precise_real_type @ModelName@_high_scale_constraint<Two_scale>::get_initial_scale_guess() const
 {
    return initial_scale_guess;
 }
@@ -159,7 +159,7 @@ void @ModelName@_high_scale_constraint<Two_scale>::set_model(Model* model_)
    model = cast_model<@ModelName@<Two_scale>*>(model_);
 }
 
-void @ModelName@_high_scale_constraint<Two_scale>::set_scale(double s)
+void @ModelName@_high_scale_constraint<Two_scale>::set_scale(precise_real_type s)
 {
    scale = s;
 }

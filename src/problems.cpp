@@ -149,13 +149,13 @@ std::vector<std::string> Problems::get_problem_strings() const
       std::string str("non-perturbative " + par_name);
       if (par.second.threshold > 0) {
          str += " [|" + par_name + "|(" +
-                std::to_string(par.second.scale) + ") = " +
-                std::to_string(par.second.value) +
-                " > " + std::to_string(par.second.threshold) + "]";
+                boost::to_string(par.second.scale) + ") = " +
+                boost::to_string(par.second.value) +
+                " > " + boost::to_string(par.second.threshold) + "]";
       } else {
          str += " [" + par_name + "(" +
-                std::to_string(par.second.scale) +
-                ") = " + std::to_string(par.second.value) + "]";
+                boost::to_string(par.second.scale) +
+                ") = " + boost::to_string(par.second.value) + "]";
       }
       strings.emplace_back(str);
    }
@@ -258,7 +258,7 @@ void Problems::flag_no_pole_mass_convergence(int particle)
 }
 
 void Problems::flag_non_perturbative_parameter(
-   int parameter, double value, double scale, double threshold)
+   int parameter, precise_real_type value, precise_real_type scale, precise_real_type threshold)
 {
    const auto n_parameters = parameter_names->size();
 

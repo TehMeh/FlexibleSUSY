@@ -23,7 +23,7 @@
 namespace flexiblesusy {
 
 namespace {
-const std::array<std::string, Spectrum_generator_settings::NUMBER_OF_OPTIONS> descriptions = {
+const boost::array<std::string, Spectrum_generator_settings::NUMBER_OF_OPTIONS> descriptions = {
    "precision goal",
    "max. iterations (0 = automatic)",
    "solver (0 = all)",
@@ -69,8 +69,9 @@ Spectrum_generator_settings::Spectrum_generator_settings()
    reset();
 }
 
-double Spectrum_generator_settings::get(Settings o) const
+precise_real_type Spectrum_generator_settings::get(Settings o) const
 {
+   //std::cout<<"spectrum settings GET "<<Spectrum_generator_settings::get_description(o)<<" : "<<values.at(o)<<std::endl;
    return values.at(o);
 }
 
@@ -85,8 +86,9 @@ std::string Spectrum_generator_settings::get_description(Settings o) const
    return descriptions.at(o);
 }
 
-void Spectrum_generator_settings::set(Settings o, double value)
-{
+void Spectrum_generator_settings::set(Settings o, precise_real_type value)
+{  
+   //std::cout<<"spectrum settings SET "<<Spectrum_generator_settings::get_description(o)<<" : "<<values.at(o)<<std::endl;
    values.at(o) = value;
 }
 
@@ -100,8 +102,8 @@ void Spectrum_generator_settings::set(const Spectrum_generator_settings::Setting
  *
  * | enum                             | possible values                                 | default value   |
  * |----------------------------------|-------------------------------------------------|-----------------|
- * | precision                        | any positive double                             | 1.0e-4          |
- * | max_iterations                   | any positive double                             | 0 (= automatic) |
+ * | precision                        | any positive precise_real_type                             | 1.0e-4          |
+ * | max_iterations                   | any positive precise_real_type                             | 0 (= automatic) |
  * | solver                           | 0 (all), 1 (two-scale) or 2 (semi-analytic)     | 0 (= all)       |
  * | calculate_sm_masses              | 0 (no) or 1 (yes)                               | 0 (= no)        |
  * | pole_mass_loop_order             | 0, 1, 2, 3, 4                                   | 4 (= 4-loop)    |
@@ -114,12 +116,12 @@ void Spectrum_generator_settings::set(const Spectrum_generator_settings::Setting
  * | higgs_2loop_correction_atau_atau | 0, 1                                            | 1 (= enabled)   |
  * | force_output                     | 0 (no) or 1 (yes)                               | 0 (= no)        |
  * | top_pole_qcd_corrections         | 0 (1L), 1 (2L), 2 (3L)                          | 1 (= 2L QCD)    |
- * | beta_zero_threshold              | any positive double                             | 1.0e-11         |
+ * | beta_zero_threshold              | any positive precise_real_type                             | 1.0e-11         |
  * | calculate_observables            | 0 (no) or 1 (yes)                               | 0 (= no)        |
  * | force_positive_masses            | 0 (no) or 1 (yes)                               | 0 (= no)        |
- * | pole_mass_scale                  | any positive double                             | 0 (= SUSY scale)|
- * | eft_pole_mass_scale              | any positive double                             | 0 (= minimum of {Mt, SUSY scale})|
- * | eft_matching_scale               | any positive double                             | 0 (= SUSY scale)|
+ * | pole_mass_scale                  | any positive precise_real_type                             | 0 (= SUSY scale)|
+ * | eft_pole_mass_scale              | any positive precise_real_type                             | 0 (= minimum of {Mt, SUSY scale})|
+ * | eft_matching_scale               | any positive precise_real_type                             | 0 (= SUSY scale)|
  * | eft_matching_loop_order_up       | 0, 1, 2                                         | 2 (= 2-loop)    |
  * | eft_matching_loop_order_down     | 0, 1                                            | 1 (= 1-loop)    |
  * | eft_higgs_index                  | any integer >= 0                                | 0 (= lightest)  |
@@ -171,17 +173,17 @@ void Spectrum_generator_settings::reset()
 Loop_corrections Spectrum_generator_settings::get_loop_corrections() const
 {
    Loop_corrections loop_corrections;
-   loop_corrections.higgs_at_as     = get(higgs_2loop_correction_at_as);
-   loop_corrections.higgs_ab_as     = get(higgs_2loop_correction_ab_as);
-   loop_corrections.higgs_at_at     = get(higgs_2loop_correction_at_at);
-   loop_corrections.higgs_atau_atau = get(higgs_2loop_correction_atau_atau);
-   loop_corrections.higgs_at_as_as  = get(higgs_3loop_correction_at_as2);
-   loop_corrections.higgs_ab_as_as  = get(higgs_3loop_correction_ab_as2);
-   loop_corrections.higgs_at_at_as  = get(higgs_3loop_correction_at2_as);
-   loop_corrections.higgs_at_at_at  = get(higgs_3loop_correction_at3);
-   loop_corrections.higgs_at_as_as_as   = get(higgs_4loop_correction_at_as3);
-   loop_corrections.higgs_3L_scheme = get(higgs_3loop_ren_scheme_atb_as2);
-   loop_corrections.top_qcd         = get(top_pole_qcd_corrections);
+   loop_corrections.higgs_at_as     = (bool)get(higgs_2loop_correction_at_as);
+   loop_corrections.higgs_ab_as     = (bool)get(higgs_2loop_correction_ab_as);
+   loop_corrections.higgs_at_at     = (bool)get(higgs_2loop_correction_at_at);
+   loop_corrections.higgs_atau_atau = (bool)get(higgs_2loop_correction_atau_atau);
+   loop_corrections.higgs_at_as_as  = (bool)get(higgs_3loop_correction_at_as2);
+   loop_corrections.higgs_ab_as_as  = (bool)get(higgs_3loop_correction_ab_as2);
+   loop_corrections.higgs_at_at_as  = (bool)get(higgs_3loop_correction_at2_as);
+   loop_corrections.higgs_at_at_at  = (bool)get(higgs_3loop_correction_at3);
+   loop_corrections.higgs_at_as_as_as   = (bool)get(higgs_4loop_correction_at_as3);
+   loop_corrections.higgs_3L_scheme = (int)get(higgs_3loop_ren_scheme_atb_as2);
+   loop_corrections.top_qcd         = (int)get(top_pole_qcd_corrections);
 
    return loop_corrections;
 }

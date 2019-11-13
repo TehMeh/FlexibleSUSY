@@ -93,22 +93,22 @@ void @ModelName@_low_scale_constraint<Two_scale>::apply()
 @applyConstraint@
 }
 
-const Eigen::Matrix<std::complex<double>,3,3>& @ModelName@_low_scale_constraint<Two_scale>::get_ckm()
+const Eigen::Matrix<precise_complex_type,3,3>& @ModelName@_low_scale_constraint<Two_scale>::get_ckm()
 {
    return ckm;
 }
 
-const Eigen::Matrix<std::complex<double>,3,3>& @ModelName@_low_scale_constraint<Two_scale>::get_pmns()
+const Eigen::Matrix<precise_complex_type,3,3>& @ModelName@_low_scale_constraint<Two_scale>::get_pmns()
 {
    return pmns;
 }
 
-double @ModelName@_low_scale_constraint<Two_scale>::get_scale() const
+precise_real_type @ModelName@_low_scale_constraint<Two_scale>::get_scale() const
 {
    return scale;
 }
 
-double @ModelName@_low_scale_constraint<Two_scale>::get_initial_scale_guess() const
+precise_real_type @ModelName@_low_scale_constraint<Two_scale>::get_initial_scale_guess() const
 {
    return initial_scale_guess;
 }
@@ -192,13 +192,13 @@ void @ModelName@_low_scale_constraint<Two_scale>::calculate_threshold_correction
           " constraint.  You need to run the low-energy data set to this"
           " scale!");
 
-   const double alpha_em = qedqcd.displayAlpha(softsusy::ALPHA);
-   const double alpha_s  = qedqcd.displayAlpha(softsusy::ALPHAS);
-   const double mw_pole  = qedqcd.displayPoleMW();
-   const double mz_pole  = qedqcd.displayPoleMZ();
+   const precise_real_type alpha_em = qedqcd.displayAlpha(softsusy::ALPHA);
+   const precise_real_type alpha_s  = qedqcd.displayAlpha(softsusy::ALPHAS);
+   const precise_real_type mw_pole  = qedqcd.displayPoleMW();
+   const precise_real_type mz_pole  = qedqcd.displayPoleMZ();
 
-   double delta_alpha_em = 0.;
-   double delta_alpha_s  = 0.;
+   precise_real_type delta_alpha_em = 0.;
+   precise_real_type delta_alpha_s  = 0.;
 
    if (model->get_thresholds() && model->get_threshold_corrections().alpha_em > 0)
       delta_alpha_em = calculate_delta_alpha_em(alpha_em);
@@ -206,9 +206,9 @@ void @ModelName@_low_scale_constraint<Two_scale>::calculate_threshold_correction
    if (model->get_thresholds() && model->get_threshold_corrections().alpha_s > 0)
       delta_alpha_s  = calculate_delta_alpha_s(alpha_s);
 
-   const double alpha_em_drbar = alpha_em / (1.0 - delta_alpha_em);
-   const double alpha_s_drbar  = alpha_s  / (1.0 - delta_alpha_s);
-   const double e_drbar        = Sqrt(4.0 * Pi * alpha_em_drbar);
+   const precise_real_type alpha_em_drbar = alpha_em / (1.0 - delta_alpha_em);
+   const precise_real_type alpha_s_drbar  = alpha_s  / (1.0 - delta_alpha_s);
+   const precise_real_type e_drbar        = Sqrt(4.0 * Pi * alpha_em_drbar);
 
    // interface variables
    mZ_run = mz_pole;
@@ -225,11 +225,11 @@ void @ModelName@_low_scale_constraint<Two_scale>::calculate_threshold_correction
    ThetaWDRbar = calculate_theta_w();
 }
 
-double @ModelName@_low_scale_constraint<Two_scale>::calculate_theta_w()
+precise_real_type @ModelName@_low_scale_constraint<Two_scale>::calculate_theta_w()
 {
    check_model_ptr();
 
-   double theta_w = std::asin(Electroweak_constants::sinThetaW);
+   precise_real_type theta_w = asin(Electroweak_constants::sinThetaW);
 
 @calculateThetaW@
 
@@ -244,24 +244,24 @@ void @ModelName@_low_scale_constraint<Two_scale>::calculate_DRbar_gauge_coupling
 @calculateGaugeCouplings@
 }
 
-double @ModelName@_low_scale_constraint<Two_scale>::calculate_delta_alpha_em(double alphaEm) const
+precise_real_type @ModelName@_low_scale_constraint<Two_scale>::calculate_delta_alpha_em(precise_real_type alphaEm) const
 {
    check_model_ptr();
 
-   const double currentScale = model->get_scale();
+   const precise_real_type currentScale = model->get_scale();
 @calculateDeltaAlphaEm@
 }
 
-double @ModelName@_low_scale_constraint<Two_scale>::calculate_delta_alpha_s(double alphaS) const
+precise_real_type @ModelName@_low_scale_constraint<Two_scale>::calculate_delta_alpha_s(precise_real_type alphaS) const
 {
    check_model_ptr();
 
-   const double currentScale = model->get_scale();
+   const precise_real_type currentScale = model->get_scale();
 @calculateDeltaAlphaS@
 }
 
-double @ModelName@_low_scale_constraint<Two_scale>::calculate_alpha_s_SM5_at(
-   softsusy::QedQcd qedqcd_tmp, double scale) const
+precise_real_type @ModelName@_low_scale_constraint<Two_scale>::calculate_alpha_s_SM5_at(
+   softsusy::QedQcd qedqcd_tmp, precise_real_type scale) const
 {
    qedqcd_tmp.run_to(scale); // running in SM(5)
    return qedqcd_tmp.displayAlpha(softsusy::ALPHAS);
