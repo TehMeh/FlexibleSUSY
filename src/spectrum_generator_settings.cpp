@@ -206,7 +206,7 @@ void Spectrum_generator_settings::set_loop_corrections(
 
 Threshold_corrections Spectrum_generator_settings::get_threshold_corrections() const
 {
-   return Threshold_corrections(get(threshold_corrections));
+   return Threshold_corrections((Threshold_corrections::Flags_t)get(threshold_corrections));
 }
 
 void Spectrum_generator_settings::set_threshold_corrections(const Threshold_corrections& tc)
