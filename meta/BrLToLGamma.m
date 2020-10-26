@@ -39,7 +39,7 @@ CreateInterfaceFunctionForBrLToLGamma[inFermion_ -> {outFermion_, spectator_}] :
             discardSMcontributions = CXXDiagrams`CXXBoolValue[False]},
 
         prototype =
-            "double calculate_" <> CXXNameOfField[inFermion] <> "_to_" <>
+            "precise_real_type calculate_" <> CXXNameOfField[inFermion] <> "_to_" <>
             CXXNameOfField[outFermion] <> "_" <> CXXNameOfField[spectator] <> "(\n" <>
             If[TreeMasses`GetDimension[inFermion] =!= 1,
                "int generationIndex1, ",
@@ -53,7 +53,7 @@ CreateInterfaceFunctionForBrLToLGamma[inFermion_ -> {outFermion_, spectator_}] :
 
       definition =
             (* calculate observable using form factors *)
-            "double calculate_" <> CXXNameOfField[inFermion] <> "_to_" <> CXXNameOfField[outFermion] <> "_" <> CXXNameOfField[spectator] <> " (\n" <>
+            "precise_real_type calculate_" <> CXXNameOfField[inFermion] <> "_to_" <> CXXNameOfField[outFermion] <> "_" <> CXXNameOfField[spectator] <> " (\n" <>
                IndentText[
                   If[TreeMasses`GetDimension[inFermion] =!= 1, "int generationIndex1, ", ""] <>
                   If[TreeMasses`GetDimension[outFermion] =!= 1, "int generationIndex2, ", ""] <> "\n" <>
@@ -95,7 +95,7 @@ CreateInterfaceFunctionForBrLToLGamma[inFermion_ -> {outFermion_, spectator_}] :
                             ""] <>
                   "model, " <> discardSMcontributions <> ");\n" <>
                   (* Dominik suggest that the phase space prefactor should use pole masses  so we get them from the input file *)
-                  "double leptonInMassOS;\n" <>
+                  "precise_real_type leptonInMassOS;\n" <>
                   "switch (generationIndex1) {\n" <> 
                   IndentText[
                      "case 0: leptonInMassOS = qedqcd.displayMass(softsusy::mElectron); break;\n" <> 
@@ -106,9 +106,9 @@ CreateInterfaceFunctionForBrLToLGamma[inFermion_ -> {outFermion_, spectator_}] :
                   "}\n" <>
                   "\n" <>
                   "// eq. 51 of arXiv:hep-ph/9510309 (note that we include 'e' in the definition of form_factor)\n" <>
-                  "const double partial_width = pow(leptonInMassOS,5)/(16.0*Pi) * (std::norm(form_factors[2]) + std::norm(form_factors[3]));\n" <>
+                  "const precise_real_type partial_width = pow(leptonInMassOS,5)/(16.0_p*Pi) * (norm(form_factors[2]) + norm(form_factors[3]));\n" <>
 
-                  "const double total_width = lepton_total_decay_width<" <>
+                  "const precise_real_type total_width = lepton_total_decay_width<" <>
                      CXXNameOfField[inFermion] <> ", " <> CXXNameOfField[outFermion] <> 
                      ">(indices1, indices2, model, qedqcd);\n" <>
                   "\nreturn partial_width/total_width;\n"
