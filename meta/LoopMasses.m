@@ -803,7 +803,7 @@ if (pole_mass_loop_order > 1) {
 self_energy_2l = self_energy_" <> CConversion`ToValidCSymbolString[particle] <> "_2loop();
 for (int i = 0; i < " <> dimStr <> "; i++) {
    for (int k = 0; k < " <> dimStr <> "; k++) {
-      if (!std::isfinite(self_energy_2l(i,k))) {
+      if (!isfinite(self_energy_2l(i,k))) {
          self_energy_2l(i,k) = 0.;
          problems.flag_bad_mass(" <> FlexibleSUSY`FSModelName <> "_info::" <> CConversion`ToValidCSymbolString[particle] <> ");
       }
