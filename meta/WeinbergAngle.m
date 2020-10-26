@@ -301,7 +301,7 @@ DeltaRhoHat2LoopSM[]:=
                    HiggsContributions2LoopSM[]) /
                   (1 + PIZZTMZ/MZ^2);
            result = Parameters`CreateLocalConstRefs[expr] <> "\n";
-           result = result <> "deltaRhoHat2LoopSM = " <> Parameters`ExpressionToString[expr] <> ";";
+           result = result <> "deltaRhoHat2LoopSM = " <> Parameters`MarkerReplacerSUM[Parameters`ExpressionToString[expr],CConversion`complexScalarCType] <> ";";
            result
           ];
 
@@ -316,7 +316,7 @@ DeltaRHat2LoopSM[]:=
                      (2.145 MT^2/MZ^2 + 0.575 Log[MT/MZ] - 0.224 - 0.144 MZ^2/MT^2) -
                   HiggsContributions2LoopSM[] (1 - DELTARHAT1LOOP) RHOHATRATIO;
            result = Parameters`CreateLocalConstRefs[expr] <> "\n";
-           result = result <> "deltaRHat2LoopSM = " <> Parameters`ExpressionToString[expr] <> ";";
+           result = result <> "deltaRHat2LoopSM = " <> Parameters`MarkerReplacerSUM[Parameters`ExpressionToString[expr],CConversion`complexScalarCType] <> ";";
            result
           ];
 
@@ -838,15 +838,16 @@ CreateContributionPrototype[deltaVBcontri_WeinbergAngle`DeltaVB] :=
 (*creates C++ code for given part of deltaVB*)
 (*based on CreateNPointFunction from SelfEnergies.m*)
 CreateDeltaVBContribution[deltaVBcontri_WeinbergAngle`DeltaVB, vertexRules_List] :=
-    Module[{expr, functionName, type, prototype, decl, body},
+    Module[{expr, functionName, type, prototype, decl, body, myType},
            expr = ReleaseHold[deltaVBcontri[[2]]];
            functionName = CreateContributionPrototype[deltaVBcontri];
            type = CConversion`CreateCType[CConversion`ScalarType[CConversion`complexScalarCType]];
+           myType = CConversion`complexScalarCType;
            prototype = type <> " " <> functionName <> ";\n";
            decl = "\n" <> type <> " CLASSNAME::" <> functionName <> "\n{\n";
            body = Parameters`CreateLocalConstRefs[expr] <> "\n";
-           body = body <> "const " <> type <> " result = " <>
-                  Parameters`ExpressionToString[expr /. vertexRules /. a_[List[i__]] :> a[i]] <> ";\n";
+           body = body <> "const " <> type <> " result = ("<>type<>")(" <>
+                  Parameters`MarkerReplacerSUM[Parameters`ExpressionToString[expr /. vertexRules /. a_[List[i__]] :> a[i]], myType] <> ");\n";
            body = body <> "\nreturn result;";
            body = TextFormatting`IndentText[TextFormatting`WrapLines[body]];
            decl = decl <> body <> "}\n";
