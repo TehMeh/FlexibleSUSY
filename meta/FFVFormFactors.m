@@ -99,7 +99,7 @@ FFVFormFactorsCreateInterfaceFunction[Fj_ -> {Fi_, V_}, topologies_, diagrams_] 
             ];
          ];
       prototype =
-         "std::valarray<std::complex<double>> calculate_" <> CXXNameOfField[Fj] <>
+         "std::valarray<precise_complex_type> calculate_" <> CXXNameOfField[Fj] <>
             "_" <> CXXNameOfField[Fi] <> "_" <> CXXNameOfField[V] <> "_form_factors (\n" <>
             IndentText[
                If[TreeMasses`GetDimension[Fj] =!= 1,
@@ -139,7 +139,7 @@ FFVFormFactorsCreateInterfaceFunction[Fj_ -> {Fi_, V_}, topologies_, diagrams_] 
                              ""]
                          ] <> "};\n\n" <>
 
-               "std::valarray<std::complex<double>> val {0.0, 0.0, 0.0, 0.0};\n\n" <>
+               "std::valarray<precise_complex_type> val {0.0_p, 0.0_p, 0.0_p, 0.0_p};\n\n" <>
 
                temp <>
 
@@ -158,7 +158,7 @@ ColorFactorForDiagram[topology_, diagram_] :=
    ];
 
 CreateCall[Fj_, Fi_, V_, topology_, diagram_] :=
-   "val += std::complex<double> " <> ToString @ ColorFactorForDiagram[topology, diagram] <> " * FFV_" <>
+   "val += precise_complex_type " <> ToString @ ColorFactorForDiagram[topology, diagram] <> " * FFV_" <>
       StringJoin @@ (ToString /@ SARAH`getType /@ {EmitterL[diagram], EmitterR[diagram], Spectator[diagram]}) <> "<" <>
          StringJoin @ Riffle[CXXDiagrams`CXXNameOfField /@ {Fj, Fi, V, EmitterL[diagram], EmitterR[diagram], Spectator[diagram]}, ","]  <>
                      ">::value(indices1, indices2, context, discard_SM_contributions);\n";
