@@ -81,7 +81,7 @@ InitMuonDecay[eigenstates_:FlexibleSUSY`FSEigenstates] :=
 
 DefSMhyperCoupling[] :=
     Module[{result},
-           result = "const auto gY = ";
+           result = "const precise_real_type gY = ";
            If[!MuonDecayWorks,
               Return[result <> "1.;"]];
            result = result <> ThresholdCorrections`GetParameter[SARAH`hyperchargeCoupling] <> " * ";
@@ -92,7 +92,7 @@ DefSMhyperCoupling[] :=
 
 DefSMleftCoupling[] :=
     Module[{result},
-           result = "const auto g2 = ";
+           result = "const precise_real_type g2 = ";
            If[!MuonDecayWorks,
               Return[result <> "1.;"]];
            result = result <> ThresholdCorrections`GetParameter[SARAH`leftCoupling] <> " * ";
