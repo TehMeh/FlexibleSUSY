@@ -2504,10 +2504,10 @@ WriteUtilitiesClass[massMatrices_List, betaFun_List, inputParameters_List, extra
            particles = DeleteDuplicates @ Flatten[TreeMasses`GetMassEigenstate /@ massMatrices];
            susyParticles = Select[particles, (!TreeMasses`IsSMParticle[#])&];
            smParticles   = Complement[particles, susyParticles];
-           minpar = Cases[inputParameters, {p_, {"MINPAR", idx_}, ___} :> {idx, p}];
-           extpar = Cases[inputParameters, {p_, {"EXTPAR", idx_}, ___} :> {idx, p}];
-           imminpar = Cases[inputParameters, {p_, {"IMMINPAR", idx_}, ___} :> {idx, p}];
-           imextpar = Cases[inputParameters, {p_, {"IMEXTPAR", idx_}, ___} :> {idx, p}];
+           minpar = Cases[inputParameters, {p_, {"MINPAR", idx_}, type_} :> {idx, p, type}];
+           extpar = Cases[inputParameters, {p_, {"EXTPAR", idx_}, type_} :> {idx, p, type}];
+           imminpar = Cases[inputParameters, {p_, {"IMMINPAR", idx_}, type_} :> {idx, p, type}];
+           imextpar = Cases[inputParameters, {p_, {"IMEXTPAR", idx_}, type_} :> {idx, p, type}];
            extraSLHAInputParameters = Complement[
                inputParameters,
                Cases[inputParameters, {_, {"MINPAR", _}, ___}],
@@ -2546,10 +2546,10 @@ WriteUtilitiesClass[massMatrices_List, betaFun_List, inputParameters_List, extra
            writeSLHAMixingMatricesBlocks  = WriteOut`WriteSLHAMixingMatricesBlocks[lesHouchesParameters];
            writeSLHAModelParametersBlocks = WriteOut`WriteSLHAModelParametersBlocks[lesHouchesParameters];
            writeSLHAPhasesBlocks = WriteOut`WriteSLHAPhasesBlocks[lesHouchesParameters];
-           writeSLHAMinparBlock = WriteOut`WriteSLHAMinparBlock[minpar];
-           writeSLHAExtparBlock = WriteOut`WriteSLHAExtparBlock[extpar];
-           writeSLHAImMinparBlock = WriteOut`WriteSLHAImMinparBlock[imminpar];
-           writeSLHAImExtparBlock = WriteOut`WriteSLHAImExtparBlock[imextpar];
+           writeSLHAMinparBlock = WriteOut`WriteSLHAMinparBlock[{#[[1]],#[[2]]}& /@minpar];
+           writeSLHAExtparBlock = WriteOut`WriteSLHAExtparBlock[{#[[1]],#[[2]]}& /@extpar];
+           writeSLHAImMinparBlock = WriteOut`WriteSLHAImMinparBlock[{#[[1]],#[[2]]}& /@imminpar];
+           writeSLHAImExtparBlock = WriteOut`WriteSLHAImExtparBlock[{#[[1]],#[[2]]}& /@imextpar];
            writeSLHAInputParameterBlocks = WriteSLHAInputParameterBlocks[extraSLHAInputParameters];
            writeExtraSLHAOutputBlock = WriteOut`WriteExtraSLHAOutputBlock[extraSLHAOutputBlocks];
            numberOfDRbarBlocks  = WriteOut`GetNumberOfDRbarBlocks[lesHouchesParameters];
