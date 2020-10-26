@@ -28,7 +28,7 @@
 namespace flexiblesusy {
 
 /// real dilogarithm
-double dilog(double) DILOGATTR;
+/*double dilog(double) DILOGATTR;
 
 /// real dilogarithm
 long double dilog(long double) DILOGATTR;
@@ -37,7 +37,7 @@ long double dilog(long double) DILOGATTR;
 std::complex<double> dilog(const std::complex<double>&) DILOGATTR;
 
 /// complex dilogarithm
-std::complex<long double> dilog(const std::complex<long double>&) DILOGATTR;
+std::complex<long double> dilog(const std::complex<long double>&) DILOGATTR;*/
 
 //S.D. precise types
 
@@ -46,7 +46,7 @@ precise_real_type dilog(const precise_real_type) DILOGATTR;
 precise_complex_type dilog(const precise_complex_type&) DILOGATTR;
 
 /// Clausen function Cl_2(x)
-double clausen_2(double) DILOGATTR;
+/*double clausen_2(double) DILOGATTR;*/
 
 precise_real_type clausen_2(precise_real_type) DILOGATTR;
 
