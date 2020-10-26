@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef SPLIT_THREELOOPHIGGS_H
 #define SPLIT_THREELOOPHIGGS_H
 
@@ -23,8 +25,8 @@ namespace flexiblesusy {
 namespace splitmssm_threeloophiggs {
 
 /// Higgs self-energy 3-loop, gluino contribution O(alpha_t alpha_s^2)
-double delta_mh_3loop_gluino_split(
-   double scale, double mt, double yt, double g3, double mg);
+precise_real_type delta_mh_3loop_gluino_split(
+   precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type g3, precise_real_type mg);
 
 } // namespace splitmssm_threeloophiggs
 } // namespace flexiblesusy

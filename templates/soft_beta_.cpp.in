@@ -20,6 +20,7 @@
 
 #include "@ModelName@_soft_parameters.hpp"
 #include "wrappers.hpp"
+#include "precise.hpp"
 
 namespace flexiblesusy {
 
@@ -29,33 +30,33 @@ namespace flexiblesusy {
 namespace {
 
 template <typename Derived>
-typename Eigen::MatrixBase<Derived>::PlainObject operator+(const Eigen::MatrixBase<Derived>& m, double n)
+typename Eigen::MatrixBase<Derived>::PlainObject operator+(const Eigen::MatrixBase<Derived>& m, precise_real_type n)
 {
-   return m + Eigen::Matrix<double,
+   return m + Eigen::Matrix<precise_real_type,
                             Eigen::MatrixBase<Derived>::RowsAtCompileTime,
                             Eigen::MatrixBase<Derived>::ColsAtCompileTime>::Identity() * n;
 }
 
 template <typename Derived>
-typename Eigen::MatrixBase<Derived>::PlainObject operator+(double n, const Eigen::MatrixBase<Derived>& m)
+typename Eigen::MatrixBase<Derived>::PlainObject operator+(precise_real_type n, const Eigen::MatrixBase<Derived>& m)
 {
-   return m + Eigen::Matrix<double,
+   return m + Eigen::Matrix<precise_real_type,
                             Eigen::MatrixBase<Derived>::RowsAtCompileTime,
                             Eigen::MatrixBase<Derived>::ColsAtCompileTime>::Identity() * n;
 }
 
 template <typename Derived>
-typename Eigen::MatrixBase<Derived>::PlainObject operator-(const Eigen::MatrixBase<Derived>& m, double n)
+typename Eigen::MatrixBase<Derived>::PlainObject operator-(const Eigen::MatrixBase<Derived>& m, precise_real_type n)
 {
-   return m - Eigen::Matrix<double,
+   return m - Eigen::Matrix<precise_real_type,
                             Eigen::MatrixBase<Derived>::RowsAtCompileTime,
                             Eigen::MatrixBase<Derived>::ColsAtCompileTime>::Identity() * n;
 }
 
 template <typename Derived>
-typename Eigen::MatrixBase<Derived>::PlainObject operator-(double n, const Eigen::MatrixBase<Derived>& m)
+typename Eigen::MatrixBase<Derived>::PlainObject operator-(precise_real_type n, const Eigen::MatrixBase<Derived>& m)
 {
-   return - m + Eigen::Matrix<double,
+   return - m + Eigen::Matrix<precise_real_type,
                             Eigen::MatrixBase<Derived>::RowsAtCompileTime,
                             Eigen::MatrixBase<Derived>::ColsAtCompileTime>::Identity() * n;
 }

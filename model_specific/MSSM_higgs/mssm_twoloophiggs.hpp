@@ -19,6 +19,7 @@
 #ifndef MSSM_TWOLOOPHIGGS_H
 #define MSSM_TWOLOOPHIGGS_H
 
+#include "precise.hpp"
 #include <Eigen/Core>
 
 /**
@@ -62,116 +63,116 @@ namespace mssm_twoloophiggs {
 
 // tadpoles
 
-Eigen::Matrix<double, 2, 1> tadpole_higgs_2loop_at_as_mssm(
-   double mt2, double mg, double mst12, double mst22,
-   double sxt, double cxt, double scale2,
-   double mu, double tanb, double vev2, double gs);
+Eigen::Matrix<precise_real_type, 2, 1> tadpole_higgs_2loop_at_as_mssm(
+   precise_real_type mt2, precise_real_type mg, precise_real_type mst12, precise_real_type mst22,
+   precise_real_type sxt, precise_real_type cxt, precise_real_type scale2,
+   precise_real_type mu, precise_real_type tanb, precise_real_type vev2, precise_real_type gs);
 
-Eigen::Matrix<double, 2, 1> tadpole_higgs_2loop_at_at_mssm(
-   double mt2, double mb2, double mA2, double mst12,
-   double mst22, double msb12, double msb22,
-   double sxt, double cxt, double sxb, double cxb,
-   double scale2, double mu, double tanb, double vev2);
+Eigen::Matrix<precise_real_type, 2, 1> tadpole_higgs_2loop_at_at_mssm(
+   precise_real_type mt2, precise_real_type mb2, precise_real_type mA2, precise_real_type mst12,
+   precise_real_type mst22, precise_real_type msb12, precise_real_type msb22,
+   precise_real_type sxt, precise_real_type cxt, precise_real_type sxb, precise_real_type cxb,
+   precise_real_type scale2, precise_real_type mu, precise_real_type tanb, precise_real_type vev2);
 
-Eigen::Matrix<double, 2, 1> tadpole_higgs_2loop_ab_as_mssm(
-   double mb2, double mg, double msb12, double msb22,
-   double sxb, double cxb, double scale2,
-   double mu, double cotb, double vev2, double gs);
+Eigen::Matrix<precise_real_type, 2, 1> tadpole_higgs_2loop_ab_as_mssm(
+   precise_real_type mb2, precise_real_type mg, precise_real_type msb12, precise_real_type msb22,
+   precise_real_type sxb, precise_real_type cxb, precise_real_type scale2,
+   precise_real_type mu, precise_real_type cotb, precise_real_type vev2, precise_real_type gs);
 
-Eigen::Matrix<double, 2, 1> tadpole_higgs_2loop_atau_atau_mssm(
-   double mtau2, double mA2, double msv2, double mstau12,
-   double mstau22, double sintau, double costau, double scale2,
-   double mu, double tanb, double vev2);
+Eigen::Matrix<precise_real_type, 2, 1> tadpole_higgs_2loop_atau_atau_mssm(
+   precise_real_type mtau2, precise_real_type mA2, precise_real_type msv2, precise_real_type mstau12,
+   precise_real_type mstau22, precise_real_type sintau, precise_real_type costau, precise_real_type scale2,
+   precise_real_type mu, precise_real_type tanb, precise_real_type vev2);
 
 // self-energies
 
-Eigen::Matrix<double, 2, 2> self_energy_higgs_2loop_at_as_mssm(
-   double mt2, double mg, double mst12, double mst22,
-   double sxt, double cxt, double scale2, double mu,
-   double tanb, double vev2, double gs, int scheme = 0);
+Eigen::Matrix<precise_real_type, 2, 2> self_energy_higgs_2loop_at_as_mssm(
+   precise_real_type mt2, precise_real_type mg, precise_real_type mst12, precise_real_type mst22,
+   precise_real_type sxt, precise_real_type cxt, precise_real_type scale2, precise_real_type mu,
+   precise_real_type tanb, precise_real_type vev2, precise_real_type gs, int scheme = 0);
 
-Eigen::Matrix<double, 2, 2> self_energy_higgs_2loop_at_at_mssm(
-   double mt2, double mb2, double mA2, double mst12,
-   double mst22, double msb12, double msb22,
-   double sxt, double cxt, double sxb, double cxb,
-   double scale2, double mu, double tanb, double vev2);
+Eigen::Matrix<precise_real_type, 2, 2> self_energy_higgs_2loop_at_at_mssm(
+   precise_real_type mt2, precise_real_type mb2, precise_real_type mA2, precise_real_type mst12,
+   precise_real_type mst22, precise_real_type msb12, precise_real_type msb22,
+   precise_real_type sxt, precise_real_type cxt, precise_real_type sxb, precise_real_type cxb,
+   precise_real_type scale2, precise_real_type mu, precise_real_type tanb, precise_real_type vev2);
 
-Eigen::Matrix<double, 2, 2> self_energy_higgs_2loop_ab_as_mssm(
-   double mb2, double mg, double msb12, double msb22,
-   double sxb, double cxb, double scale2, double mu,
-   double cotb, double vev2, double gs, int scheme = 0);
+Eigen::Matrix<precise_real_type, 2, 2> self_energy_higgs_2loop_ab_as_mssm(
+   precise_real_type mb2, precise_real_type mg, precise_real_type msb12, precise_real_type msb22,
+   precise_real_type sxb, precise_real_type cxb, precise_real_type scale2, precise_real_type mu,
+   precise_real_type cotb, precise_real_type vev2, precise_real_type gs, int scheme = 0);
 
-Eigen::Matrix<double, 2, 2> self_energy_higgs_2loop_atau_atau_mssm(
-   double mtau2, double mA2, double msv2, double mstau12,
-   double mstau22, double sintau, double costau, double scale2,
-   double mu, double tanb, double vev2, int scheme = 0);
+Eigen::Matrix<precise_real_type, 2, 2> self_energy_higgs_2loop_atau_atau_mssm(
+   precise_real_type mtau2, precise_real_type mA2, precise_real_type msv2, precise_real_type mstau12,
+   precise_real_type mstau22, precise_real_type sintau, precise_real_type costau, precise_real_type scale2,
+   precise_real_type mu, precise_real_type tanb, precise_real_type vev2, int scheme = 0);
 
 
-Eigen::Matrix<double, 2, 2> self_energy_pseudoscalar_2loop_at_as_mssm(
-   double mt2, double mg, double mst12, double mst22,
-   double sxt, double cxt, double scale2, double mu,
-   double tanb, double vev2, double gs);
+Eigen::Matrix<precise_real_type, 2, 2> self_energy_pseudoscalar_2loop_at_as_mssm(
+   precise_real_type mt2, precise_real_type mg, precise_real_type mst12, precise_real_type mst22,
+   precise_real_type sxt, precise_real_type cxt, precise_real_type scale2, precise_real_type mu,
+   precise_real_type tanb, precise_real_type vev2, precise_real_type gs);
 
-Eigen::Matrix<double, 2, 2> self_energy_pseudoscalar_2loop_at_at_mssm(
-   double mt2, double mb2, double mA2, double mst12,
-   double mst22, double msb12, double msb22,
-   double sxt, double cxt, double sxb, double cxb,
-   double scale2, double mu, double tanb, double vev2);
+Eigen::Matrix<precise_real_type, 2, 2> self_energy_pseudoscalar_2loop_at_at_mssm(
+   precise_real_type mt2, precise_real_type mb2, precise_real_type mA2, precise_real_type mst12,
+   precise_real_type mst22, precise_real_type msb12, precise_real_type msb22,
+   precise_real_type sxt, precise_real_type cxt, precise_real_type sxb, precise_real_type cxb,
+   precise_real_type scale2, precise_real_type mu, precise_real_type tanb, precise_real_type vev2);
 
-Eigen::Matrix<double, 2, 2> self_energy_pseudoscalar_2loop_ab_as_mssm(
-   double mb2, double mg, double msb12, double msb22,
-   double sxb, double cxb, double scale2, double mu,
-   double cotb, double vev2, double gs);
+Eigen::Matrix<precise_real_type, 2, 2> self_energy_pseudoscalar_2loop_ab_as_mssm(
+   precise_real_type mb2, precise_real_type mg, precise_real_type msb12, precise_real_type msb22,
+   precise_real_type sxb, precise_real_type cxb, precise_real_type scale2, precise_real_type mu,
+   precise_real_type cotb, precise_real_type vev2, precise_real_type gs);
 
-Eigen::Matrix<double, 2, 2> self_energy_pseudoscalar_2loop_atau_atau_mssm(
-   double mtau2, double mA2, double msv2, double mstau12,
-   double mstau22, double sintau, double costau, double scale2,
-   double mu, double tanb, double vev2);
+Eigen::Matrix<precise_real_type, 2, 2> self_energy_pseudoscalar_2loop_atau_atau_mssm(
+   precise_real_type mtau2, precise_real_type mA2, precise_real_type msv2, precise_real_type mstau12,
+   precise_real_type mstau22, precise_real_type sintau, precise_real_type costau, precise_real_type scale2,
+   precise_real_type mu, precise_real_type tanb, precise_real_type vev2);
 
 // self-energies with tadpoles added
 
-Eigen::Matrix<double, 2, 2> self_energy_higgs_2loop_at_as_mssm_with_tadpoles(
-   double mt2, double mg, double mst12, double mst22,
-   double sxt, double cxt, double scale2, double mu,
-   double tanb, double vev2, double gs, int scheme = 0);
+Eigen::Matrix<precise_real_type, 2, 2> self_energy_higgs_2loop_at_as_mssm_with_tadpoles(
+   precise_real_type mt2, precise_real_type mg, precise_real_type mst12, precise_real_type mst22,
+   precise_real_type sxt, precise_real_type cxt, precise_real_type scale2, precise_real_type mu,
+   precise_real_type tanb, precise_real_type vev2, precise_real_type gs, int scheme = 0);
 
-Eigen::Matrix<double, 2, 2> self_energy_higgs_2loop_at_at_mssm_with_tadpoles(
-   double mt2, double mb2, double mA2, double mst12,
-   double mst22, double msb12, double msb22,
-   double sxt, double cxt, double sxb, double cxb,
-   double scale2, double mu, double tanb, double vev2);
+Eigen::Matrix<precise_real_type, 2, 2> self_energy_higgs_2loop_at_at_mssm_with_tadpoles(
+   precise_real_type mt2, precise_real_type mb2, precise_real_type mA2, precise_real_type mst12,
+   precise_real_type mst22, precise_real_type msb12, precise_real_type msb22,
+   precise_real_type sxt, precise_real_type cxt, precise_real_type sxb, precise_real_type cxb,
+   precise_real_type scale2, precise_real_type mu, precise_real_type tanb, precise_real_type vev2);
 
-Eigen::Matrix<double, 2, 2> self_energy_higgs_2loop_ab_as_mssm_with_tadpoles(
-   double mb2, double mg, double msb12, double msb22,
-   double sxb, double cxb, double scale2, double mu,
-   double cotb, double vev2, double gs, int scheme = 0);
+Eigen::Matrix<precise_real_type, 2, 2> self_energy_higgs_2loop_ab_as_mssm_with_tadpoles(
+   precise_real_type mb2, precise_real_type mg, precise_real_type msb12, precise_real_type msb22,
+   precise_real_type sxb, precise_real_type cxb, precise_real_type scale2, precise_real_type mu,
+   precise_real_type cotb, precise_real_type vev2, precise_real_type gs, int scheme = 0);
 
-Eigen::Matrix<double, 2, 2> self_energy_higgs_2loop_atau_atau_mssm_with_tadpoles(
-   double mtau2, double mA2, double msv2, double mstau12,
-   double mstau22, double sintau, double costau, double scale2,
-   double mu, double tanb, double vev2, int scheme = 0);
+Eigen::Matrix<precise_real_type, 2, 2> self_energy_higgs_2loop_atau_atau_mssm_with_tadpoles(
+   precise_real_type mtau2, precise_real_type mA2, precise_real_type msv2, precise_real_type mstau12,
+   precise_real_type mstau22, precise_real_type sintau, precise_real_type costau, precise_real_type scale2,
+   precise_real_type mu, precise_real_type tanb, precise_real_type vev2, int scheme = 0);
 
 
-double self_energy_pseudoscalar_2loop_at_as_mssm_with_tadpoles(
-   double mt2, double mg, double mst12, double mst22,
-   double sxt, double cxt, double scale2, double mu,
-   double tanb, double vev2, double gs);
+precise_real_type self_energy_pseudoscalar_2loop_at_as_mssm_with_tadpoles(
+   precise_real_type mt2, precise_real_type mg, precise_real_type mst12, precise_real_type mst22,
+   precise_real_type sxt, precise_real_type cxt, precise_real_type scale2, precise_real_type mu,
+   precise_real_type tanb, precise_real_type vev2, precise_real_type gs);
 
-double self_energy_pseudoscalar_2loop_at_at_mssm_with_tadpoles(
-   double mt2, double mb2, double mA2, double mst12,
-   double mst22, double msb12, double msb22,
-   double sxt, double cxt, double sxb, double cxb,
-   double scale2, double mu, double tanb, double vev2);
+precise_real_type self_energy_pseudoscalar_2loop_at_at_mssm_with_tadpoles(
+   precise_real_type mt2, precise_real_type mb2, precise_real_type mA2, precise_real_type mst12,
+   precise_real_type mst22, precise_real_type msb12, precise_real_type msb22,
+   precise_real_type sxt, precise_real_type cxt, precise_real_type sxb, precise_real_type cxb,
+   precise_real_type scale2, precise_real_type mu, precise_real_type tanb, precise_real_type vev2);
 
-double self_energy_pseudoscalar_2loop_ab_as_mssm_with_tadpoles(
-   double mb2, double mg, double msb12, double msb22,
-   double sxb, double cxb, double scale2, double mu,
-   double cotb, double vev2, double gs);
+precise_real_type self_energy_pseudoscalar_2loop_ab_as_mssm_with_tadpoles(
+   precise_real_type mb2, precise_real_type mg, precise_real_type msb12, precise_real_type msb22,
+   precise_real_type sxb, precise_real_type cxb, precise_real_type scale2, precise_real_type mu,
+   precise_real_type cotb, precise_real_type vev2, precise_real_type gs);
 
-double self_energy_pseudoscalar_2loop_atau_atau_mssm_with_tadpoles(
-   double mtau2, double mA2, double msv2, double mstau12,
-   double mstau22, double sintau, double costau, double scale2,
-   double mu, double tanb, double vev2);
+precise_real_type self_energy_pseudoscalar_2loop_atau_atau_mssm_with_tadpoles(
+   precise_real_type mtau2, precise_real_type mA2, precise_real_type msv2, precise_real_type mstau12,
+   precise_real_type mstau22, precise_real_type sintau, precise_real_type costau, precise_real_type scale2,
+   precise_real_type mu, precise_real_type tanb, precise_real_type vev2);
 
 } // namespace mssm_twoloophiggs
 } // namespace flexiblesusy

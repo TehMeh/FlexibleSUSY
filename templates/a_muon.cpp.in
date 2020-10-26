@@ -101,14 +101,14 @@ precise_real_type calculate_a_muon_impl(const @ModelName@_mass_eigenstates& mode
 
 @AMuon_Calculation@
 
-    if (!is_zero(precise_real_type(form_factors[2].imag() + form_factors[3].imag()))) {
+    if (!is_zero(precise_real_type(precise_complex_type(form_factors[2]).imag() + precise_complex_type(form_factors[3]).imag()))) {
       ERROR("Error in the g-2 calculation! Form factor F2 should be real");
       return std::numeric_limits<precise_real_type>::quiet_NaN();
    }
 
    precise_real_type val = (precise_real_type)(
       // vector form factor
-      1./2.*(form_factors[2].real() + form_factors[3].real())
+      1./2.*(precise_complex_type(form_factors[2]).real() + precise_complex_type(form_factors[3]).real())
       // reinstate the mass that was factored out in definition of form factor 
       * context.mass<Muon>({@AMuon_MuonIndex@}) 
       // factor out e/(2*muon pole mass)

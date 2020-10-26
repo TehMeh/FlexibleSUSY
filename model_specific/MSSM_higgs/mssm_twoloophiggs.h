@@ -44,10 +44,10 @@ extern "C" {
  * OS = renormalization scheme for 1-loop (0 = DRbar, 1 = On-Shell),
  * Sij = 2-loop corrections to the CP-even Higgs mass matrix elements.
  */
-int dszhiggs_(double * t, double * g, double * T1, double * T2,
-              double * st, double * ct, double * q, double * mu,
-              double * tanb, double *vv, double * gs, int * OS,
-              double * S11, double * S22, double * S12);
+int dszhiggs_(precise_real_type * t, precise_real_type * g, precise_real_type * T1, precise_real_type * T2,
+              precise_real_type * st, precise_real_type * ct, precise_real_type * q, precise_real_type * mu,
+              precise_real_type * tanb, precise_real_type *vv, precise_real_type * gs, int * OS,
+              precise_real_type * S11, precise_real_type * S22, precise_real_type * S12);
 
 /**
  * Two-loop O(a_t^2 + at ab + ab^2) corrections to the CP-even Higgs masses
@@ -69,11 +69,11 @@ int dszhiggs_(double * t, double * g, double * T1, double * T2,
  *         parameters in the bottom/sbottom sector should be computed
  *         in terms of the "resummed" bottom Yukawa coupling.
  */
-int ddshiggs_(double * t, double * b, double * A0, double * T1,
-              double * T2, double * B1, double * B2, double * st,
-              double * ct, double * sb, double * cb, double * q,
-              double * mu, double * tanb, double * vv,
-              double * S11, double * S12, double * S22);
+int ddshiggs_(precise_real_type * t, precise_real_type * b, precise_real_type * A0, precise_real_type * T1,
+              precise_real_type * T2, precise_real_type * B1, precise_real_type * B2, precise_real_type * st,
+              precise_real_type * ct, precise_real_type * sb, precise_real_type * cb, precise_real_type * q,
+              precise_real_type * mu, precise_real_type * tanb, precise_real_type * vv,
+              precise_real_type * S11, precise_real_type * S12, precise_real_type * S22);
 
 /**
  * Two-loop O(a_tau^2) corrections to the CP-even Higgs mass matrix.
@@ -90,10 +90,10 @@ int ddshiggs_(double * t, double * b, double * A0, double * T1,
  * OS = renormalization scheme for 1-loop (0 = DRbar, 1 = On-Shell),
  * Sij = 2-loop corrections to the CP-even Higgs mass matrix elements.
  */
-int tausqhiggs_(double * t, double * A0, double * BL, double * T1,
-                double * T2, double * st, double * ct, double * q,
-                double * mu, double * tanb, double * vv, int * OS,
-                double * S11, double * S22, double * S12);
+int tausqhiggs_(precise_real_type * t, precise_real_type * A0, precise_real_type * BL, precise_real_type * T1,
+                precise_real_type * T2, precise_real_type * st, precise_real_type * ct, precise_real_type * q,
+                precise_real_type * mu, precise_real_type * tanb, precise_real_type * vv, int * OS,
+                precise_real_type * S11, precise_real_type * S22, precise_real_type * S12);
 
 /**
  * Two-loop O(a_tau * a_bottom) corrections to the CP-even Higgs mass
@@ -110,11 +110,11 @@ int tausqhiggs_(double * t, double * A0, double * BL, double * T1,
  * vv = v^2, Sij = 2-loop corrections to the CP-even Higgs mass matrix
  * elements.
  */
-int taubot_(double * t, double * b,
-            double * T1, double * T2, double * B1, double * B2,
-            double * st, double * ct, double * sb, double * cb,
-            double * q, double * mu, double * tanb, double * vv,
-            double * S11, double * S22, double * S12);
+int taubot_(precise_real_type * t, precise_real_type * b,
+            precise_real_type * T1, precise_real_type * T2, precise_real_type * B1, precise_real_type * B2,
+            precise_real_type * st, precise_real_type * ct, precise_real_type * sb, precise_real_type * cb,
+            precise_real_type * q, precise_real_type * mu, precise_real_type * tanb, precise_real_type * vv,
+            precise_real_type * S11, precise_real_type * S22, precise_real_type * S12);
 
 /**
  * Two-loop O(a_t a_s) corrections to the CP-odd Higgs mass in the
@@ -131,10 +131,10 @@ int taubot_(double * t, double * b,
  * gs = strong coupling,
  * dma = 2-loop corrections to the CP-odd Higgs mass.
  */
-int dszodd_(double * t, double * g, double * T1,
-            double * T2, double * st, double * ct,
-            double * q, double * mu, double * tanb,
-            double * vv, double * gs, double * dma);
+int dszodd_(precise_real_type * t, precise_real_type * g, precise_real_type * T1,
+            precise_real_type * T2, precise_real_type * st, precise_real_type * ct,
+            precise_real_type * q, precise_real_type * mu, precise_real_type * tanb,
+            precise_real_type * vv, precise_real_type * gs, precise_real_type * dma);
 
 /**
  * Two-loop O(a_t^2 + at ab + ab^2) corrections to the CP-odd Higgs mass
@@ -156,10 +156,10 @@ int dszodd_(double * t, double * g, double * T1,
  *         parameters in the bottom/sbottom sector should be computed
  *         in term of the "resummed" bottom Yukawa coupling.
 */
-int ddsodd_(double * t, double * b, double * A0, double * T1,
-            double * T2, double * B1, double * B2, double * st,
-            double * ct, double * sb, double * cb, double * q,
-            double * mu, double * tanb, double * vv, double * dma);
+int ddsodd_(precise_real_type * t, precise_real_type * b, precise_real_type * A0, precise_real_type * T1,
+            precise_real_type * T2, precise_real_type * B1, precise_real_type * B2, precise_real_type * st,
+            precise_real_type * ct, precise_real_type * sb, precise_real_type * cb, precise_real_type * q,
+            precise_real_type * mu, precise_real_type * tanb, precise_real_type * vv, precise_real_type * dma);
 
 /**
  * Two-loop O(a_tau^2) corrections to the CP-odd Higgs mass in the
@@ -175,10 +175,10 @@ int ddsodd_(double * t, double * b, double * A0, double * T1,
  * mu = Higgs mixing parameter, tb = tan(beta), vv = v^2,
  * dma = 2-loop corrections to the CP-odd Higgs mass.
  */
-int tausqodd_(double * t, double * A0, double * BL, double * T1,
-              double * T2, double * st, double * ct, double * q,
-              double * mu, double * tanb, double * vv,
-              double * dma);
+int tausqodd_(precise_real_type * t, precise_real_type * A0, precise_real_type * BL, precise_real_type * T1,
+              precise_real_type * T2, precise_real_type * st, precise_real_type * ct, precise_real_type * q,
+              precise_real_type * mu, precise_real_type * tanb, precise_real_type * vv,
+              precise_real_type * dma);
 
 /**
  * Two-loop O(a_tau * a_bottom) corrections to the CP-odd Higgs mass
@@ -194,11 +194,11 @@ int tausqodd_(double * t, double * A0, double * BL, double * T1,
  * q = Q^2 (ren. scale), mu = Higgs mixing parameter, tb = tan(beta),
  * vv = v^2, dma = 2-loop corrections to the CP-odd Higgs mass.
  */
-int taubotodd_(double * t, double * b,
-            double * T1, double * T2, double * B1, double * B2,
-            double * st, double * ct, double * sb, double * cb,
-            double * q, double * mu, double * tanb, double * vv,
-            double * dma);
+int taubotodd_(precise_real_type * t, precise_real_type * b,
+            precise_real_type * T1, precise_real_type * T2, precise_real_type * B1, precise_real_type * B2,
+            precise_real_type * st, precise_real_type * ct, precise_real_type * sb, precise_real_type * cb,
+            precise_real_type * q, precise_real_type * mu, precise_real_type * tanb, precise_real_type * vv,
+            precise_real_type * dma);
 
 /**
  * Two-loop O(a_t a_s) corrections to the Higgs tadpoles.
@@ -217,10 +217,10 @@ int taubotodd_(double * t, double * b,
  * Notice: we assume that the 1-loop part is computed in terms of
  *         running (DRbar) parameters, evaluated at the scale Q.
  */
-int ewsb2loop_(double * t, double * g, double *  T1, double * T2,
-               double * st, double * ct, double * q, double * mu,
-               double * tanb, double * vv, double * gs,
-               double * s1, double * s2);
+int ewsb2loop_(precise_real_type * t, precise_real_type * g, precise_real_type *  T1, precise_real_type * T2,
+               precise_real_type * st, precise_real_type * ct, precise_real_type * q, precise_real_type * mu,
+               precise_real_type * tanb, precise_real_type * vv, precise_real_type * gs,
+               precise_real_type * s1, precise_real_type * s2);
 
 /**
  * Two-loop O(a_t^2 + at ab + ab^2) corrections to the
@@ -243,11 +243,11 @@ int ewsb2loop_(double * t, double * g, double *  T1, double * T2,
  *         parameters in the bottom/sbottom sector should be computed
  *         in term of the "resummed" bottom Yukawa coupling.
  */
-int ddstad_(double * t, double * b, double * A0, double * T1,
-            double * T2, double * B1, double * B2, double * st,
-            double * ct, double * sb, double * cb, double * q,
-            double * mu, double * tanb, double * vv,
-            double * s1, double * s2);
+int ddstad_(precise_real_type * t, precise_real_type * b, precise_real_type * A0, precise_real_type * T1,
+            precise_real_type * T2, precise_real_type * B1, precise_real_type * B2, precise_real_type * st,
+            precise_real_type * ct, precise_real_type * sb, precise_real_type * cb, precise_real_type * q,
+            precise_real_type * mu, precise_real_type * tanb, precise_real_type * vv,
+            precise_real_type * s1, precise_real_type * s2);
 
 /**
  * Two-loop O(a_t^2) corrections to the Higgs tadpoles.
@@ -266,10 +266,10 @@ int ddstad_(double * t, double * b, double * A0, double * T1,
  * Notice: we assume that the 1-loop part is computed in terms of
  * running (DRbar) parameters, evaluated at the scale Q.
  */
-int tausqtad_(double * t, double * A0, double * BL, double * T1,
-			 double * T2, double * st, double * ct, double * q,
-			 double * mu, double * tanb, double * vv,
-			 double * s1, double * s2);
+int tausqtad_(precise_real_type * t, precise_real_type * A0, precise_real_type * BL, precise_real_type * T1,
+			 precise_real_type * T2, precise_real_type * st, precise_real_type * ct, precise_real_type * q,
+			 precise_real_type * mu, precise_real_type * tanb, precise_real_type * vv,
+			 precise_real_type * s1, precise_real_type * s2);
 
 /**
  * Two-loop O(a_tau * a_bottom) corrections to the Higgs tadpoles.
@@ -285,11 +285,11 @@ int tausqtad_(double * t, double * A0, double * BL, double * T1,
  * vv = v^2,
  * si = 1/vi*dVeff/dvi = 2-loop corrections to the Higgs tadpoles.
  */
-int taubottad_(double * t, double * b,
-               double * T1, double * T2, double * B1, double * B2,
-               double * st, double * ct, double * sb, double * cb,
-               double * q, double * mu, double * tanb, double * vv,
-               double * s1, double * s2);
+int taubottad_(precise_real_type * t, precise_real_type * b,
+               precise_real_type * T1, precise_real_type * T2, precise_real_type * B1, precise_real_type * B2,
+               precise_real_type * st, precise_real_type * ct, precise_real_type * sb, precise_real_type * cb,
+               precise_real_type * q, precise_real_type * mu, precise_real_type * tanb, precise_real_type * vv,
+               precise_real_type * s1, precise_real_type * s2);
 
 #ifdef __cplusplus
 }

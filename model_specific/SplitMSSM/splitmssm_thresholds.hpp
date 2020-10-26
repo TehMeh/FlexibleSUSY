@@ -16,6 +16,8 @@
 // <http://www.gnu.org/licenses/>.
 // ====================================================================
 
+#include "precise.hpp"
+
 #ifndef SplitMSSM_FullMSSM_THRESHOLDS_H
 #define SplitMSSM_FullMSSM_THRESHOLDS_H
 
@@ -32,7 +34,7 @@
    Parameters pars;
    // fill parameters ...
 
-   double lambda = lambda_tree_level(pars);
+   precise_real_type lambda = lambda_tree_level(pars);
 
    if (loopLevel > 0) {
       lambda +=
@@ -52,11 +54,11 @@
    // fill parameters ...
    // Note: g1 and g2 are defined in the Split-MSSM
 
-   double lambda_split = lambda_tree_level(pars);
-   double gYu = gYu_tree_level(pars);
-   double gYd = gYd_tree_level(pars);
-   double g2u = g2u_tree_level(pars);
-   double g2d = g2d_tree_level(pars);
+   precise_real_type lambda_split = lambda_tree_level(pars);
+   precise_real_type gYu = gYu_tree_level(pars);
+   precise_real_type gYd = gYd_tree_level(pars);
+   precise_real_type g2u = g2u_tree_level(pars);
+   precise_real_type g2d = g2d_tree_level(pars);
 
    if (loopLevel > 0) {
       lambda_split +=
@@ -78,7 +80,7 @@
    // fill parameters ...
    // Note: parameters are defined in the Split-MSSM
 
-   double lambda_SM = lambda_split;
+   precise_real_type lambda_SM = lambda_split;
 
    if (loopLevel > 0) {
       lambda_SM += delta_lambda_1loop_chi_1(
@@ -99,49 +101,49 @@ namespace splitmssm_thresholds {
  * arXiv:1407.4081 for the parameter definition.
  */
 struct Parameters {
-   double g1{0.}, g2{0.}, g3{0.}; ///< MS-bar gauge couplings in the EFT (GUT normalized)
-   double gt{0.};          ///< MS-bar top Yukawa coupling of the SM or Split-MSSM
-   double At{0.};          ///< DR-bar trilinear coupling for the stops in the MSSM
-   double mu{0.};          ///< bilinear Higgsino coupling
-   double mA{0.};          ///< mass of the heavy Higgs doublett
-   double m1{0.};          ///< bino mass parameter
-   double m2{0.};          ///< wino mass parameter
-   double tan_beta{0.};    ///< mixing angle of the heavy Higgs doublett in the MSSM
-   double scale{0.};       ///< renormalization scale
-   Eigen::Matrix<double,3,3> mq2{Eigen::Matrix<double,3,3>::Zero()}; ///< DR-bar squared soft-breaking left-handed squark mass parameters in the MSSM
-   Eigen::Matrix<double,3,3> mu2{Eigen::Matrix<double,3,3>::Zero()}; ///< DR-bar squared soft-breaking right-handed up-squark mass parameters in the MSSM
-   Eigen::Matrix<double,3,3> md2{Eigen::Matrix<double,3,3>::Zero()}; ///< DR-bar squared soft-breaking right-handed down-squark mass parameters in the MSSM
-   Eigen::Matrix<double,3,3> ml2{Eigen::Matrix<double,3,3>::Zero()}; ///< DR-bar squared soft-breaking left-handed selectron mass parameters in the MSSM
-   Eigen::Matrix<double,3,3> me2{Eigen::Matrix<double,3,3>::Zero()}; ///< DR-bar squared soft-breaking right-handed selectron mass parameters in the MSSM
+   precise_real_type g1{0.}, g2{0.}, g3{0.}; ///< MS-bar gauge couplings in the EFT (GUT normalized)
+   precise_real_type gt{0.};          ///< MS-bar top Yukawa coupling of the SM or Split-MSSM
+   precise_real_type At{0.};          ///< DR-bar trilinear coupling for the stops in the MSSM
+   precise_real_type mu{0.};          ///< bilinear Higgsino coupling
+   precise_real_type mA{0.};          ///< mass of the heavy Higgs precise_real_typett
+   precise_real_type m1{0.};          ///< bino mass parameter
+   precise_real_type m2{0.};          ///< wino mass parameter
+   precise_real_type tan_beta{0.};    ///< mixing angle of the heavy Higgs precise_real_typett in the MSSM
+   precise_real_type scale{0.};       ///< renormalization scale
+   Eigen::Matrix<precise_real_type,3,3> mq2{Eigen::Matrix<precise_real_type,3,3>::Zero()}; ///< DR-bar squared soft-breaking left-handed squark mass parameters in the MSSM
+   Eigen::Matrix<precise_real_type,3,3> mu2{Eigen::Matrix<precise_real_type,3,3>::Zero()}; ///< DR-bar squared soft-breaking right-handed up-squark mass parameters in the MSSM
+   Eigen::Matrix<precise_real_type,3,3> md2{Eigen::Matrix<precise_real_type,3,3>::Zero()}; ///< DR-bar squared soft-breaking right-handed down-squark mass parameters in the MSSM
+   Eigen::Matrix<precise_real_type,3,3> ml2{Eigen::Matrix<precise_real_type,3,3>::Zero()}; ///< DR-bar squared soft-breaking left-handed selectron mass parameters in the MSSM
+   Eigen::Matrix<precise_real_type,3,3> me2{Eigen::Matrix<precise_real_type,3,3>::Zero()}; ///< DR-bar squared soft-breaking right-handed selectron mass parameters in the MSSM
 };
 
 std::ostream& operator<<(std::ostream&, const Parameters&);
 
-double lambda_tree_level(const Parameters&);
-double gYu_tree_level(const Parameters&);
-double gYd_tree_level(const Parameters&);
-double g2u_tree_level(const Parameters&);
-double g2d_tree_level(const Parameters&);
+precise_real_type lambda_tree_level(const Parameters&);
+precise_real_type gYu_tree_level(const Parameters&);
+precise_real_type gYd_tree_level(const Parameters&);
+precise_real_type g2u_tree_level(const Parameters&);
+precise_real_type g2d_tree_level(const Parameters&);
 
-double delta_lambda_1loop_reg(const Parameters&);
-double delta_lambda_1loop_phi(const Parameters&);
-double delta_lambda_1loop_chi_1(const Parameters&);
-double delta_lambda_1loop_chi_1(
-   double scale, double mu, double lambda, double gYu, double gYd,
-   double g2u, double g2d, double m1, double m2);
-double delta_lambda_1loop_chi_2(const Parameters&);
-double delta_lambda_1loop_chi_2(
-   double scale, double mu, double m2, double g1, double g2, double tan_beta);
-double delta_lambda_2loop_phi(const Parameters&);
-double delta_lambda_2loop_phi_HSS(const Parameters&);
-double delta_gYu_1loop(const Parameters&);
-double delta_gYd_1loop(const Parameters&);
-double delta_g2u_1loop(const Parameters&);
-double delta_g2d_1loop(const Parameters&);
-double delta_gt_1loop_chi(
-   double scale, double mu, double gYu, double gYd,
-   double g2u, double g2d, double m1, double m2);
-double delta_m2_1loop_chi(const Parameters&);
+precise_real_type delta_lambda_1loop_reg(const Parameters&);
+precise_real_type delta_lambda_1loop_phi(const Parameters&);
+precise_real_type delta_lambda_1loop_chi_1(const Parameters&);
+precise_real_type delta_lambda_1loop_chi_1(
+   precise_real_type scale, precise_real_type mu, precise_real_type lambda, precise_real_type gYu, precise_real_type gYd,
+   precise_real_type g2u, precise_real_type g2d, precise_real_type m1, precise_real_type m2);
+precise_real_type delta_lambda_1loop_chi_2(const Parameters&);
+precise_real_type delta_lambda_1loop_chi_2(
+   precise_real_type scale, precise_real_type mu, precise_real_type m2, precise_real_type g1, precise_real_type g2, precise_real_type tan_beta);
+precise_real_type delta_lambda_2loop_phi(const Parameters&);
+precise_real_type delta_lambda_2loop_phi_HSS(const Parameters&);
+precise_real_type delta_gYu_1loop(const Parameters&);
+precise_real_type delta_gYd_1loop(const Parameters&);
+precise_real_type delta_g2u_1loop(const Parameters&);
+precise_real_type delta_g2d_1loop(const Parameters&);
+precise_real_type delta_gt_1loop_chi(
+   precise_real_type scale, precise_real_type mu, precise_real_type gYu, precise_real_type gYd,
+   precise_real_type g2u, precise_real_type g2d, precise_real_type m1, precise_real_type m2);
+precise_real_type delta_m2_1loop_chi(const Parameters&);
 
 } // namespace splitmssm_thresholds
 } // namespace flexiblesusy

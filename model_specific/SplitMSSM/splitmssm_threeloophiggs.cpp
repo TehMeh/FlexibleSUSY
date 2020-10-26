@@ -40,18 +40,18 @@ namespace splitmssm_threeloophiggs {
  *
  * @return real part of 3-loop gluino contribution to Higgs self-energy
  */
-double delta_mh_3loop_gluino_split(
-   double scale, double mt, double yt, double g3, double mg)
+precise_real_type delta_mh_3loop_gluino_split(
+   precise_real_type scale, precise_real_type mt, precise_real_type yt, precise_real_type g3, precise_real_type mg)
 {
-   const double yt2 = Sqr(yt);
-   const double mt2 = Sqr(mt);
-   const double g34 = std::pow(g3, 4);
-   const double mg2 = Sqr(mg);
-   const double Q2 = Sqr(scale);
-   const double LogG = FiniteLog(mg2 / Q2);
-   const double LogG3 = std::pow(LogG, 3);
+   const precise_real_type yt2 = Sqr(yt);
+   const precise_real_type mt2 = Sqr(mt);
+   const precise_real_type g34 = pow(g3, 4);
+   const precise_real_type mg2 = Sqr(mg);
+   const precise_real_type Q2 = Sqr(scale);
+   const precise_real_type LogG = FiniteLog(mg2 / Q2);
+   const precise_real_type LogG3 = pow(LogG, 3);
 
-   const double result = 64*g34*yt2*mt2*LogG3;
+   const precise_real_type result = 64*g34*yt2*mt2*LogG3;
 
    return result * threeLoop;
 }

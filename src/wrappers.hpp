@@ -42,12 +42,12 @@
 
 namespace flexiblesusy {
 
-static constexpr double Pi = M_PI;
-static constexpr double oneOver16PiSqr = 1./(16. * Pi * Pi);
-static constexpr double oneLoop = oneOver16PiSqr;
-static constexpr double twoLoop = oneOver16PiSqr * oneOver16PiSqr;
-static constexpr double threeLoop = oneOver16PiSqr * oneOver16PiSqr * oneOver16PiSqr;
-static constexpr double fourLoop = twoLoop * twoLoop;
+static precise_real_type Pi = M_PI;
+static precise_real_type oneOver16PiSqr = 1./(16_p * Pi * Pi);
+static precise_real_type oneLoop = oneOver16PiSqr;
+static precise_real_type twoLoop = oneOver16PiSqr * oneOver16PiSqr;
+static precise_real_type threeLoop = oneOver16PiSqr * oneOver16PiSqr * oneOver16PiSqr;
+static precise_real_type fourLoop = twoLoop * twoLoop;
 static constexpr bool True = true;
  //ATTENTION S.D.
 /*template <typename T>
@@ -146,9 +146,9 @@ Derived AbsSqrt(const Eigen::ArrayBase<Derived>& m)
  * @return mass
  */
 template <typename T>
-double calculate_singlet_mass(T value) noexcept
+precise_real_type calculate_singlet_mass(T value) noexcept
 {
-   return std::abs(value);
+   return abs(value);
 }
 
 /**
@@ -165,10 +165,10 @@ double calculate_singlet_mass(T value) noexcept
  * @return mass
  */
 template <typename T>
-double calculate_majorana_singlet_mass(T value, std::complex<double>& phase)
+precise_real_type calculate_majorana_singlet_mass(T value, precise_complex_type& phase)
 {
-   phase = std::polar(1., 0.5 * std::arg(std::complex<double>(value)));
-   return std::abs(value);
+   phase = polar(1., 0.5 * arg(precise_complex_type(value)));
+   return abs(value);
 }
 
 /**
@@ -185,10 +185,10 @@ double calculate_majorana_singlet_mass(T value, std::complex<double>& phase)
  * @return mass
  */
 template <typename T>
-double calculate_dirac_singlet_mass(T value, std::complex<double>& phase)
+precise_real_type calculate_dirac_singlet_mass(T value, precise_complex_type& phase)
 {
-   phase = std::polar(1., std::arg(std::complex<double>(value)));
-   return std::abs(value);
+   phase = polar(1., arg(precise_complex_type(value)));
+   return abs(value);
 }
 
 //double ArcTan(double) noexcept;
@@ -654,9 +654,9 @@ Im(const Eigen::MatrixBase<Derived>& x)
 template <typename T>
 T RelDiff(T a, T b, T eps = std::numeric_limits<T>::epsilon()) noexcept
 {
-   const T max = std::max(a, b);
+   const T max = max(a, b);
 
-   if (std::abs(max) < eps)
+   if (abs(max) < eps)
       return T();
 
    return (a - b) / max;

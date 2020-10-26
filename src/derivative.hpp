@@ -51,7 +51,7 @@ template <class F, class A>
 auto derivative_forward_fx(const F& f, A x, decltype(f(x)) fx, A eps = std::numeric_limits<A>::epsilon())
    -> decltype(f(x))
 {
-   const A h = std::fabs(x) < eps ? eps : std::sqrt(eps) * x;
+   const A h = fabs(x) < eps ? eps : sqrt(eps) * x;
    volatile const A xph = x + h; // avoid away optimization
    const A dx = xph - x;
    return (f(xph) - fx) / dx;
@@ -76,7 +76,7 @@ template <class F, class A>
 auto derivative_backward_fx(const F& f, A x, decltype(f(x)) fx, A eps = std::numeric_limits<A>::epsilon())
    -> decltype(f(x))
 {
-   const A h = std::fabs(x) < eps ? eps : std::sqrt(eps) * x;
+   const A h = fabs(x) < eps ? eps : sqrt(eps) * x;
    volatile const A xph = x - h; // avoid away optimization
    const A dx = x - xph;
    return (fx - f(xph)) / dx;
@@ -107,7 +107,7 @@ auto derivative_one_sided(const F& f, A x, A eps = std::numeric_limits<A>::epsil
 
    // coefficients from Math. Comp. 51 (1988), 699-706, Table 3
    // DOI: http://dx.doi.org/10.1090/S0025-5718-1988-0935077-0
-   static const std::vector<std::vector<double> > coeffs = {
+   static const std::vector<std::vector<precise_real_type> > coeffs = {
       {-1., 1.},
       {-3./2., 2., -1./2.},
       {-11./6., 3., -3./2., 1./3.},
@@ -118,11 +118,11 @@ auto derivative_one_sided(const F& f, A x, A eps = std::numeric_limits<A>::epsil
       {-761./280., 8., -14., 56./3., -35./2., 56./5., -14./3., 8./7., -1./8.}
    };
 
-   const A h = std::fabs(x) < eps ? eps : std::sqrt(eps) * x;
+   const A h = fabs(x) < eps ? eps : sqrt(eps) * x;
    return_type result = 0;
 
    for (int i = 0; i < Order + 2; i++) {
-      const double coeff = coeffs[Order][i];
+      const precise_real_type coeff = coeffs[Order][i];
       result += sign * coeff * f(x + sign*i*h);
    }
 
@@ -187,18 +187,18 @@ auto derivative_central(const F& f, A x, A eps = std::numeric_limits<A>::epsilon
 
    // coefficients from Math. Comp. 51 (1988), 699-706, Table 1
    // DOI: http://dx.doi.org/10.1090/S0025-5718-1988-0935077-0
-   static const std::vector<std::vector<double> > coeffs = {
+   static const std::vector<std::vector<precise_real_type> > coeffs = {
       {0.5},
       {2./3., -1./12.},
       {3./4., -3./20., 1./60.},
       {4./5., -1./5., 4./105., -1./280.}
    };
 
-   const A h = std::fabs(x) < eps ? eps : std::sqrt(eps) * x;
+   const A h = fabs(x) < eps ? eps : sqrt(eps) * x;
    return_type result = 0;
 
    for (int i = 0; i < Order + 1; i++) {
-      const double coeff = coeffs[Order][i];
+      const precise_real_type coeff = coeffs[Order][i];
       const A step = (i + 1) * h;
       result += coeff * (f(x + step) - f(x - step));
    }

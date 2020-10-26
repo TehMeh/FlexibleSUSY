@@ -57,7 +57,7 @@ const precise_real_type oneOver32PiSqr = 0.5_p*oneOver16PiSqr;
  */
 template <class Fj, class Fi, class V, class S1, class S2, class F>
 struct FFV_SSF {
-   static std::valarray<std::complex<double>>
+   static std::valarray<precise_complex_type>
    value(const typename field_indices<Fj>::type& indices_in,
          const typename field_indices<Fi>::type& indices_out,
          context_base const& context,
@@ -81,7 +81,7 @@ struct FFV_SSF {
 */
 template <class Fj, class Fi, class V, class F1, class F2, class S>
 struct FFV_FFS {
-   static std::valarray<std::complex<double>>
+   static std::valarray<precise_complex_type>
    value(const typename field_indices<Fj>::type& indices_in,
          const typename field_indices<Fi>::type& indices_out,
          context_base const& context,
@@ -308,29 +308,33 @@ std::valarray<precise_complex_type> FFV_SSF<Fj, Fi, V, SA, SB, F>::value(
          const auto x = pow(mF/mS, 2);
 
          // TODO: check the sign convention of this coupling
-         std::complex<double> vector_boson_coupling {-vertexEmit.value(1,0)};
+         precise_complex_type vector_boson_coupling {-vertexEmit.value(1,0)};
 
          // eq. 15 of hep-ph/9510309 (possibly with different sign)
-         const std::complex<double> A1L =
+         const precise_complex_type A1L =
             - 1./18. * vertexOut.right() * vertexIn.left() * OneLoopFunctionA(x);
          // eq. 16 of hep-ph/9510309 (possibly with different sign)
-         const std::complex<double> A2L = 
+         const precise_complex_type A2L = 
             - vertexOut.left() * vertexIn.right() * OneLoopFunctionB(x)/12.
             - vertexOut.left()* vertexIn.left() * mF/mj * OneLoopFunctionC(x)/3.
             - mi/mj * vertexOut.right() * vertexIn.left() * OneLoopFunctionB(x)/12.; 
 
          // eq. 15 & 16 of hep-ph/9510309 after replacement L <-> R (possibly with different sign)
-         const std::complex<double> A1R = 
+         const precise_complex_type A1R = 
             - 1./18. * vertexOut.left() * vertexIn.right() * OneLoopFunctionA(x);
-         const std::complex<double> A2R = 
+         const precise_complex_type A2R = 
             - vertexOut.right() * vertexIn.left() * OneLoopFunctionB(x)/12. 
             - vertexOut.right()* vertexIn.right() * mF/mj * OneLoopFunctionC(x)/3.
             - mi/mj * vertexOut.left() * vertexIn.right() * OneLoopFunctionB(x)/12.; 
 
-         const std::complex<double> massFactor = pow(mS,-2);
+         const precise_complex_type massFactor = pow(mS,-2);
 
-         res += oneOver32PiSqr * vector_boson_coupling * massFactor
-            * std::valarray<std::complex<double>> {A1L, A1R, A2L, A2R};
+         res +=/* oneOver32PiSqr * vector_boson_coupling * massFactor
+            * */std::valarray<precise_complex_type> {oneOver32PiSqr * vector_boson_coupling * massFactor
+            * A1L, oneOver32PiSqr * vector_boson_coupling * massFactor
+            * A1R, oneOver32PiSqr * vector_boson_coupling * massFactor
+            * A2L, oneOver32PiSqr * vector_boson_coupling * massFactor
+            * A2R};
       }
    }
 
@@ -339,7 +343,7 @@ std::valarray<precise_complex_type> FFV_SSF<Fj, Fi, V, SA, SB, F>::value(
 
 // emit massless vector boson from the internal fermion line
 template <class Fj, class Fi, class V, class FA, class FB, class S>
-std::valarray<std::complex<double>> FFV_FFS<Fj, Fi, V, FA, FB, S>::value(
+std::valarray<precise_complex_type> FFV_FFS<Fj, Fi, V, FA, FB, S>::value(
    const typename field_indices<Fj>::type& indices_in,
    const typename field_indices<Fi>::type& indices_out,
    context_base const& context,
@@ -396,29 +400,33 @@ std::valarray<std::complex<double>> FFV_FFS<Fj, Fi, V, FA, FB, S>::value(
          const auto mS = context.mass<S>(scalarFieldIndicesIn);
          const auto x = pow(mF/mS, 2);
 
-         std::complex<double> vector_boson_coupling {vertexEmit.left()};
+         precise_complex_type vector_boson_coupling {vertexEmit.left()};
 
          // eq. 18 of hep-ph/9510309 (possibly with different sign)
-         const std::complex<double> A1L =
+         const precise_complex_type A1L =
             - 1./18. * vertexOut.right() * vertexIn.left() * OneLoopFunctionD(x);
          // eq. 19 of hep-ph/9510309 (possibly with different sign)
-         const std::complex<double> A2L = 
-            - vertexOut.left() * vertexIn.right() * OneLoopFunctionE(x)/12.0 
+         const precise_complex_type A2L = 
+            - vertexOut.left() * vertexIn.right() * OneLoopFunctionE(x)/12.0_p 
             - vertexOut.left()* vertexIn.left() * mF/mj * OneLoopFunctionF(x) * 2./3.
-            - mi/mj * vertexOut.right() * vertexIn.left() * OneLoopFunctionE(x)/12.0;
+            - mi/mj * vertexOut.right() * vertexIn.left() * OneLoopFunctionE(x)/12.0_p;
 
          // eq. 18 & 18 of hep-ph/9510309 after replacement L <-> R (possibly with different sign)
-         const std::complex<double> A1R = 
+         const precise_complex_type A1R = 
             - 1./18. * vertexOut.left() * vertexIn.right() * OneLoopFunctionD(x);
-         const std::complex<double> A2R = 
-            - vertexOut.right() * vertexIn.left() * OneLoopFunctionE(x)/12.0 
+         const precise_complex_type A2R = 
+            - vertexOut.right() * vertexIn.left() * OneLoopFunctionE(x)/12.0_p 
             - vertexOut.right()* vertexIn.right() * mF/mj * OneLoopFunctionF(x) * 2./3.
-            - mi/mj * vertexOut.left() * vertexIn.right() * OneLoopFunctionE(x)/12.0; 
+            - mi/mj * vertexOut.left() * vertexIn.right() * OneLoopFunctionE(x)/12.0_p; 
 
-         const std::complex<double> massFactor = pow(mS,-2);
+         const precise_complex_type massFactor = pow(mS,-2);
 
-         res += oneOver32PiSqr * vector_boson_coupling * massFactor
-            * std::valarray<std::complex<double>> {A1L, A1R, A2L, A2R};
+         res +=/*oneOver32PiSqr * vector_boson_coupling * massFactor
+            **/ std::valarray<precise_complex_type> {oneOver32PiSqr * vector_boson_coupling * massFactor
+            *A1L, oneOver32PiSqr * vector_boson_coupling * massFactor
+            *A1R, oneOver32PiSqr * vector_boson_coupling * massFactor
+            *A2L, oneOver32PiSqr * vector_boson_coupling * massFactor
+            *A2R};
       }
    }
 

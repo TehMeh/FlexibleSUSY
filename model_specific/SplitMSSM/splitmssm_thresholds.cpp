@@ -72,14 +72,14 @@ std::ostream& operator<<(std::ostream& ostr, const Parameters& parameters)
  *
  * @return first term on the rhs of Eq. (8) of arXiv:1407.4081
  */
-double lambda_tree_level(const Parameters& parameters)
+precise_real_type lambda_tree_level(const Parameters& parameters)
 {
-   const double g1 = parameters.g1;
-   const double g2 = parameters.g2;
-   const double tan_beta = parameters.tan_beta;
-   const double beta = ArcTan(tan_beta);
-   const double cos_2beta = Cos(2*beta);
-   const double lambda = 0.25 * (Sqr(g2) + 0.6*Sqr(g1)) * Sqr(cos_2beta);
+   const precise_real_type g1 = parameters.g1;
+   const precise_real_type g2 = parameters.g2;
+   const precise_real_type tan_beta = parameters.tan_beta;
+   const precise_real_type beta = ArcTan(tan_beta);
+   const precise_real_type cos_2beta = Cos(2*beta);
+   const precise_real_type lambda = 0.25 * (Sqr(g2) + 0.6*Sqr(g1)) * Sqr(cos_2beta);
 
    return lambda;
 }
@@ -92,13 +92,13 @@ double lambda_tree_level(const Parameters& parameters)
  *
  * @return first term on the rhs of Eq. (17) of arXiv:1407.4081
  */
-double gYu_tree_level(const Parameters& parameters)
+precise_real_type gYu_tree_level(const Parameters& parameters)
 {
-   const double g1 = parameters.g1;
-   const double tan_beta = parameters.tan_beta;
-   const double beta = ArcTan(tan_beta);
-   const double sin_beta = Sin(beta);
-   const double gYu = sqrt(0.6) * g1 * sin_beta;
+   const precise_real_type g1 = parameters.g1;
+   const precise_real_type tan_beta = parameters.tan_beta;
+   const precise_real_type beta = ArcTan(tan_beta);
+   const precise_real_type sin_beta = Sin(beta);
+   const precise_real_type gYu = sqrt(0.6) * g1 * sin_beta;
 
    return gYu;
 }
@@ -111,13 +111,13 @@ double gYu_tree_level(const Parameters& parameters)
  *
  * @return first term on the rhs of Eq. (18) of arXiv:1407.4081
  */
-double gYd_tree_level(const Parameters& parameters)
+precise_real_type gYd_tree_level(const Parameters& parameters)
 {
-   const double g1 = parameters.g1;
-   const double tan_beta = parameters.tan_beta;
-   const double beta = ArcTan(tan_beta);
-   const double cos_beta = Cos(beta);
-   const double gYd = sqrt(0.6) * g1 * cos_beta;
+   const precise_real_type g1 = parameters.g1;
+   const precise_real_type tan_beta = parameters.tan_beta;
+   const precise_real_type beta = ArcTan(tan_beta);
+   const precise_real_type cos_beta = Cos(beta);
+   const precise_real_type gYd = sqrt(0.6) * g1 * cos_beta;
 
    return gYd;
 }
@@ -130,13 +130,13 @@ double gYd_tree_level(const Parameters& parameters)
  *
  * @return first term on the rhs of Eq. (15) of arXiv:1407.4081
  */
-double g2u_tree_level(const Parameters& parameters)
+precise_real_type g2u_tree_level(const Parameters& parameters)
 {
-   const double g2 = parameters.g2;
-   const double tan_beta = parameters.tan_beta;
-   const double beta = ArcTan(tan_beta);
-   const double sin_beta = Sin(beta);
-   const double g2u = g2 * sin_beta;
+   const precise_real_type g2 = parameters.g2;
+   const precise_real_type tan_beta = parameters.tan_beta;
+   const precise_real_type beta = ArcTan(tan_beta);
+   const precise_real_type sin_beta = Sin(beta);
+   const precise_real_type g2u = g2 * sin_beta;
 
    return g2u;
 }
@@ -149,13 +149,13 @@ double g2u_tree_level(const Parameters& parameters)
  *
  * @return first term on the rhs of Eq. (16) of arXiv:1407.4081
  */
-double g2d_tree_level(const Parameters& parameters)
+precise_real_type g2d_tree_level(const Parameters& parameters)
 {
-   const double g2 = parameters.g2;
-   const double tan_beta = parameters.tan_beta;
-   const double beta = ArcTan(tan_beta);
-   const double cos_beta = Cos(beta);
-   const double g2d = g2 * cos_beta;
+   const precise_real_type g2 = parameters.g2;
+   const precise_real_type tan_beta = parameters.tan_beta;
+   const precise_real_type beta = ArcTan(tan_beta);
+   const precise_real_type cos_beta = Cos(beta);
+   const precise_real_type g2d = g2 * cos_beta;
 
    return g2d;
 }
@@ -169,15 +169,15 @@ double g2d_tree_level(const Parameters& parameters)
  * @return 1-loop MS-bar--DR-bar transition CT for quartic Higgs
  * coupling
  */
-double delta_lambda_1loop_reg(const Parameters& parameters)
+precise_real_type delta_lambda_1loop_reg(const Parameters& parameters)
 {
-   const double g1 = parameters.g1;
-   const double g2 = parameters.g2;
-   const double tan_beta = parameters.tan_beta;
-   const double beta = ArcTan(tan_beta);
-   const double cos_2beta = Cos(2*beta);
+   const precise_real_type g1 = parameters.g1;
+   const precise_real_type g2 = parameters.g2;
+   const precise_real_type tan_beta = parameters.tan_beta;
+   const precise_real_type beta = ArcTan(tan_beta);
+   const precise_real_type cos_2beta = Cos(2*beta);
 
-   const double delta_lambda_1loop_reg
+   const precise_real_type delta_lambda_1loop_reg
       = - 0.09*Power(g1,4) - 0.3*Sqr(g1)*Sqr(g2)
       - (0.75 - Sqr(cos_2beta)/6.) * Power(g2,4);
 
@@ -193,38 +193,38 @@ double delta_lambda_1loop_reg(const Parameters& parameters)
  * @return 1-loop threshold coupling for quartic Higgs coupling from
  * sfermions
  */
-double delta_lambda_1loop_phi(const Parameters& parameters)
+precise_real_type delta_lambda_1loop_phi(const Parameters& parameters)
 {
    using namespace threshold_loop_functions;
 
-   const double g1 = parameters.g1;
-   const double g2 = parameters.g2;
-   const double g12 = Sqr(g1);
-   const double g22 = Sqr(g2);
-   const double g14 = Sqr(g12);
-   const double g24 = Sqr(g22);
-   const double tan_beta = parameters.tan_beta;
-   const double beta = ArcTan(tan_beta);
-   const double cos_2beta = Cos(2*beta);
-   const double cos2_2beta = Sqr(cos_2beta);
-   const double cos_4beta = Cos(4*beta);
-   const double cos_8beta = Cos(8*beta);
-   const double sin_4beta = Sin(4*beta);
-   const double gt = parameters.gt;
-   const double gt2 = Sqr(gt);
-   const double gt4 = Sqr(gt2);
-   const double scale2 = Sqr(parameters.scale);
-   const Eigen::Matrix<double,3,3> mq2(parameters.mq2);
-   const Eigen::Matrix<double,3,3> mu2(parameters.mu2);
-   const Eigen::Matrix<double,3,3> md2(parameters.md2);
-   const Eigen::Matrix<double,3,3> ml2(parameters.ml2);
-   const Eigen::Matrix<double,3,3> me2(parameters.me2);
-   const double xQU = AbsSqrt(mq2(2,2)/mu2(2,2));
-   const double At = parameters.At;
-   const double mu = parameters.mu;
-   const double xt = At - mu/tan_beta;
-   const double xtt = Sqr(xt)/AbsSqrt(mq2(2,2)*mu2(2,2));
-   const double mA2 = Sqr(parameters.mA);
+   const precise_real_type g1 = parameters.g1;
+   const precise_real_type g2 = parameters.g2;
+   const precise_real_type g12 = Sqr(g1);
+   const precise_real_type g22 = Sqr(g2);
+   const precise_real_type g14 = Sqr(g12);
+   const precise_real_type g24 = Sqr(g22);
+   const precise_real_type tan_beta = parameters.tan_beta;
+   const precise_real_type beta = ArcTan(tan_beta);
+   const precise_real_type cos_2beta = Cos(2*beta);
+   const precise_real_type cos2_2beta = Sqr(cos_2beta);
+   const precise_real_type cos_4beta = Cos(4*beta);
+   const precise_real_type cos_8beta = Cos(8*beta);
+   const precise_real_type sin_4beta = Sin(4*beta);
+   const precise_real_type gt = parameters.gt;
+   const precise_real_type gt2 = Sqr(gt);
+   const precise_real_type gt4 = Sqr(gt2);
+   const precise_real_type scale2 = Sqr(parameters.scale);
+   const Eigen::Matrix<precise_real_type,3,3> mq2(parameters.mq2);
+   const Eigen::Matrix<precise_real_type,3,3> mu2(parameters.mu2);
+   const Eigen::Matrix<precise_real_type,3,3> md2(parameters.md2);
+   const Eigen::Matrix<precise_real_type,3,3> ml2(parameters.ml2);
+   const Eigen::Matrix<precise_real_type,3,3> me2(parameters.me2);
+   const precise_real_type xQU = AbsSqrt(mq2(2,2)/mu2(2,2));
+   const precise_real_type At = parameters.At;
+   const precise_real_type mu = parameters.mu;
+   const precise_real_type xt = At - mu/tan_beta;
+   const precise_real_type xtt = Sqr(xt)/AbsSqrt(mq2(2,2)*mu2(2,2));
+   const precise_real_type mA2 = Sqr(parameters.mA);
 
    ASSERT_NON_ZERO(mq2(0,0), delta_lambda_1loop_phi);
    ASSERT_NON_ZERO(mq2(1,1), delta_lambda_1loop_phi);
@@ -245,7 +245,7 @@ double delta_lambda_1loop_phi(const Parameters& parameters)
    ASSERT_NON_ZERO(tan_beta, delta_lambda_1loop_phi);
    ASSERT_NON_ZERO(scale2  , delta_lambda_1loop_phi);
 
-   const double delta_lambda_1loop_phi =
+   const precise_real_type delta_lambda_1loop_phi =
       3*gt2*(gt2+0.5*(g22-g12/5.)*cos_2beta)*Log(mq2(2,2)/scale2)
       +3*gt2*(gt2+0.4*g12*cos_2beta)*Log(mu2(2,2)/scale2)
       +cos2_2beta/300*(
@@ -291,18 +291,18 @@ namespace {
     * Split-MSSM contribution to the beta-function of lambda
     * (arXiv:1407.4081, Eq. (12)).
     */
-   double beta_lambda(double lambda, double gYu, double gYd, double g2u, double g2d)
+   precise_real_type beta_lambda(precise_real_type lambda, precise_real_type gYu, precise_real_type gYd, precise_real_type g2u, precise_real_type g2d)
    {
-      const double gYu2 = Sqr(gYu);
-      const double gYd2 = Sqr(gYd);
-      const double g2u2 = Sqr(g2u);
-      const double g2d2 = Sqr(g2d);
-      const double gYu4 = Sqr(gYu2);
-      const double gYd4 = Sqr(gYd2);
-      const double g2u4 = Sqr(g2u2);
-      const double g2d4 = Sqr(g2d2);
+      const precise_real_type gYu2 = Sqr(gYu);
+      const precise_real_type gYd2 = Sqr(gYd);
+      const precise_real_type g2u2 = Sqr(g2u);
+      const precise_real_type g2d2 = Sqr(g2d);
+      const precise_real_type gYu4 = Sqr(gYu2);
+      const precise_real_type gYd4 = Sqr(gYd2);
+      const precise_real_type g2u4 = Sqr(g2u2);
+      const precise_real_type g2d4 = Sqr(g2d2);
 
-      const double beta =
+      const precise_real_type beta =
          2*lambda*(gYd2 + gYu2 + 3*g2d2 + 3*g2u2)
          -gYd4 - gYu4 - 5*g2d4 - 5*g2u4
          -4*gYd*gYu*g2d*g2u
@@ -325,24 +325,24 @@ namespace {
  * @return 1-loop threshold correction for quartic Higgs coupling from
  * Higgsinos and gauginos
  */
-double delta_lambda_1loop_chi_1(const Parameters& parameters)
+precise_real_type delta_lambda_1loop_chi_1(const Parameters& parameters)
 {
-   const double scale = parameters.scale;
-   const double mu = parameters.mu;
-   const double gYu = gYu_tree_level(parameters);
-   const double gYd = gYd_tree_level(parameters);
-   const double g2u = g2u_tree_level(parameters);
-   const double g2d = g2d_tree_level(parameters);
-   const double m1 = parameters.m1;
-   const double m2 = parameters.m2;
-   const double lambda = lambda_tree_level(parameters);
+   const precise_real_type scale = parameters.scale;
+   const precise_real_type mu = parameters.mu;
+   const precise_real_type gYu = gYu_tree_level(parameters);
+   const precise_real_type gYd = gYd_tree_level(parameters);
+   const precise_real_type g2u = g2u_tree_level(parameters);
+   const precise_real_type g2d = g2d_tree_level(parameters);
+   const precise_real_type m1 = parameters.m1;
+   const precise_real_type m2 = parameters.m2;
+   const precise_real_type lambda = lambda_tree_level(parameters);
 
    ASSERT_NON_ZERO(scale, delta_lambda_1loop_chi_1);
    ASSERT_NON_ZERO(mu   , delta_lambda_1loop_chi_1);
    ASSERT_NON_ZERO(m1   , delta_lambda_1loop_chi_1);
    ASSERT_NON_ZERO(m2   , delta_lambda_1loop_chi_1);
 
-   const double delta_lambda =
+   const precise_real_type delta_lambda =
       delta_lambda_1loop_chi_1(scale,mu,lambda,gYu,gYd,g2u,g2d,m1,m2);
 
    return delta_lambda;
@@ -364,39 +364,39 @@ double delta_lambda_1loop_chi_1(const Parameters& parameters)
  *
  * @return r.h.s. of Eq. (11), including the loop factor
  */
-double delta_lambda_1loop_chi_1(
-   double scale,
-   double mu,
-   double lambda,
-   double gYu,
-   double gYd,
-   double g2u,
-   double g2d,
-   double m1,
-   double m2
+precise_real_type delta_lambda_1loop_chi_1(
+   precise_real_type scale,
+   precise_real_type mu,
+   precise_real_type lambda,
+   precise_real_type gYu,
+   precise_real_type gYd,
+   precise_real_type g2u,
+   precise_real_type g2d,
+   precise_real_type m1,
+   precise_real_type m2
 )
 {
    using namespace threshold_loop_functions;
 
-   const double gYu2 = Sqr(gYu);
-   const double gYd2 = Sqr(gYd);
-   const double g2u2 = Sqr(g2u);
-   const double g2d2 = Sqr(g2d);
-   const double gYu4 = Sqr(gYu2);
-   const double gYd4 = Sqr(gYd2);
-   const double g2u4 = Sqr(g2u2);
-   const double g2d4 = Sqr(g2d2);
-   const double r1 = m1 / mu;
-   const double r2 = m2 / mu;
-   const double mu2 = Sqr(mu);
-   const double scale2 = Sqr(scale);
+   const precise_real_type gYu2 = Sqr(gYu);
+   const precise_real_type gYd2 = Sqr(gYd);
+   const precise_real_type g2u2 = Sqr(g2u);
+   const precise_real_type g2d2 = Sqr(g2d);
+   const precise_real_type gYu4 = Sqr(gYu2);
+   const precise_real_type gYd4 = Sqr(gYd2);
+   const precise_real_type g2u4 = Sqr(g2u2);
+   const precise_real_type g2d4 = Sqr(g2d2);
+   const precise_real_type r1 = m1 / mu;
+   const precise_real_type r2 = m2 / mu;
+   const precise_real_type mu2 = Sqr(mu);
+   const precise_real_type scale2 = Sqr(scale);
 
    ASSERT_NON_ZERO(scale, delta_lambda_1loop_chi_1);
    ASSERT_NON_ZERO(mu   , delta_lambda_1loop_chi_1);
    ASSERT_NON_ZERO(m1   , delta_lambda_1loop_chi_1);
    ASSERT_NON_ZERO(m2   , delta_lambda_1loop_chi_1);
 
-   const double delta_lambda =
+   const precise_real_type delta_lambda =
       0.5*beta_lambda(lambda,gYu,gYd,g2u,g2d)*Log(mu2/scale2)
       -7./12.*f1(r1)*(gYd4+gYu4)
       -9./4.*f2(r2)*(g2d4+g2u4)
@@ -423,16 +423,16 @@ double delta_lambda_1loop_chi_1(
  * @return 1-loop threshold correction for quartic Higgs coupling from
  * Higgsinos and gauginos
  */
-double delta_lambda_1loop_chi_2(const Parameters& parameters)
+precise_real_type delta_lambda_1loop_chi_2(const Parameters& parameters)
 {
-   const double scale = parameters.scale;
-   const double mu = parameters.mu;
-   const double m2 = parameters.m2;
-   const double g1 = parameters.g1;
-   const double g2 = parameters.g2;
-   const double tan_beta = parameters.tan_beta;
+   const precise_real_type scale = parameters.scale;
+   const precise_real_type mu = parameters.mu;
+   const precise_real_type m2 = parameters.m2;
+   const precise_real_type g1 = parameters.g1;
+   const precise_real_type g2 = parameters.g2;
+   const precise_real_type tan_beta = parameters.tan_beta;
 
-   const double delta_lambda =
+   const precise_real_type delta_lambda =
       delta_lambda_1loop_chi_2(scale,mu,m2,g1,g2,tan_beta);
 
    return delta_lambda;
@@ -451,27 +451,27 @@ double delta_lambda_1loop_chi_2(const Parameters& parameters)
  *
  * @return r.h.s. of Eq. (13), including the loop factor
  */
-double delta_lambda_1loop_chi_2(
-   double scale,
-   double mu,
-   double m2,
-   double g1,
-   double g2,
-   double tan_beta)
+precise_real_type delta_lambda_1loop_chi_2(
+   precise_real_type scale,
+   precise_real_type mu,
+   precise_real_type m2,
+   precise_real_type g1,
+   precise_real_type g2,
+   precise_real_type tan_beta)
 {
-   const double scale2 = Sqr(scale);
-   const double mu2 = Sqr(mu);
-   const double m22 = Sqr(m2);
-   const double g14 = Power(g1,4);
-   const double g24 = Power(g2,4);
-   const double beta = ArcTan(tan_beta);
-   const double cos2_2beta = Sqr(Cos(2*beta));
+   const precise_real_type scale2 = Sqr(scale);
+   const precise_real_type mu2 = Sqr(mu);
+   const precise_real_type m22 = Sqr(m2);
+   const precise_real_type g14 = Power(g1,4);
+   const precise_real_type g24 = Power(g2,4);
+   const precise_real_type beta = ArcTan(tan_beta);
+   const precise_real_type cos2_2beta = Sqr(Cos(2*beta));
 
    ASSERT_NON_ZERO(scale, delta_lambda_1loop_chi_2);
    ASSERT_NON_ZERO(mu   , delta_lambda_1loop_chi_2);
    ASSERT_NON_ZERO(m2   , delta_lambda_1loop_chi_2);
 
-   const double delta_lambda =
+   const precise_real_type delta_lambda =
       -1./6. * cos2_2beta * (
          +2.*g24*Log(m22/scale2)
          +(9./25.*g14 + g24)*Log(mu2/scale2)
@@ -489,30 +489,30 @@ double delta_lambda_1loop_chi_2(
  * @return 2-loop threshold coupling for quartic Higgs coupling from
  * sfermions (arXiv:1407.4081, Eq. (34)).
  */
-double delta_lambda_2loop_phi(const Parameters& parameters)
+precise_real_type delta_lambda_2loop_phi(const Parameters& parameters)
 {
-   const double Pi4 = Power(Pi,4);
-   const double g3 = parameters.g3;
-   const double g32 = Sqr(g3);
-   const double gt = parameters.gt;
-   const double gt4 = Power(gt,4);
-   const double scale2 = Sqr(parameters.scale);
-   const Eigen::Matrix<double,3,3> mq2(parameters.mq2);
-   const Eigen::Matrix<double,3,3> mu2(parameters.mu2);
-   const double xQU = AbsSqrt(mq2(2,2)/mu2(2,2));
-   const double xQU2 = Sqr(xQU);
-   const double At = parameters.At;
-   const double mu = parameters.mu;
-   const double tan_beta = parameters.tan_beta;
-   const double xt = At - mu/tan_beta;
-   const double xtt = Sqr(xt)/AbsSqrt(mq2(2,2)*mu2(2,2));
+   const precise_real_type Pi4 = Power(Pi,4);
+   const precise_real_type g3 = parameters.g3;
+   const precise_real_type g32 = Sqr(g3);
+   const precise_real_type gt = parameters.gt;
+   const precise_real_type gt4 = Power(gt,4);
+   const precise_real_type scale2 = Sqr(parameters.scale);
+   const Eigen::Matrix<precise_real_type,3,3> mq2(parameters.mq2);
+   const Eigen::Matrix<precise_real_type,3,3> mu2(parameters.mu2);
+   const precise_real_type xQU = AbsSqrt(mq2(2,2)/mu2(2,2));
+   const precise_real_type xQU2 = Sqr(xQU);
+   const precise_real_type At = parameters.At;
+   const precise_real_type mu = parameters.mu;
+   const precise_real_type tan_beta = parameters.tan_beta;
+   const precise_real_type xt = At - mu/tan_beta;
+   const precise_real_type xtt = Sqr(xt)/AbsSqrt(mq2(2,2)*mu2(2,2));
 
    ASSERT_NON_ZERO(mq2(2,2), delta_lambda_2loop_phi);
    ASSERT_NON_ZERO(mu2(2,2), delta_lambda_2loop_phi);
    ASSERT_NON_ZERO(scale2  , delta_lambda_2loop_phi);
    ASSERT_NON_ZERO(tan_beta, delta_lambda_2loop_phi);
 
-   double delta_lambda_2loop_phi;
+   precise_real_type delta_lambda_2loop_phi;
 
    if (is_equal(xQU, 1.)) {
       delta_lambda_2loop_phi =
@@ -549,22 +549,22 @@ double delta_lambda_2loop_phi(const Parameters& parameters)
  * @return 2-loop threshold coupling for quartic Higgs coupling from
  * sfermions (arXiv:1407.4081, Eq. (36))
  */
-double delta_lambda_2loop_phi_HSS(const Parameters& parameters)
+precise_real_type delta_lambda_2loop_phi_HSS(const Parameters& parameters)
 {
-   const double Pi4 = Power(Pi,4);
-   const double g32 = Sqr(parameters.g3);
-   const double gt4 = Power(parameters.gt,4);
-   const double scale = parameters.scale;
-   const double At = parameters.At;
-   const double mu = parameters.mu;
-   const double tan_beta = parameters.tan_beta;
-   const double xt = At - mu/tan_beta;
-   const double r = xt / scale;
+   const precise_real_type Pi4 = Power(Pi,4);
+   const precise_real_type g32 = Sqr(parameters.g3);
+   const precise_real_type gt4 = Power(parameters.gt,4);
+   const precise_real_type scale = parameters.scale;
+   const precise_real_type At = parameters.At;
+   const precise_real_type mu = parameters.mu;
+   const precise_real_type tan_beta = parameters.tan_beta;
+   const precise_real_type xt = At - mu/tan_beta;
+   const precise_real_type r = xt / scale;
 
    ASSERT_NON_ZERO(scale   , delta_lambda_2loop_phi_HSS);
    ASSERT_NON_ZERO(tan_beta, delta_lambda_2loop_phi_HSS);
 
-   const double delta_lambda_2loop_phi_HSS =
+   const precise_real_type delta_lambda_2loop_phi_HSS =
       -12.*r - 6.*Sqr(r) + 14.*Power(r,3) + 0.5*Power(r,4) - Power(r,5);
 
    return (g32*gt4)/(96.*Pi4) * delta_lambda_2loop_phi_HSS;
@@ -578,26 +578,26 @@ double delta_lambda_2loop_phi_HSS(const Parameters& parameters)
  *
  * @return one-loop term on the rhs of Eq. (17) of arXiv:1407.4081
  */
-double delta_gYu_1loop(const Parameters& parameters)
+precise_real_type delta_gYu_1loop(const Parameters& parameters)
 {
-   const double g1 = parameters.g1;
-   const double g2 = parameters.g2;
-   const double g12 = Sqr(g1);
-   const double g22 = Sqr(g2);
-   const double tan_beta = parameters.tan_beta;
-   const double beta = ArcTan(tan_beta);
-   const double cos2_beta = Sqr(Cos(beta));
-   const double sin_beta = Sin(beta);
-   const double sin2_beta = Sqr(sin_beta);
-   const double gt = parameters.gt;
-   const double gt2 = Sqr(gt);
-   const double scale2 = Sqr(parameters.scale);
-   const Eigen::Matrix<double,3,3> mq2(parameters.mq2);
-   const Eigen::Matrix<double,3,3> mu2(parameters.mu2);
-   const Eigen::Matrix<double,3,3> md2(parameters.md2);
-   const Eigen::Matrix<double,3,3> ml2(parameters.ml2);
-   const Eigen::Matrix<double,3,3> me2(parameters.me2);
-   const double mA2 = Sqr(parameters.mA);
+   const precise_real_type g1 = parameters.g1;
+   const precise_real_type g2 = parameters.g2;
+   const precise_real_type g12 = Sqr(g1);
+   const precise_real_type g22 = Sqr(g2);
+   const precise_real_type tan_beta = parameters.tan_beta;
+   const precise_real_type beta = ArcTan(tan_beta);
+   const precise_real_type cos2_beta = Sqr(Cos(beta));
+   const precise_real_type sin_beta = Sin(beta);
+   const precise_real_type sin2_beta = Sqr(sin_beta);
+   const precise_real_type gt = parameters.gt;
+   const precise_real_type gt2 = Sqr(gt);
+   const precise_real_type scale2 = Sqr(parameters.scale);
+   const Eigen::Matrix<precise_real_type,3,3> mq2(parameters.mq2);
+   const Eigen::Matrix<precise_real_type,3,3> mu2(parameters.mu2);
+   const Eigen::Matrix<precise_real_type,3,3> md2(parameters.md2);
+   const Eigen::Matrix<precise_real_type,3,3> ml2(parameters.ml2);
+   const Eigen::Matrix<precise_real_type,3,3> me2(parameters.me2);
+   const precise_real_type mA2 = Sqr(parameters.mA);
 
    ASSERT_NON_ZERO(mq2(0,0), delta_gYu_1loop);
    ASSERT_NON_ZERO(mq2(1,1), delta_gYu_1loop);
@@ -618,7 +618,7 @@ double delta_gYu_1loop(const Parameters& parameters)
    ASSERT_NON_ZERO(tan_beta, delta_gYu_1loop);
    ASSERT_NON_ZERO(scale2  , delta_gYu_1loop);
 
-   const double delta_gYu_1loop =
+   const precise_real_type delta_gYu_1loop =
       (3*g22/16)*(-2+7*cos2_beta)
       +(3*g12/80)*(-44+7*cos2_beta)
       +(9*gt2)/(4*sin2_beta)
@@ -645,24 +645,24 @@ double delta_gYu_1loop(const Parameters& parameters)
  *
  * @return one-loop term on the rhs of Eq. (18) of arXiv:1407.4081
  */
-double delta_gYd_1loop(const Parameters& parameters)
+precise_real_type delta_gYd_1loop(const Parameters& parameters)
 {
-   const double g1 = parameters.g1;
-   const double g2 = parameters.g2;
-   const double g12 = Sqr(g1);
-   const double g22 = Sqr(g2);
-   const double tan_beta = parameters.tan_beta;
-   const double beta = ArcTan(tan_beta);
-   const double cos_beta = Cos(beta);
-   const double sin_beta = Sin(beta);
-   const double sin2_beta = Sqr(sin_beta);
-   const double scale2 = Sqr(parameters.scale);
-   const Eigen::Matrix<double,3,3> mq2(parameters.mq2);
-   const Eigen::Matrix<double,3,3> mu2(parameters.mu2);
-   const Eigen::Matrix<double,3,3> md2(parameters.md2);
-   const Eigen::Matrix<double,3,3> ml2(parameters.ml2);
-   const Eigen::Matrix<double,3,3> me2(parameters.me2);
-   const double mA2 = Sqr(parameters.mA);
+   const precise_real_type g1 = parameters.g1;
+   const precise_real_type g2 = parameters.g2;
+   const precise_real_type g12 = Sqr(g1);
+   const precise_real_type g22 = Sqr(g2);
+   const precise_real_type tan_beta = parameters.tan_beta;
+   const precise_real_type beta = ArcTan(tan_beta);
+   const precise_real_type cos_beta = Cos(beta);
+   const precise_real_type sin_beta = Sin(beta);
+   const precise_real_type sin2_beta = Sqr(sin_beta);
+   const precise_real_type scale2 = Sqr(parameters.scale);
+   const Eigen::Matrix<precise_real_type,3,3> mq2(parameters.mq2);
+   const Eigen::Matrix<precise_real_type,3,3> mu2(parameters.mu2);
+   const Eigen::Matrix<precise_real_type,3,3> md2(parameters.md2);
+   const Eigen::Matrix<precise_real_type,3,3> ml2(parameters.ml2);
+   const Eigen::Matrix<precise_real_type,3,3> me2(parameters.me2);
+   const precise_real_type mA2 = Sqr(parameters.mA);
 
    ASSERT_NON_ZERO(mq2(0,0), delta_gYd_1loop);
    ASSERT_NON_ZERO(mq2(1,1), delta_gYd_1loop);
@@ -683,7 +683,7 @@ double delta_gYd_1loop(const Parameters& parameters)
    ASSERT_NON_ZERO(tan_beta, delta_gYd_1loop);
    ASSERT_NON_ZERO(scale2  , delta_gYd_1loop);
 
-   const double delta_gYd_1loop =
+   const precise_real_type delta_gYd_1loop =
       (3*g22/16)*(-2+7*sin2_beta)
       +(3*g12/80)*(-44+7*sin2_beta)
       +(4*g12-9*(g12+5*g22)*sin2_beta)/40*Log(mA2/scale2)
@@ -708,24 +708,24 @@ double delta_gYd_1loop(const Parameters& parameters)
  *
  * @return one-loop term on the rhs of Eq. (15) of arXiv:1407.4081
  */
-double delta_g2u_1loop(const Parameters& parameters)
+precise_real_type delta_g2u_1loop(const Parameters& parameters)
 {
-   const double g1 = parameters.g1;
-   const double g2 = parameters.g2;
-   const double g12 = Sqr(g1);
-   const double g22 = Sqr(g2);
-   const double tan_beta = parameters.tan_beta;
-   const double beta = ArcTan(tan_beta);
-   const double cos2_beta = Sqr(Cos(beta));
-   const double sin_beta = Sin(beta);
-   const double sin2_beta = Sqr(sin_beta);
-   const double gt = parameters.gt;
-   const double gt2 = Sqr(gt);
-   const double scale2 = Sqr(parameters.scale);
-   const Eigen::Matrix<double,3,3> mq2(parameters.mq2);
-   const Eigen::Matrix<double,3,3> mu2(parameters.mu2);
-   const Eigen::Matrix<double,3,3> ml2(parameters.ml2);
-   const double mA2 = Sqr(parameters.mA);
+   const precise_real_type g1 = parameters.g1;
+   const precise_real_type g2 = parameters.g2;
+   const precise_real_type g12 = Sqr(g1);
+   const precise_real_type g22 = Sqr(g2);
+   const precise_real_type tan_beta = parameters.tan_beta;
+   const precise_real_type beta = ArcTan(tan_beta);
+   const precise_real_type cos2_beta = Sqr(Cos(beta));
+   const precise_real_type sin_beta = Sin(beta);
+   const precise_real_type sin2_beta = Sqr(sin_beta);
+   const precise_real_type gt = parameters.gt;
+   const precise_real_type gt2 = Sqr(gt);
+   const precise_real_type scale2 = Sqr(parameters.scale);
+   const Eigen::Matrix<precise_real_type,3,3> mq2(parameters.mq2);
+   const Eigen::Matrix<precise_real_type,3,3> mu2(parameters.mu2);
+   const Eigen::Matrix<precise_real_type,3,3> ml2(parameters.ml2);
+   const precise_real_type mA2 = Sqr(parameters.mA);
 
    ASSERT_NON_ZERO(mq2(0,0), delta_g2u_1loop);
    ASSERT_NON_ZERO(mq2(1,1), delta_g2u_1loop);
@@ -740,7 +740,7 @@ double delta_g2u_1loop(const Parameters& parameters)
    ASSERT_NON_ZERO(tan_beta, delta_g2u_1loop);
    ASSERT_NON_ZERO(scale2  , delta_g2u_1loop);
 
-   const double delta_g2u_1loop =
+   const precise_real_type delta_g2u_1loop =
       -g22*(2./3.+11./16.*cos2_beta)
       +3*g12/80*(-2+7*cos2_beta)
       +9*gt2/(4*sin2_beta)
@@ -768,21 +768,21 @@ double delta_g2u_1loop(const Parameters& parameters)
  *
  * @return one-loop term on the rhs of Eq. (16) of arXiv:1407.4081
  */
-double delta_g2d_1loop(const Parameters& parameters)
+precise_real_type delta_g2d_1loop(const Parameters& parameters)
 {
-   const double g1 = parameters.g1;
-   const double g2 = parameters.g2;
-   const double g12 = Sqr(g1);
-   const double g22 = Sqr(g2);
-   const double tan_beta = parameters.tan_beta;
-   const double beta = ArcTan(tan_beta);
-   const double cos_beta = Cos(beta);
-   const double sin_beta = Sin(beta);
-   const double sin2_beta = Sqr(sin_beta);
-   const double scale2 = Sqr(parameters.scale);
-   const Eigen::Matrix<double,3,3> mq2(parameters.mq2);
-   const Eigen::Matrix<double,3,3> ml2(parameters.ml2);
-   const double mA2 = Sqr(parameters.mA);
+   const precise_real_type g1 = parameters.g1;
+   const precise_real_type g2 = parameters.g2;
+   const precise_real_type g12 = Sqr(g1);
+   const precise_real_type g22 = Sqr(g2);
+   const precise_real_type tan_beta = parameters.tan_beta;
+   const precise_real_type beta = ArcTan(tan_beta);
+   const precise_real_type cos_beta = Cos(beta);
+   const precise_real_type sin_beta = Sin(beta);
+   const precise_real_type sin2_beta = Sqr(sin_beta);
+   const precise_real_type scale2 = Sqr(parameters.scale);
+   const Eigen::Matrix<precise_real_type,3,3> mq2(parameters.mq2);
+   const Eigen::Matrix<precise_real_type,3,3> ml2(parameters.ml2);
+   const precise_real_type mA2 = Sqr(parameters.mA);
 
    ASSERT_NON_ZERO(mq2(0,0), delta_g2d_1loop);
    ASSERT_NON_ZERO(mq2(1,1), delta_g2d_1loop);
@@ -794,7 +794,7 @@ double delta_g2d_1loop(const Parameters& parameters)
    ASSERT_NON_ZERO(tan_beta, delta_g2d_1loop);
    ASSERT_NON_ZERO(scale2  , delta_g2d_1loop);
 
-   const double delta_g2d_1loop =
+   const precise_real_type delta_g2d_1loop =
       -g22*(2./3.+11./16.*sin2_beta)
       +(3*g12/80)*(-2+7*sin2_beta)
       +(g22/2)*Log(mq2(0,0)/scale2)
@@ -824,27 +824,27 @@ double delta_g2d_1loop(const Parameters& parameters)
  * @return 1-loop threshold correction for the top Yukawa coupling
  * from Higgsinos and gauginos
  */
-double delta_gt_1loop_chi(
-   double scale, double mu, double gYu, double gYd,
-   double g2u, double g2d, double m1, double m2)
+precise_real_type delta_gt_1loop_chi(
+   precise_real_type scale, precise_real_type mu, precise_real_type gYu, precise_real_type gYd,
+   precise_real_type g2u, precise_real_type g2d, precise_real_type m1, precise_real_type m2)
 {
    using namespace threshold_loop_functions;
 
-   const double gYu2 = Sqr(gYu);
-   const double gYd2 = Sqr(gYd);
-   const double g2u2 = Sqr(g2u);
-   const double g2d2 = Sqr(g2d);
-   const double r1 = m1 / mu;
-   const double r2 = m2 / mu;
-   const double mu2 = Sqr(mu);
-   const double scale2 = Sqr(scale);
+   const precise_real_type gYu2 = Sqr(gYu);
+   const precise_real_type gYd2 = Sqr(gYd);
+   const precise_real_type g2u2 = Sqr(g2u);
+   const precise_real_type g2d2 = Sqr(g2d);
+   const precise_real_type r1 = m1 / mu;
+   const precise_real_type r2 = m2 / mu;
+   const precise_real_type mu2 = Sqr(mu);
+   const precise_real_type scale2 = Sqr(scale);
 
    ASSERT_NON_ZERO(scale, delta_gt_1loop_chi);
    ASSERT_NON_ZERO(mu   , delta_gt_1loop_chi);
    ASSERT_NON_ZERO(m1   , delta_gt_1loop_chi);
    ASSERT_NON_ZERO(m2   , delta_gt_1loop_chi);
 
-   const double delta_gt_chi =
+   const precise_real_type delta_gt_chi =
       -1./6.*gYu*gYd*f(r1)
       -1./12.*(gYu2+gYd2)*(g(r1)+3*Log(mu2/scale2))
       -0.5*g2u*g2d*f(r2)
@@ -855,7 +855,7 @@ double delta_gt_1loop_chi(
 
 namespace {
    /// arXiv:1502.06525, Eq. (44)
-   double G(double x2, double q2)
+   precise_real_type G(precise_real_type x2, precise_real_type q2)
    {
       if (is_zero(x2))
          return 0.;
@@ -866,7 +866,7 @@ namespace {
    }
 
    /// arXiv:1502.06525, Eq. (A8)
-   double G1(double m12, double m22, double q2)
+   precise_real_type G1(precise_real_type m12, precise_real_type m22, precise_real_type q2)
    {
       ASSERT_NON_ZERO(q2, G1);
 
@@ -879,7 +879,7 @@ namespace {
    }
 
    /// arXiv:1502.06525, Eq. (A13)
-   double G2(double m12, double m22, double q2)
+   precise_real_type G2(precise_real_type m12, precise_real_type m22, precise_real_type q2)
    {
       ASSERT_NON_ZERO(q2, G2);
 
@@ -904,22 +904,22 @@ namespace {
  * @return 1-loop threshold correction for Higgs mass parameter from
  * Higgsinos and gauginos
  */
-double delta_m2_1loop_chi(const Parameters& parameters)
+precise_real_type delta_m2_1loop_chi(const Parameters& parameters)
 {
-   const double g2 = parameters.g2;
-   const double gY = parameters.g1 * Sqrt(0.6);
-   const double m1 = parameters.m1;
-   const double m2 = parameters.m2;
-   const double mu = parameters.mu;
-   const double scale = parameters.scale;
-   const double g22 = Sqr(g2);
-   const double gY2 = Sqr(gY);
-   const double m12 = Sqr(m1);
-   const double m22 = Sqr(m2);
-   const double mu2 = Sqr(mu);
-   const double scale2 = Sqr(scale);
+   const precise_real_type g2 = parameters.g2;
+   const precise_real_type gY = parameters.g1 * Sqrt(0.6);
+   const precise_real_type m1 = parameters.m1;
+   const precise_real_type m2 = parameters.m2;
+   const precise_real_type mu = parameters.mu;
+   const precise_real_type scale = parameters.scale;
+   const precise_real_type g22 = Sqr(g2);
+   const precise_real_type gY2 = Sqr(gY);
+   const precise_real_type m12 = Sqr(m1);
+   const precise_real_type m22 = Sqr(m2);
+   const precise_real_type mu2 = Sqr(mu);
+   const precise_real_type scale2 = Sqr(scale);
 
-   const double minus_delta_m2 =
+   const precise_real_type minus_delta_m2 =
       - 6*g22*G2(m22,mu2,scale2)
       - 2*gY2*G2(m12,mu2,scale2)
       - 12*g22*m2*mu*G1(m22,mu2,scale2)

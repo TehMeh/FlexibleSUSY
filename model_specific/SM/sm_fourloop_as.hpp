@@ -25,28 +25,28 @@ namespace flexiblesusy {
 namespace sm_fourloop_as {
 
 struct Parameters {
-    double as{};    ///< SM(5) strong coupling MS-bar
-    double mt{};    ///< SM top mass MS-bar
-    double Q{};     ///< renormalization scale
+    precise_real_type as{};    ///< SM(5) strong coupling MS-bar
+    precise_real_type mt{};    ///< SM top mass MS-bar
+    precise_real_type Q{};     ///< renormalization scale
 };
 
 /// 1-loop O(alpha_s) contributions to Delta alpha_s [hep-ph/0004189]
-double delta_alpha_s_1loop_as(const Parameters&);
+precise_real_type delta_alpha_s_1loop_as(const Parameters&);
 
 /// 2-loop O(alpha_s^2) contributions to Delta alpha_s [hep-ph/0004189]
-double delta_alpha_s_2loop_as_as(const Parameters&);
+precise_real_type delta_alpha_s_2loop_as_as(const Parameters&);
 
 /// 3-loop O(alpha_s^3) contributions to Delta alpha_s [hep-ph/0004189]
-double delta_alpha_s_3loop_as_as_as(const Parameters&);
+precise_real_type delta_alpha_s_3loop_as_as_as(const Parameters&);
 
 /// 4-loop O(alpha_s^4) contributions to Delta alpha_s [hep-ph/0512060]
-double delta_alpha_s_4loop_as_as_as_as(const Parameters&);
+precise_real_type delta_alpha_s_4loop_as_as_as_as(const Parameters&);
 
 /// calculate alpha_s(SM(6)) from alpha_s(SM(5)) Eq (14) [hep-ph/0512060]
-double calc_alpha_s(const Parameters&, int);
+precise_real_type calc_alpha_s(const Parameters&, int);
 
 /// calculate alpha_s(SM(6)) from alpha_s(SM(5)) alternatively
-double calc_alpha_s_alternative(const Parameters&, int);
+precise_real_type calc_alpha_s_alternative(const Parameters&, int);
 
 std::ostream& operator<<(std::ostream&, const Parameters&);
 
