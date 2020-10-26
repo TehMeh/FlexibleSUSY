@@ -600,7 +600,7 @@ std::string CLASSNAME::name() const
 
 void CLASSNAME::run_to(precise_real_type scale, precise_real_type eps)
 {
-   if (eps < 0.0)
+   if (eps < 0.0_p)
       eps = precision;
    @ModelName@_soft_parameters::run_to(scale, eps);
 }

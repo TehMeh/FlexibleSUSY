@@ -69,7 +69,7 @@ private:
    precise_real_type me_guess{0.}; ///< guessed DR-bar mass of electron
    precise_real_type mm_guess{0.}; ///< guessed DR-bar mass of muon
    precise_real_type mtau_guess{0.}; ///< guessed DR-bar mass of tau
-   precise_real_type running_precision{1.0e-3}; ///< Runge-Kutta RG running precision
+   precise_real_type running_precision{1.0e-3_p}; ///< Runge-Kutta RG running precision
    @ModelName@_low_scale_constraint<Semi_analytic>& low_constraint;
    @ModelName@_susy_scale_constraint<Semi_analytic>& susy_constraint;
    Eigen::Matrix<precise_complex_type,3,3> upQuarksDRbar{Eigen::Matrix<precise_complex_type,3,3>::Zero()};

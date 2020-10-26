@@ -347,10 +347,10 @@ precise_real_type MaxRelDiff(const precise_complex_type a, const precise_complex
    const precise_real_type sTin = abs(a);
    const precise_real_type sTout = abs(b);
    const precise_real_type maxx = max(sTin, sTout);
-   const precise_real_type underflow = 1.0e-20;
+   const precise_real_type underflow = 1.0e-20_p;
 
    if (maxx < underflow)
-      return 0.0;
+      return 0.0_p;
 
    return abs(a - b) / maxx;
 }
@@ -509,7 +509,7 @@ double ZeroSqrt(double x) noexcept
 
 precise_real_type ZeroSqrt(precise_real_type x) noexcept
 {
-   return (x > 0.0 ? sqrt(x) : (precise_real_type)0.0);
+   return (x > 0.0_p ? sqrt(x) : 0.0_p);
 }
 
 } // namespace flexiblesusy

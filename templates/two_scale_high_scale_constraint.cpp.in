@@ -98,7 +98,7 @@ namespace flexiblesusy {
 #else
 #define FSHimalayaMh23L [] () {                                         \
       throw HimalayaError("The 3-loop corrections to lambda "           \
-                          "require Himalaya 2.0.0 (or higher), but "    \
+                          "require Himalaya 2.0_p.0 (or higher), but "    \
                           "FlexibleSUSY has not been configured with "  \
                           "this Himalaya version!");                    \
       return 0.;                                                        \

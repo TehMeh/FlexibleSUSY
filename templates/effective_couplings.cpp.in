@@ -84,7 +84,7 @@ void @ModelName@_effective_couplings::run_SM_strong_coupling_to(standard_model::
 
 precise_complex_type @ModelName@_effective_couplings::scalar_scalar_qcd_factor(precise_real_type m_decay, precise_real_type m_loop) const
 {
-   precise_complex_type result(1.0, 0.0);
+   precise_complex_type result(1.0_p, 0.0_p);
 
    if (include_qcd_corrections) {
 @calculateScalarScalarLoopQCDFactor@
@@ -95,7 +95,7 @@ precise_complex_type @ModelName@_effective_couplings::scalar_scalar_qcd_factor(p
 
 precise_complex_type @ModelName@_effective_couplings::scalar_fermion_qcd_factor(precise_real_type m_decay, precise_real_type m_loop) const
 {
-   precise_complex_type result(1.0, 0.0);
+   precise_complex_type result(1.0_p, 0.0_p);
 
    if (include_qcd_corrections) {
 @calculateScalarFermionLoopQCDFactor@
@@ -106,7 +106,7 @@ precise_complex_type @ModelName@_effective_couplings::scalar_fermion_qcd_factor(
 
 precise_complex_type @ModelName@_effective_couplings::pseudoscalar_fermion_qcd_factor(precise_real_type m_decay, precise_real_type m_loop) const
 {
-   precise_complex_type result(1.0, 0.0);
+   precise_complex_type result(1.0_p, 0.0_p);
 
    if (include_qcd_corrections) {
 @calculatePseudoscalarFermionLoopQCDFactor@
@@ -118,11 +118,11 @@ precise_complex_type @ModelName@_effective_couplings::pseudoscalar_fermion_qcd_f
 precise_real_type @ModelName@_effective_couplings::number_of_active_flavours(precise_real_type m) const
 {
    if (m < qedqcd.displayMbMb()) {
-      return 4.0;
+      return 4.0_p;
    } else if (m < qedqcd.displayPoleMt()) {
-      return 5.0;
+      return 5.0_p;
    } else {
-      return 6.0;
+      return 6.0_p;
    }
 }
 
@@ -133,7 +133,7 @@ precise_real_type @ModelName@_effective_couplings::scalar_scaling_factor(precise
    const precise_real_type l = Log(Sqr(m) / Sqr(mtpole));
 
 @calculateScalarQCDScalingFactor@
-   return Sqrt(1.0 + nlo_qcd + nnlo_qcd + nnnlo_qcd);
+   return Sqrt(1.0_p + nlo_qcd + nnlo_qcd + nnnlo_qcd);
 }
 
 precise_real_type @ModelName@_effective_couplings::pseudoscalar_scaling_factor(precise_real_type m) const
@@ -143,7 +143,7 @@ precise_real_type @ModelName@_effective_couplings::pseudoscalar_scaling_factor(p
    const precise_real_type l = Log(Sqr(m) / Sqr(mtpole));
 
 @calculatePseudoscalarQCDScalingFactor@
-   return Sqrt(1.0 + nlo_qcd + nnlo_qcd + nnnlo_qcd);
+   return Sqrt(1.0_p + nlo_qcd + nnlo_qcd + nnnlo_qcd);
 }
 
 @partialWidthGetters@

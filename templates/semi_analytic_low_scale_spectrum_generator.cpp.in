@@ -125,7 +125,7 @@ void @ModelName@_spectrum_generator<Semi_analytic>::run_except(const softsusy::Q
                                                               susy_scale_constraint);
 
    Two_scale_increasing_precision precision(
-      precise_real_type(10.0), settings.get(Spectrum_generator_settings::precision));
+      precise_real_type(10.0_p), settings.get(Spectrum_generator_settings::precision));
 
    RGFlow<Semi_analytic> solver;
    solver.set_inner_convergence_tester(&inner_ct);

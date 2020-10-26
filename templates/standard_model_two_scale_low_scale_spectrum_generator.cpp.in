@@ -166,7 +166,7 @@ void @ModelName@_spectrum_generator<Two_scale>::run_except(const softsusy::QedQc
                                                                          low_scale_constraint,
                                                                          susy_scale_constraint);
    Two_scale_increasing_precision precision(
-      precise_real_type(10.0), settings.get(Spectrum_generator_settings::precision));
+      precise_real_type(10.0_p), settings.get(Spectrum_generator_settings::precision));
 
    RGFlow<Two_scale> solver;
    solver.set_convergence_tester(&cct);

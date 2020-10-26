@@ -57,7 +57,7 @@ public:
    void set_sm_parameters(const Sm_parameters&);  ///< set sm_parameters member variable
 
    /// calculates and returns the sine of the Weinberg angle and the W pole mass
-   std::pair<precise_real_type,precise_real_type> calculate(precise_real_type sinThetaW_start = 0.48);
+   std::pair<precise_real_type,precise_real_type> calculate(precise_real_type sinThetaW_start = 0.48_p);
 
 private:
    int number_of_iterations{20};      ///< maximum number of iterations

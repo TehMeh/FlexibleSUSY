@@ -87,7 +87,7 @@ void @ModelName@_low_scale_constraint<Semi_analytic>::apply()
 
    model->calculate_DRbar_masses();
    update_scale();
-   qedqcd.run_to(scale, 1.0e-5);
+   qedqcd.run_to(scale, 1.0e-5_p);
    calculate_DRbar_gauge_couplings();
    calculate_running_SM_masses();
 
@@ -181,9 +181,9 @@ void @ModelName@_low_scale_constraint<Semi_analytic>::calculate_threshold_correc
    if (model->get_thresholds() && model->get_threshold_corrections().alpha_s > 0)
       delta_alpha_s  = calculate_delta_alpha_s(alpha_s);
 
-   const double alpha_em_drbar = alpha_em / (1.0 - delta_alpha_em);
-   const double alpha_s_drbar  = alpha_s  / (1.0 - delta_alpha_s);
-   const double e_drbar        = Sqrt(4.0 * Pi * alpha_em_drbar);
+   const double alpha_em_drbar = alpha_em / (1.0_p - delta_alpha_em);
+   const double alpha_s_drbar  = alpha_s  / (1.0_p - delta_alpha_s);
+   const double e_drbar        = Sqrt(4.0_p * Pi * alpha_em_drbar);
 
    // interface variables
    mZ_run = mz_pole;

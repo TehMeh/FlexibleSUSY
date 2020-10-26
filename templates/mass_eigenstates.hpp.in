@@ -108,7 +108,7 @@ public:
    void calculate_spectrum();
    void clear_problems();
    std::string name() const;
-   void run_to(precise_real_type scale, precise_real_type eps = -1.0) override;
+   void run_to(precise_real_type scale, precise_real_type eps = -1.0_p) override;
    void print(std::ostream& out = std::cerr) const override;
    void set_precision(precise_real_type);
    precise_real_type get_precision() const;

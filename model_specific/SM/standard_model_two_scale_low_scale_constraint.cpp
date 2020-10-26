@@ -74,7 +74,7 @@ void Standard_model_low_scale_constraint<Two_scale>::apply()
       model->calculate_MVZ_DRbar(mz_pole) : mz_pole;
    const precise_real_type theta_w = model->calculate_theta_w(qedqcd, alpha_em_drbar);
 
-   precise_real_type new_g1 = 1.2909944487358056*e_drbar*Sec(theta_w);
+   precise_real_type new_g1 = 1.2909944487358056_p*e_drbar*Sec(theta_w);
    precise_real_type new_g2 = e_drbar*Csc(theta_w);
 
    if (IsFinite(new_g1)) {
@@ -99,7 +99,7 @@ void Standard_model_low_scale_constraint<Two_scale>::apply()
    model->calculate_Ye_DRbar(qedqcd);
    model->set_g1(new_g1);
    model->set_g2(new_g2);
-   model->set_g3(3.5449077018110318*Sqrt(alpha_s_drbar));
+   model->set_g3(3.5449077018110318_p*Sqrt(alpha_s_drbar));
 
    if (model->get_thresholds() && model->get_threshold_corrections().sin_theta_w > 0)
       qedqcd.setPoleMW(model->recalculate_mw_pole(qedqcd.displayPoleMW()));

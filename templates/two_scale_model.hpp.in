@@ -59,7 +59,7 @@ public:
    virtual void calculate_spectrum() override;
    virtual void clear_problems() override;
    virtual std::string name() const override;
-   virtual void run_to(precise_real_type scale, precise_real_type eps = -1.0) override;
+   virtual void run_to(precise_real_type scale, precise_real_type eps = -1.0_p) override;
    virtual void print(std::ostream& out = std::cerr) const override;
    virtual void set_precision(precise_real_type) override;
 };

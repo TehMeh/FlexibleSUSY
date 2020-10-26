@@ -86,7 +86,7 @@ void @ModelName@_standard_model_initial_guesser<Two_scale>::guess_eft_parameters
    mu_guess = leAtMt.displayMass(softsusy::mUp);
    mc_guess = leAtMt.displayMass(softsusy::mCharm);
    mt_guess = model->get_thresholds() > 0 && model->get_threshold_corrections().mt > 0 ?
-      leAtMt.displayMass(softsusy::mTop) - 30.0 :
+      leAtMt.displayMass(softsusy::mTop) - 30.0_p :
       leAtMt.displayPoleMt();
    md_guess = leAtMt.displayMass(softsusy::mDown);
    ms_guess = leAtMt.displayMass(softsusy::mStrange);
@@ -104,9 +104,9 @@ void @ModelName@_standard_model_initial_guesser<Two_scale>::guess_eft_parameters
    // guess gauge couplings at mt
    const auto alpha_sm(leAtMt.guess_alpha_SM5(mtpole));
 
-   eft->set_g1(sqrt(4.0 * Pi * alpha_sm(0)));
-   eft->set_g2(sqrt(4.0 * Pi * alpha_sm(1)));
-   eft->set_g3(sqrt(4.0 * Pi * alpha_sm(2)));
+   eft->set_g1(sqrt(4.0_p * Pi * alpha_sm(0)));
+   eft->set_g2(sqrt(4.0_p * Pi * alpha_sm(1)));
+   eft->set_g3(sqrt(4.0_p * Pi * alpha_sm(2)));
    eft->set_scale(mtpole);
 
    eft->set_v(Electroweak_constants::vev);
@@ -126,7 +126,7 @@ void @ModelName@_standard_model_initial_guesser<Two_scale>::guess_eft_parameters
    eft->set_Ye(1, 1, Sqrt(2.)* mm_guess/ eft->get_v());
    eft->set_Ye(2, 2, Sqrt(2.)* mtau_guess/ eft->get_v());
 
-   eft->set_Lambdax(0.12604);
+   eft->set_Lambdax(0.12604_p);
    eft->solve_ewsb_tree_level();
 
 }

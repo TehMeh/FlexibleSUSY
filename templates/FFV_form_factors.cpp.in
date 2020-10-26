@@ -38,7 +38,7 @@ using namespace @ModelName@_cxx_diagrams::fields;
 
 namespace {
 
-static constexpr double oneOver32PiSqr = 0.5*oneOver16PiSqr;
+const precise_real_type oneOver32PiSqr = 0.5_p*oneOver16PiSqr;
 
 /**
  * @class FFV_SSF
@@ -102,153 +102,153 @@ namespace {
 * @brief The loop functions necessary for the Fe_I -> Fe_J gamma one-loop calculations.
 *
 * These are OneLoopFunctionA(), OneLoopFunctionB()
-* as specified in arXiv:0808.1819
+* as specified in arXiv:0808.1819_p
 */
 
 // function from eq. 15 of hep-ph/9510309
-double OneLoopFunctionA(double r)
+precise_real_type OneLoopFunctionA(precise_real_type r)
 {
-   if (is_zero(1.0 - r)) {
-      return 1.5;
+   if (is_zero((precise_real_type)(1.0_p - r))) {
+      return 1.5_p;
    } else if (is_zero(r)) {
-      return 2.0;
+      return 2.0_p;
    } else {
-      return (2.0 - 9.0 * r + 18.0 * r * r - 11.0 * r * r * r +
-              6.0 * r * r * r * std::log(r)) /
-             pow(1.0 - r, 4);
+      return (2.0_p - 9.0_p * r + 18.0_p * r * r - 11.0_p * r * r * r +
+              6.0_p * r * r * r * log(r)) /
+             pow(1.0_p - r, 4);
    }
 }
 
-double OneLoopFunctionB(double r)
+precise_real_type OneLoopFunctionB(precise_real_type r)
 {
-   const double y = r - 1.0;
+   const precise_real_type y = r - 1.0_p;
    if (is_zero(r)) {
-      return 2.0;
-   } else if (std::abs(y) < 0.23) {
+      return 2.0_p;
+   } else if (abs(y) < 0.23_p) {
       // error around x=1 is <= 10^-12 on an intel i7
-      return (1.0000000000000000000 -
-              0.4000000000000000000  * y +
-              0.2000000000000000000  * y * y -
-              0.11428571428571428571 * y * y * y +
-              0.07142857142857142857 * y * y * y * y -
-              0.04761904761904761905 * y * y * y * y * y +
-              0.03333333333333333333 * y * y * y * y * y * y -
-              0.02424242424242424242 * y * y * y * y * y * y * y +
-              0.0181818181818181818  * y * y * y * y * y * y * y * y -
-              0.01398601398601398601 * y * y * y * y * y * y * y * y * y +
-              0.01098901098901098901 * y * y * y * y * y * y * y * y * y * y -
-              0.0087912087912087912  * y * y * y * y * y * y * y * y * y * y * y +
-              0.00714285714285714286 * y * y * y * y * y * y * y * y * y * y * y * y -
-              0.0058823529411764706  * y * y * y * y * y * y * y * y * y * y * y * y * y +
-              0.0049019607843137255  * y * y * y * y * y * y * y * y * y * y * y * y * y * y -
-              0.0041279669762641899  * y * y * y * y * y * y * y * y * y * y * y * y * y * y * y);
+      return (1.0000000000000000000_p -
+              0.4000000000000000000_p  * y +
+              0.2000000000000000000_p  * y * y -
+              0.11428571428571428571_p * y * y * y +
+              0.07142857142857142857_p * y * y * y * y -
+              0.04761904761904761905_p * y * y * y * y * y +
+              0.03333333333333333333_p * y * y * y * y * y * y -
+              0.02424242424242424242_p * y * y * y * y * y * y * y +
+              0.0181818181818181818_p  * y * y * y * y * y * y * y * y -
+              0.01398601398601398601_p * y * y * y * y * y * y * y * y * y +
+              0.01098901098901098901_p * y * y * y * y * y * y * y * y * y * y -
+              0.0087912087912087912_p  * y * y * y * y * y * y * y * y * y * y * y +
+              0.00714285714285714286_p * y * y * y * y * y * y * y * y * y * y * y * y -
+              0.0058823529411764706_p  * y * y * y * y * y * y * y * y * y * y * y * y * y +
+              0.0049019607843137255_p  * y * y * y * y * y * y * y * y * y * y * y * y * y * y -
+              0.0041279669762641899_p  * y * y * y * y * y * y * y * y * y * y * y * y * y * y * y);
    } else {
       return 2. *
-             (1.0 - 6.0 * r + 3.0 * r * r + 2.0 * r * r * r -
-              6.0 * r * r * std::log(r)) /
-             pow(1.0 - r, 4);
+             (1.0_p - 6.0_p * r + 3.0_p * r * r + 2.0_p * r * r * r -
+              6.0_p * r * r * log(r)) /
+             pow(1.0_p - r, 4);
    }
 }
 
-double OneLoopFunctionC(double r)
+precise_real_type OneLoopFunctionC(precise_real_type r)
 {
-   const double y = r - 1.0;
+   const precise_real_type y = r - 1.0_p;
    if (is_zero(r)) {
-      return 3.0;
-   } else if (std::abs(y) < 0.185) {
+      return 3.0_p;
+   } else if (abs(y) < 0.185_p) {
       // error around x=1 is <= 10^-13 on an intel i7
-      return (1.0000000000000000000 -
-              0.50000000000000000000 * y +
-              0.30000000000000000000 * y * y -
-              0.2000000000000000000  * y * y * y +
-              0.14285714285714285714 * y * y * y * y -
-              0.10714285714285714286 * y * y * y * y * y +
-              0.08333333333333333333 * y * y * y * y * y * y -
-              0.06666666666666666667 * y * y * y * y * y * y * y +
-              0.05454545454545454545 * y * y * y * y * y * y * y * y -
-              0.0454545454545454545  * y * y * y * y * y * y * y * y * y +
-              0.0384615384615384615  * y * y * y * y * y * y * y * y * y * y -
-              0.03296703296703296703 * y * y * y * y * y * y * y * y * y * y * y +
-              0.0285714285714285714  * y * y * y * y * y * y * y * y * y * y * y * y -
-              0.02500000000000000000 * y * y * y * y * y * y * y * y * y * y * y * y * y +
-              0.0220588235294117647  * y * y * y * y * y * y * y * y * y * y * y * y * y * y -
-              0.0196078431372549020  * y * y * y * y * y * y * y * y * y * y * y * y * y * y * y);
+      return (1.0000000000000000000_p -
+              0.50000000000000000000_p * y +
+              0.30000000000000000000_p * y * y -
+              0.2000000000000000000_p  * y * y * y +
+              0.14285714285714285714_p * y * y * y * y -
+              0.10714285714285714286_p * y * y * y * y * y +
+              0.08333333333333333333_p * y * y * y * y * y * y -
+              0.06666666666666666667_p * y * y * y * y * y * y * y +
+              0.05454545454545454545_p * y * y * y * y * y * y * y * y -
+              0.0454545454545454545_p  * y * y * y * y * y * y * y * y * y +
+              0.0384615384615384615_p  * y * y * y * y * y * y * y * y * y * y -
+              0.03296703296703296703_p * y * y * y * y * y * y * y * y * y * y * y +
+              0.0285714285714285714_p  * y * y * y * y * y * y * y * y * y * y * y * y -
+              0.02500000000000000000_p * y * y * y * y * y * y * y * y * y * y * y * y * y +
+              0.0220588235294117647_p  * y * y * y * y * y * y * y * y * y * y * y * y * y * y -
+              0.0196078431372549020_p  * y * y * y * y * y * y * y * y * y * y * y * y * y * y * y);
    } else {
-      return 3. * (1.0 - r * r + 2.0 * r * std::log(r)) / pow(1.0 - r, 3);
+      return 3. * (1.0_p - r * r + 2.0_p * r * log(r)) / pow(1.0_p - r, 3);
    }
 }
 
-double OneLoopFunctionD(double r)
+precise_real_type OneLoopFunctionD(precise_real_type r)
 {
-   if (is_zero(1.0 - r)) {
-      return -9.0 / 2.0;
+   if (is_zero((precise_real_type)(1.0_p - r))) {
+      return -9.0_p / 2.0_p;
    } else {
-      return (16.0 - 45.0 * r + 36.0 * r * r - 7.0 * r * r * r +
-              6.0 * (2.0 - 3.0 * r) * std::log(r)) /
-             pow(1.0 - r, 4);
+      return (16.0_p - 45.0_p * r + 36.0_p * r * r - 7.0_p * r * r * r +
+              6.0_p * (2.0_p - 3.0_p * r) * log(r)) /
+             pow(1.0_p - r, 4);
    }
 }
 
-double OneLoopFunctionE(double r)
+precise_real_type OneLoopFunctionE(precise_real_type r)
 {
-   const double y = r - 1.0;
+   const precise_real_type y = r - 1.0_p;
    if (is_zero(r)) {
-      return 12.0;
-   } else if (std::abs(y) < 0.21) {
+      return 12.0_p;
+   } else if (abs(y) < 0.21_p) {
       // error around x=1 is <= 10^-12 on an intel i7
-      return (1.0000000000000000000 -
-              0.60000000000000000000  * y +
-              0.40000000000000000000  * y * y -
-              0.28571428571428571429  * y * y * y +
-              0.21428571428571428571  * y * y * y * y -
-              0.16666666666666666667  * y * y * y * y * y +
-              0.13333333333333333333  * y * y * y * y * y * y -
-              0.10909090909090909091  * y * y * y * y * y * y * y +
-              0.090909090909090909091 * y * y * y * y * y * y * y * y -
-              0.076923076923076923077 * y * y * y * y * y * y * y * y * y +
-              0.065934065934065934066 * y * y * y * y * y * y * y * y * y * y -
-              0.057142857142857142857 * y * y * y * y * y * y * y * y * y * y * y +
-              0.050000000000000000000 * y * y * y * y * y * y * y * y * y * y * y * y -
-              0.044117647058823529412 * y * y * y * y * y * y * y * y * y * y * y * y * y +
-              0.039215686274509803922 * y * y * y * y * y * y * y * y * y * y * y * y * y * y -
-              0.035087719298245614035 * y * y * y * y * y * y * y * y * y * y * y * y * y * y * y);
+      return (1.0000000000000000000_p -
+              0.60000000000000000000_p  * y +
+              0.40000000000000000000_p  * y * y -
+              0.28571428571428571429_p  * y * y * y +
+              0.21428571428571428571_p  * y * y * y * y -
+              0.16666666666666666667_p  * y * y * y * y * y +
+              0.13333333333333333333_p  * y * y * y * y * y * y -
+              0.10909090909090909091_p  * y * y * y * y * y * y * y +
+              0.090909090909090909091_p * y * y * y * y * y * y * y * y -
+              0.076923076923076923077_p * y * y * y * y * y * y * y * y * y +
+              0.065934065934065934066_p * y * y * y * y * y * y * y * y * y * y -
+              0.057142857142857142857_p * y * y * y * y * y * y * y * y * y * y * y +
+              0.050000000000000000000_p * y * y * y * y * y * y * y * y * y * y * y * y -
+              0.044117647058823529412_p * y * y * y * y * y * y * y * y * y * y * y * y * y +
+              0.039215686274509803922_p * y * y * y * y * y * y * y * y * y * y * y * y * y * y -
+              0.035087719298245614035_p * y * y * y * y * y * y * y * y * y * y * y * y * y * y * y);
    } else {
       return 2. *
-             (2.0 + 3.0 * r - 6.0 * r * r + r * r * r + 6.0 * r * std::log(r)) /
-             pow(1.0 - r, 4);
+             (2.0_p + 3.0_p * r - 6.0_p * r * r + r * r * r + 6.0_p * r * log(r)) /
+             pow(1.0_p - r, 4);
    }
 }
 
-double OneLoopFunctionF(double r)
+precise_real_type OneLoopFunctionF(precise_real_type r)
 {
-   const double y = r - 1.0;
-   if (std::abs(y) < 0.155) {
+   const precise_real_type y = r - 1.0_p;
+   if (abs(y) < 0.155_p) {
       // error around x=1 is <= 10^-13 on an intel i7
-      return (1.0 - 
-              0.75 * y + 
-              0.6 * y * y -
-              0.50000000000000000000 * y * y * y +
-              0.4285714285714285714  * y * y * y * y -
-              0.37500000000000000000 * y * y * y * y * y +
-              0.33333333333333333333 * y * y * y * y * y * y -
-              0.3000000000000000000  * y * y * y * y * y * y * y +
-              0.2727272727272727273  * y * y * y * y * y * y * y * y -
-              0.2500000000000000000  * y * y * y * y * y * y * y * y * y +
-              0.23076923076923076923 * y * y * y * y * y * y * y * y * y * y -
-              0.21428571428571428571 * y * y * y * y * y * y * y * y * y * y * y +
-              0.2000000000000000000  * y * y * y * y * y * y * y * y * y * y * y * y -
-              0.1875000000000000000  * y * y * y * y * y * y * y * y * y * y * y * y * y +
-              0.1764705882352941176  * y * y * y * y * y * y * y * y * y * y * y * y * y * y -
-              0.16666666666666666667 * y * y * y * y * y * y * y * y * y * y * y * y * y * y * y);
+      return (1.0_p - 
+              0.75_p * y + 
+              0.6_p * y * y -
+              0.50000000000000000000_p * y * y * y +
+              0.4285714285714285714_p  * y * y * y * y -
+              0.37500000000000000000_p * y * y * y * y * y +
+              0.33333333333333333333_p * y * y * y * y * y * y -
+              0.3000000000000000000_p  * y * y * y * y * y * y * y +
+              0.2727272727272727273_p  * y * y * y * y * y * y * y * y -
+              0.2500000000000000000_p  * y * y * y * y * y * y * y * y * y +
+              0.23076923076923076923_p * y * y * y * y * y * y * y * y * y * y -
+              0.21428571428571428571_p * y * y * y * y * y * y * y * y * y * y * y +
+              0.2000000000000000000_p  * y * y * y * y * y * y * y * y * y * y * y * y -
+              0.1875000000000000000_p  * y * y * y * y * y * y * y * y * y * y * y * y * y +
+              0.1764705882352941176_p  * y * y * y * y * y * y * y * y * y * y * y * y * y * y -
+              0.16666666666666666667_p * y * y * y * y * y * y * y * y * y * y * y * y * y * y * y);
    } else {
-      return 3. / 2. * (-3.0 + 4.0 * r - r * r - 2.0 * std::log(r)) /
-             pow(1.0 - r, 3);
+      return 3. / 2. * (-3.0_p + 4.0_p * r - r * r - 2.0_p * log(r)) /
+             pow(1.0_p - r, 3);
    }
 }
 
 // emit massless vector boson from the internal scalar line
 template <class Fj, class Fi, class V, class SA, class SB, class F>
-std::valarray<std::complex<double>> FFV_SSF<Fj, Fi, V, SA, SB, F>::value(
+std::valarray<precise_complex_type> FFV_SSF<Fj, Fi, V, SA, SB, F>::value(
    const typename field_indices<Fj>::type& indices_in,
    const typename field_indices<Fi>::type& indices_out,
    context_base const& context,
@@ -269,7 +269,7 @@ std::valarray<std::complex<double>> FFV_SSF<Fj, Fi, V, SA, SB, F>::value(
    const auto mi = context.mass<Fi>(indices_out);
 
    // loop over all possible particle generations attached to both vertices
-   std::valarray<std::complex<double>> res {0.0, 0.0, 0.0, 0.0};
+   std::valarray<precise_complex_type> res {0.0_p, 0.0_p, 0.0_p, 0.0_p};
    for (const auto& indexIn: index_range<VertexFBarFjSBar>()) {
       for (const auto& indexOut: index_range<VertexFiBarFS>()) {
 
@@ -360,7 +360,7 @@ std::valarray<std::complex<double>> FFV_FFS<Fj, Fi, V, FA, FB, S>::value(
    const auto mi = context.mass<Fi>(indices_out);
 
    // loop over all possible particle generations attached to both vertices
-   std::valarray<std::complex<double>> res {0.0, 0.0, 0.0, 0.0};
+   std::valarray<precise_complex_type> res {0.0_p, 0.0_p, 0.0_p, 0.0_p};
    for (const auto& indexIn: index_range<VertexFBarFjSBar>()) {
       for (const auto& indexOut: index_range<VertexFiBarFS>()) {
 
