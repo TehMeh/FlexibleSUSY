@@ -1032,9 +1032,16 @@ CreateSetAssignment[name_, startIndex_, parameterType_, struct_:"pars"] :=
           Quit[1];
           ];
 
-CreateSetAssignment[name_, startIndex_, CConversion`ScalarType[CConversion`realScalarCType | CConversion`integerScalarCType], struct_:"pars"] :=
+CreateSetAssignment[name_, startIndex_, CConversion`ScalarType[CConversion`realScalarCType], struct_:"pars"] :=
     Module[{ass = ""},
            ass = name <> " = " <> struct <> "(" <> ToString[startIndex] <> ");\n";
+           Return[{ass, 1}];
+          ];
+
+CreateSetAssignment[name_, startIndex_, CConversion`ScalarType[CConversion`integerScalarCType], struct_:"pars"] :=
+    Module[{ass = "", type},
+           type = CConversion`CreateCType[CConversion`ScalarType[CConversion`integerScalarCType]];
+           ass = name <> " = " <> type <> "(" <> struct <> "(" <> ToString[startIndex] <> "));\n";
            Return[{ass, 1}];
           ];
 
@@ -1476,13 +1483,18 @@ SetInputParameterTo[Im[par_], value_String] :=
 SetInputParameterTo[par_, value_String] :=
     CConversion`ToValidCSymbolString[par] <> " = " <> value <> ";";
 
-CreateCaseFromTuple[{key_?NumberQ, parameter_}] :=
+SetInputParameterTo[par_, value_String, type_] :=
+    CConversion`ToValidCSymbolString[par] <> " = (" <> CConversion`CreateCType[type] <> ")" <> value <> ";";
+
+CreateCaseFromTuple[{key_?NumberQ, parameter_, type_}] :=If[type === CConversion`ScalarType[integerScalarCType],
     "case " <> ToString[key] <> ": input." <>
-    SetInputParameterTo[parameter, "value"] <> " break;\n";
+    SetInputParameterTo[parameter, "value", type] <> " break;\n",
+    "case " <> ToString[key] <> ": input." <>
+    SetInputParameterTo[parameter, "value"] <> " break;\n"];
 
 CreateCaseFromTuple[expr_] :=
     Block[{},
-          Print["Error: not a valid {key,parameter} tuple: ", expr];
+          Print["Error: not a valid {key, parameter, type} tuple: ", expr];
           ""
          ];
 
