@@ -59,10 +59,10 @@ inline void MLPut(MLINK link, precise_complex_type c)
 template <int M>
 void MLPut(MLINK link, const Eigen::Array<precise_real_type,M,1>& a)
 {
-   precise_real_type v[M];
+   double v[M];
    for (int i = 0; i < M; i++)
-      v[i] = a(i);
-   MLPutRealList(link, (const double*)(v), M);
+      v[i] = double(a(i));
+   MLPutRealList(link, v, M);
 }
 
 template <int M>
@@ -75,10 +75,10 @@ void MLPut(MLINK link, const Eigen::Matrix<precise_real_type,M,1>& m)
 template <int M, int N>
 void MLPut(MLINK link, const Eigen::Matrix<precise_real_type,M,N>& m)
 {
-   precise_real_type mat[M][N];
+   double mat[M][N];
    for (int i = 0; i < M; i++)
       for (int k = 0; k < N; k++)
-         mat[i][k] = m(i, k);
+         mat[i][k] = double(m(i, k));
 
    long dims[] = { M, N };
    MLPutDoubleArray(link, (double*)mat, dims, NULL, 2);
