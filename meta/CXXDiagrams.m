@@ -1080,7 +1080,7 @@ VertexFunctionBodyForFields[fields_List] :=
 			DeclareIndices[StripUnbrokenGaugeIndices /@ indexedFields, "indices"] <>
 			Parameters`CreateLocalConstRefs[expr] <> "\n" <>
 			"const " <> GetComplexScalarCType[] <> " result = " <>
-			Parameters`ExpressionToString[expr] <> ";\n\n" <>
+			Parameters`MarkerReplacerSUM[Parameters`ExpressionToString[expr], CConversion`complexScalarCType] <> ";\n\n" <>
 			"return {result};",
 
 			ChiralVertex,
@@ -1111,7 +1111,7 @@ VertexFunctionBodyForFields[fields_List] :=
 			DeclareIndices[StripUnbrokenGaugeIndices /@ indexedFields, "indices"] <>
 			Parameters`CreateLocalConstRefs[expr] <> "\n" <>
 			"const " <> GetComplexScalarCType[] <> " result = " <>
-			Parameters`ExpressionToString[expr] <> ";\n\n" <>
+			Parameters`MarkerReplacerSUM[Parameters`ExpressionToString[expr], CConversion`complexScalarCType] <> ";\n\n" <>
 			"return {result, " <>
 				ToString@Utils`MathIndexToCPP[Position[indexedFields, incomingGhost, {1}][[1,1]]] <>
 			"};",
@@ -1127,7 +1127,7 @@ VertexFunctionBodyForFields[fields_List] :=
 			DeclareIndices[StripUnbrokenGaugeIndices /@ indexedFields, "indices"] <>
       Parameters`CreateLocalConstRefs[expr] <> "\n" <>
       "const " <> GetComplexScalarCType[] <> " result = " <>
-      Parameters`ExpressionToString[expr] <> ";\n\n" <>
+      Parameters`MarkerReplacerSUM[Parameters`ExpressionToString[expr], CConversion`complexScalarCType] <> ";\n\n" <>
       "return {result, " <>
 				If[Or @@ ((And @@
 						(RotateLeft[{lIndex1, lIndex2, lIndex3}, #] ===
@@ -1189,7 +1189,7 @@ VertexFunctionBodyForFields[fields_List] :=
       DeclareIndices[StripUnbrokenGaugeIndices /@ indexedFields, "indices"] <>
       Parameters`CreateLocalConstRefs[expr] <> "\n" <>
       "const " <> GetComplexScalarCType[] <> " result = " <>
-      Parameters`ExpressionToString[expr] <> ";\n\n" <>
+      Parameters`MarkerReplacerSUM[Parameters`ExpressionToString[expr], CConversion`complexScalarCType] <> ";\n\n" <>
       "return {result, minuend_index, subtrahend_index};",
 
       _,
