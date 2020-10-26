@@ -72,7 +72,6 @@ public:
       higgs_3loop_correction_at2_as, ///< [28] Higgs 3-loop correction O(alpha_t^2 alpha_s)
       higgs_3loop_correction_at3,    ///< [29] Higgs 3-loop correction O(alpha_t^3)
       higgs_4loop_correction_at_as3, ///< [30] Higgs 4-loop correction O(alpha_t alpha_s^3)
-      NumberOfDigits,         ///< [31] Number of Digits in the mantisse / precision S.D.
       NUMBER_OF_OPTIONS      ///< number of possible options
    };
 
