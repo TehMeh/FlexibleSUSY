@@ -4,6 +4,10 @@
 *.so
 *.d
 *.x
+*.dat
+core
+list-symbols-packages-v2.1.sh
+*.nb
 
 config/config.h
 config/version
