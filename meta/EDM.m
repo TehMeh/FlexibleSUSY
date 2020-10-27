@@ -97,7 +97,7 @@ EDMCreateInterfaceFunctionForField[field_,gTaggedDiagrams_List] :=
 							""]
 					] <> "};\n\n" <>
 
-				"precise_real_type val = 0.0;\n\n" <>
+				"precise_real_type val = 0.0_p;\n\n" <>
 
 				"using namespace " <> FlexibleSUSY`FSModelName <> "_cxx_diagrams::fields;\n\n" <>
 
@@ -110,7 +110,7 @@ EDMCreateInterfaceFunctionForField[field_,gTaggedDiagrams_List] :=
 							CXXDiagrams`ColourFactorForIndexedDiagramFromGraph[indexedDiagram, graph]] <>
 						" * " <> 
 						CXXEvaluatorForFieldAndDiagramFromGraph[field, diagram, graph] <>
-						"(indices, context);"
+						"::value(indices, context);"
 					] & /@ diagrams, "\n"]
 				] & /@ gTaggedDiagrams, "\n"] <> "\n\n" <>
 
@@ -148,12 +148,12 @@ CXXEvaluatorForFieldAndDiagramFromGraph[field_,diagram_,vertexCorrectionGraph] :
   ]
 
 CXXEvaluatorFS[field_,photonEmitter_,exchangeParticle_] :=
-  "EDMVertexCorrectionFS::value<" <> CXXDiagrams`CXXNameOfField[field] <> ", " <>
+  "EDMVertexCorrectionFS<" <> CXXDiagrams`CXXNameOfField[field] <> ", " <>
   CXXDiagrams`CXXNameOfField[photonEmitter] <> ", " <>
   CXXDiagrams`CXXNameOfField[exchangeParticle] <> ">"
 
 CXXEvaluatorSF[field_,photonEmitter_,exchangeParticle_] :=
-  "EDMVertexCorrectionSF::value<" <> CXXDiagrams`CXXNameOfField[field] <> ", " <>
+  "EDMVertexCorrectionSF<" <> CXXDiagrams`CXXNameOfField[field] <> ", " <>
   CXXDiagrams`CXXNameOfField[photonEmitter] <> ", " <>
   CXXDiagrams`CXXNameOfField[exchangeParticle] <> ">"
 
