@@ -180,7 +180,7 @@ EDMField, PhotonEmitter, ExchangeField
 
     const precise_real_type numericFactor = oneOver16PiSquared;
     const precise_real_type massFactor = precise_real_type(photonEmitterMass/(exchangeFieldMass * exchangeFieldMass));
-    const precise_real_type couplingFactor = precise_real_type(precise_complex_type(boost::multiprecision::conj(vertex.right())).imag() * vertex.left().imag());
+    const precise_real_type couplingFactor = precise_complex_type(boost::multiprecision::conj(vertex.right()) * vertex.left()).imag();
 
     const precise_real_type massRatioSquared = Sqr(precise_real_type(photonEmitterMass/exchangeFieldMass));
     const precise_real_type loopFactor = photonEmitterCharge * OneLoopFunctionA(massRatioSquared);
@@ -224,7 +224,8 @@ EDMField, PhotonEmitter, ExchangeField
 
     const precise_real_type numericFactor = oneOver16PiSquared;
     const precise_real_type massFactor = precise_real_type(exchangeFieldMass/(photonEmitterMass * photonEmitterMass));
-    const precise_real_type couplingFactor = precise_real_type(precise_complex_type(boost::multiprecision::conj(vertex.right())).imag() * vertex.left().imag());
+    const precise_real_type couplingFactor = precise_complex_type(boost::multiprecision::conj(vertex.right()) * vertex.left()).imag();
+
 
     const precise_real_type massRatioSquared = Sqr(precise_real_type(exchangeFieldMass / photonEmitterMass));
     const precise_real_type loopFactor = photonEmitterCharge * OneLoopFunctionB(massRatioSquared);
