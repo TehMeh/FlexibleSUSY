@@ -70,6 +70,19 @@ ExtraSLHAOutputBlocks = {
             {2, FlexibleSUSYObservable`CpHiggsGluonGluon} } }
 };
 
+
+ExtraSLHAOutputBlocks = {
+   {EFFHIGGSCOUPLINGS, NoScale,
+           {{1, FlexibleSUSYObservable`CpHiggsPhotonPhoton},
+            {2, FlexibleSUSYObservable`CpHiggsGluonGluon},
+            {3, FlexibleSUSYObservable`CpPseudoScalarPhotonPhoton},
+            {4, FlexibleSUSYObservable`CpPseudoScalarGluonGluon}} },
+	{FlexibleSUSYLowEnergy,
+			{{21, FlexibleSUSYObservable`aMuon},
+             {23, FlexibleSUSYObservable`EDM[Fe[1]]},
+			 {24, FlexibleSUSYObservable`EDM[Fe[2]]} } }
+};
+
 SARAH`ParameterDefinitions = Append[
     Cases[SARAH`ParameterDefinitions, {p_ /; p =!= SARAH`\[Lambda], ___}],
     {SARAH`\[Lambda], { Description -> "SM Higgs Selfcouplings" } }
