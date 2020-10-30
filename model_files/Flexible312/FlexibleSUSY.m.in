@@ -145,14 +145,18 @@ LowPoleMassPrecision     = {};
 NumberOfDigits = {40}; (*default or >0 integers*) (*added S.D.*)
 
 ExtraSLHAOutputBlocks = {
-   {EFFHIGGSCOUPLINGS, NoScale,
+    {EFFHIGGSCOUPLINGS, NoScale,
            {{1, FlexibleSUSYObservable`CpHiggsPhotonPhoton},
             {2, FlexibleSUSYObservable`CpHiggsGluonGluon},
             {3, FlexibleSUSYObservable`CpPseudoScalarPhotonPhoton},
-            {4, FlexibleSUSYObservable`CpPseudoScalarGluonGluon}} },
+            {4, FlexibleSUSYObservable`CpPseudoScalarGluonGluon}} 
+    },
 	{FlexibleSUSYLowEnergy,
-			{{23, FlexibleSUSYObservable`EDM[Fe[1]]},
-			 {24, FlexibleSUSYObservable`EDM[Fe[2]]} } },
+			{{23, FlexibleSUSYObservable`EDM[Fe[1]]}
+			 ,{24, FlexibleSUSYObservable`EDM[Fe[2]]}
+             ,{25, FlexibleSUSYObservable`BrLToLGamma[Fe[2]->{Fe[1],VP}]} 
+            } 
+    },
 
 		(*output of imaginary parts*)
 	(*{IMVPMNS, {	{1, 1, Im[Pole @ Vpmns[1,1]]},
