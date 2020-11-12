@@ -142,8 +142,6 @@ HighPoleMassPrecision    = {hh,Hm,Fv};
 MediumPoleMassPrecision  = {};
 LowPoleMassPrecision     = {};
 
-NumberOfDigits = {40}; (*default or >0 integers*) (*added S.D.*)
-
 ExtraSLHAOutputBlocks = {
     {EFFHIGGSCOUPLINGS, NoScale,
            {{1, FlexibleSUSYObservable`CpHiggsPhotonPhoton},
@@ -154,7 +152,7 @@ ExtraSLHAOutputBlocks = {
 	{FlexibleSUSYLowEnergy,
 			{{23, FlexibleSUSYObservable`EDM[Fe[1]]}
 			 ,{24, FlexibleSUSYObservable`EDM[Fe[2]]}
-             ,{25, FlexibleSUSYObservable`BrLToLGamma[Fe[2]->{Fe[1],VP}]} 
+             (*,{25, FlexibleSUSYObservable`BrLToLGamma[Fe[2]->{Fe[1],VP}]}*) (*this observable does not work in Mathematica*) 
             } 
     },
 
