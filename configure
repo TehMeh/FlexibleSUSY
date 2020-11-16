@@ -108,6 +108,7 @@ options="                    \
    enable_verbose            \
    enable_feynarts           \
    enable_formcalc           \
+   enable_boost_multiprecision \
 "
 
 # BEGIN: NOT EXPORTED ##########################################
@@ -140,6 +141,7 @@ enable_tsil="automatic"
 enable_verbose="no"
 enable_feynarts="automatic"
 enable_formcalc="automatic"
+enable_boost_multiprecision="no"
 
 # corresponding preprocessor define statements
 DEFINE_ENABLE_COLORS="#undef ENABLE_COLORS"
@@ -161,6 +163,7 @@ DEFINE_ENABLE_VERBOSE="#undef ENABLE_VERBOSE"
 DEFINE_ENABLE_TWO_SCALE_SOLVER="#undef ENABLE_TWO_SCALE_SOLVER"
 DEFINE_ENABLE_LATTICE_SOLVER="#undef ENABLE_LATTICE_SOLVER"
 DEFINE_ENABLE_SEMI_ANALYTIC_SOLVER="#undef ENABLE_SEMI_ANALYTIC_SOLVER"
+DEFINE_ENABLE_BOOST_MULTIPRECISION="#undef ENABLE_BOOST_MULTIPRECISION"
 DEFINE_ENABLE_ADDONS=""
 
 boost_lib_dir=""
@@ -237,12 +240,12 @@ cxx_compiler_version="unknown"
 
 # required C++ compiler versions
 required_cxx_compiler_version="unknown"
-required_gpp_compiler_version="5.0.0"
+required_gpp_compiler_version="7.5.0"
 required_clang_compiler_version="3.8.1"
 required_icpc_compiler_version="17.0.0"
 
 # required boost version
-required_boost_version="1.37.0"
+required_boost_version="1.68.0"
 
 # required Mathematica version
 required_mathematica_version="7"
@@ -1374,6 +1377,7 @@ check_boost() {
     check_boost_version
     check_boost_test_incl
     check_boost_test_libs
+    check_boost_multiprecision
 }
 
 #_____________________________________________________________________
@@ -1486,6 +1490,24 @@ check_boost_thread_incl() {
         fi
     fi
 }
+
+
+#_____________________________________________________________________
+check_boost_multiprecision() {
+    if test "x$enable_boost_multiprecision" = "xyes" ; then
+        check_header "boost/multiprecision/mpc.hpp" "$boost_inc_dir" \
+        "$default_inc_paths"
+        if test "x$found_hdr" = "x" ; then
+            message "Error: Boost::Multiprecision is requested but failed to find "
+            message "  boost/multiprecision/mpc.hpp in ${boost_inc_dir} ${default_inc_paths}"
+            message "  see http://www.boost.org"
+            exit 1
+        else
+            LDLIBS="${LDLIBS} -lmpc -lmpfr -lgmp"
+        fi
+    fi
+}
+
 
 #_____________________________________________________________________
 check_std_threads() {
@@ -3256,6 +3278,17 @@ enable_defines() {
         logmsg "   ${DEFINE_ENABLE_TSIL}"
     fi
 
+    if test "x${enable_boost_multiprecision}" = "xyes" ; then
+        DEFINE_ENABLE_BOOST_MULTIPRECISION="#define ENABLE_BOOST_MULTIPRECISION 1"
+        message "Enabling boost::multiprecision"
+        logmsg "   ${DEFINE_ENABLE_BOOST_MULTIPRECISION}"
+    else
+        enable_boost_multiprecision=no
+        DEFINE_ENABLE_BOOST_MULTIPRECISION="#undef ENABLE_TSIL"
+        message "Disabling boost::multiprecision"
+        logmsg "   ${DEFINE_ENABLE_BOOST_MULTIPRECISION}"
+    fi
+
     for s in ${SOLVERS}; do
 	case "$s" in
 	    all)
@@ -3385,6 +3418,7 @@ replace_markers() {
 	-e "s|@ENABLE_SQLITE@|$enable_sqlite|"    \
 	-e "s|@ENABLE_THREADS@|$enable_threads|"  \
 	-e "s|@ENABLE_TSIL@|$enable_tsil|"        \
+    -e "s|@ENABLE_BOOST_MULTIPRECISION@|$enable_boost_multiprecision|"   \
 	-e "s|@ENABLE_VERBOSE@|$enable_verbose|"  \
         -e "s|@GM2CALCLIBS@|$GM2CALCLIBS|"        \
         -e "s|@GM2CALCFLAGS@|$GM2CALCFLAGS|"      \
@@ -3451,6 +3485,7 @@ cat <<EOF
   verbose           Verbose messages (default: $enable_verbose)
   feynarts          Enable usage of FeynArts (default: automatic)
   formcalc          Enable usage of FormCalc (default: automatic)
+  boost-multiprecision  Enable boost::multiprecision (default: $enable_boost_multiprecision)
 
 Package directories, compilation settings and model selection
 
@@ -3782,6 +3817,7 @@ sed -e "s|@FLEXIBLESUSY_VERSION@|$FLEXIBLESUSY_VERSION|" \
     -e "s|@DEFINE_ENABLE_SQLITE@|$DEFINE_ENABLE_SQLITE|"       \
     -e "s|@DEFINE_ENABLE_THREADS@|$DEFINE_ENABLE_THREADS|"     \
     -e "s|@DEFINE_ENABLE_TSIL@|$DEFINE_ENABLE_TSIL|"           \
+    -e "s|@DEFINE_ENABLE_BOOST_MULTIPRECISION@|$DEFINE_ENABLE_BOOST_MULTIPRECISION|"           \
     -e "s|@DEFINE_ENABLE_VERBOSE@|$DEFINE_ENABLE_VERBOSE|"     \
     -e "s|@DEFINE_ENABLE_TWO_SCALE_SOLVER@|$DEFINE_ENABLE_TWO_SCALE_SOLVER|" \
     -e "s|@DEFINE_ENABLE_LATTICE_SOLVER@|$DEFINE_ENABLE_LATTICE_SOLVER|" \
