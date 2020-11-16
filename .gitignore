@@ -5,13 +5,14 @@
 *.d
 *.x
 *.json
+*.out
 
 src/loop_libraries/libcollier_wrapper.mod
 src/loop_libraries/libcollier_wrapper.f90
 src/libfortran_utils.mod
 
 config/config.h
-config/version
+config/flexiblesusy-version
 config/git_commit
 config/required_sarah_version.m
 config/list_sarah_model_files.sh
