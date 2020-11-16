@@ -120,7 +120,42 @@
 /* Enable semi-analytic BVP solver */
 @DEFINE_ENABLE_SEMI_ANALYTIC_SOLVER@
 
+/*Enable Boost multiprecision*/
+@DEFINE_ENABLE_BOOST_MULTIPRECISION@
+
 /* Enable statements for addons */
 @DEFINE_ENABLE_ADDONS@
+
+/* Define the real type */
+#ifdef ENABLE_BOOST_MULTIPRECISION
+
+#include <boost/multiprecision/mpc.hpp>
+#include <boost/multiprecision/mpfr.hpp>
+#include <iostream>
+#include <iomanip>
+
+//typedef boost::multiprecision::float128 fs_real_t;
+//typedef boost::multiprecision::complex128 fs_complex_t;
+typedef boost::multiprecision::number<boost::multiprecision::mpfr_float_backend<30>, boost::multiprecision::et_on> fs_real_t;
+typedef boost::multiprecision::number<boost::multiprecision::mpc_complex_backend<30>, boost::multiprecision::et_on> fs_complex_t;
+inline void precise_cout(int modify=0) { std::cout << std::setprecision(std::numeric_limits<fs_real_t>::max_digits10 + modify); }
+inline const fs_real_t operator""_p(const char *a)
+{ return static_cast<fs_real_t>(a); }
+
+#else
+
+// Boost::Multiprecision is not used
+#include <complex>
+#include <iostream>
+#include <iomanip>
+
+typedef double fs_real_t;
+typedef std::complex<fs_real_t> fs_complex_t;
+inline void precise_cout(int modify=0) { std::cout << std::setprecision(24+modify); }
+inline fs_real_t operator""_p(const char *a) { return atof(a); }
+
+#endif
+
+inline void unprecise_cout() { std::cout << std::setprecision(6); }
 
 #endif
