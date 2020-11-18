@@ -79,8 +79,9 @@ ExtraSLHAOutputBlocks = {
             {4, FlexibleSUSYObservable`CpPseudoScalarGluonGluon}} },
 	{FlexibleSUSYLowEnergy,
 			{{21, FlexibleSUSYObservable`aMuon},
-             {23, FlexibleSUSYObservable`EDM[Fe[1]]},
-			 {24, FlexibleSUSYObservable`EDM[Fe[2]]} } }
+       {23, FlexibleSUSYObservable`EDM[Fe[1]]},
+			 {24, FlexibleSUSYObservable`EDM[Fe[2]]}
+       (*,{25, FlexibleSUSYObservable`BrLToLGamma[Fe[2]->{Fe[1],VP}]}*) } }
 };
 
 SARAH`ParameterDefinitions = Append[
